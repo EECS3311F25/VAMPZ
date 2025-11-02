@@ -1,11 +1,24 @@
 import { useState } from 'react'
+import './index.css'
+import { LoginPage, SignupPage, ForgotPasswordPage } from './components'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState('login')
 
   return (
     <>
-        <div>ASDs</div>
+      {currentPage === 'login' && (
+        <LoginPage 
+          onSwitchToSignup={() => setCurrentPage('signup')}
+          onSwitchToForgotPassword={() => setCurrentPage('forgotPassword')}
+        />
+      )}
+      {currentPage === 'signup' && (
+        <SignupPage onSwitchToLogin={() => setCurrentPage('login')} />
+      )}
+      {currentPage === 'forgotPassword' && (
+        <ForgotPasswordPage onSwitchToLogin={() => setCurrentPage('login')} />
+      )}
     </>
   )
 }

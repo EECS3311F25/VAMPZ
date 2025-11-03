@@ -1,13 +1,12 @@
 import { Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function Navbar({ onSignIn, onSignUp, onGoHome }) {
+export default function Navbar() {
+  const navigate = useNavigate();
   const handleHomeClick = (e) => {
     e.preventDefault();
-    if (onGoHome) {
-      onGoHome();
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePricingClick = (e) => {
@@ -51,10 +50,8 @@ export default function Navbar({ onSignIn, onSignUp, onGoHome }) {
             <button className="navbar-search-btn">
               <Search size={20} />
             </button>
-            <a href="#" className="navbar-signin" onClick={(e) => { e.preventDefault(); onSignIn && onSignIn(); }}>
-              Sign in <span>&gt;</span>
-            </a>
-            <button className="navbar-signup" onClick={() => { onSignUp && onSignUp(); }}>
+            <Link to="/login" className="navbar-signin">Sign in <span>&gt;</span></Link>
+            <button className="navbar-signup" onClick={() => navigate('/signup')}>
               Sign Up
             </button>
           </div>

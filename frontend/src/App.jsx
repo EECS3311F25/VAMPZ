@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import TopBanner from './components/TopBanner';
 import Navbar from './components/Navbar';
 import TickerBar from './components/TickerBar';
@@ -13,45 +13,48 @@ import { SignupPage } from './pages/SignupPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'login' | 'signup' | 'forgot'
-
-  const showHome = currentPage === 'home';
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-white">
       <TopBanner />
-      <Navbar
-        onSignIn={() => setCurrentPage('login')}
-        onSignUp={() => setCurrentPage('signup')}
-        onGoHome={() => setCurrentPage('home')}
-      />
-
-      {showHome && (
-        <>
-          <TickerBar />
-          <Hero />
-          <Features />
-          <Pricing />
-          <CTA />
-          <Footer />
-        </>
-      )}
-
-      {currentPage === 'login' && (
-        <LoginPage
-          onSwitchToSignup={() => setCurrentPage('signup')}
-          onSwitchToForgotPassword={() => setCurrentPage('forgot')}
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          element={(
+            <>
+              <TickerBar />
+              <Hero />
+              <Features />
+              <Pricing />
+              <CTA />
+              <Footer />
+            </>
+          )}
         />
-      )}
-
-      {currentPage === 'signup' && (
-        <SignupPage onSwitchToLogin={() => setCurrentPage('login')} />
-      )}
-
-      {currentPage === 'forgot' && (
-        <ForgotPasswordPage onSwitchToLogin={() => setCurrentPage('login')} />
-      )}
-
+        <Route
+          path="/login"
+          element={(
+            <LoginPage
+              onSwitchToSignup={() => navigate('/signup')}
+              onSwitchToForgotPassword={() => navigate('/forgot')}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          element={(
+            <SignupPage onSwitchToLogin={() => navigate('/login')} />
+          )}
+        />
+        <Route
+          path="/forgot"
+          element={(
+            <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
+          )}
+        />
+      </Routes>
       <ChatButton />
     </div>
   );

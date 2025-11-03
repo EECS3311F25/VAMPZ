@@ -1,9 +1,13 @@
 import { Search } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ onSignIn, onSignUp, onGoHome }) {
   const handleHomeClick = (e) => {
     e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (onGoHome) {
+      onGoHome();
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handlePricingClick = (e) => {
@@ -47,10 +51,10 @@ export default function Navbar() {
             <button className="navbar-search-btn">
               <Search size={20} />
             </button>
-            <a href="#" className="navbar-signin">
+            <a href="#" className="navbar-signin" onClick={(e) => { e.preventDefault(); onSignIn && onSignIn(); }}>
               Sign in <span>&gt;</span>
             </a>
-            <button className="navbar-signup">
+            <button className="navbar-signup" onClick={() => { onSignUp && onSignUp(); }}>
               Sign Up
             </button>
           </div>

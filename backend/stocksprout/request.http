@@ -1,4 +1,4 @@
-POST http://localhost:8080/api/registration
+POST http://localhost:8080/api/signup
 Content-Type: application/json
 
 {
@@ -9,10 +9,28 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:8080/api/signup
+Content-Type: application/json
+
+{
+  "firstName": "Pranac asd",
+  "lastName": "Agrawal",
+  "email": "asd@s.coasdm",
+  "password": "12345678"
+}
+
+
+###
 POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email": "asd@s.om",
+  "email": "asd@s.com",
   "password": "12345678"
 }
+
+###
+GET http://localhost:8080/api/login/me
+
+###
+POST http://localhost:8080/api/login/logout

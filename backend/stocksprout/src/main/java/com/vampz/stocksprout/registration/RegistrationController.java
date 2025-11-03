@@ -8,17 +8,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "api/registration")
+@RequestMapping(path = "api/signup")
 @AllArgsConstructor
 public class RegistrationController {
 
     private final RegistrationService registrationService;
 
     @PostMapping
-    public Map<String, String>
-    register(@RequestBody RegistrationRequest request) {
-        Map<String,String> result = registrationService.register(request);
-
-        return result;
+    public Map<String, String> register(@RequestBody RegistrationRequest request) {
+        return registrationService.register(request);
     }
 }

@@ -1,23 +1,23 @@
 import { motion } from 'framer-motion';
-import { Zap, Database, ShieldCheck } from 'lucide-react';
+import { LineChart, GraduationCap, BarChart3 } from 'lucide-react';
 
 const features = [
   {
-    icon: Zap,
-    title: 'Fast & Reliable',
-    description: 'Optimized for speed and uptime, ensuring your apps never miss a tick.',
+    icon: LineChart,
+    title: 'Realistic Market Simulation',
+    description: 'Practice trading with live market data and dynamic price movements.',
     iconClass: 'feature-icon-yellow',
   },
   {
-    icon: Database,
-    title: 'Extensive Data Coverage',
-    description: 'Access stocks, forex, crypto, and more through a unified API.',
+    icon: GraduationCap,
+    title: 'Guided Learning Experience',
+    description: 'Understand the “why” behind every trade with built-in tutorials and feedback.',
     iconClass: 'feature-icon-blue',
   },
   {
-    icon: ShieldCheck,
-    title: 'Secure & Scalable',
-    description: 'Enterprise-grade reliability and security built into every request.',
+    icon: BarChart3,
+    title: 'Interactive Portfolio Tracking',
+    description: 'Visualize growth through detailed performance charts, trade history and analytics.',
     iconClass: 'feature-icon-green',
   },
 ];

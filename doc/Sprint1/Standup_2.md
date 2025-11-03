@@ -1,4 +1,4 @@
-# [11-02-2025] - Sprint 1 Standup 1
+# [11-02-2025] - Sprint 1 Standup 2
 
 ## 1. What did you work on since last Standup?
 We created a demo website as well as implemented an API call to get live market data

@@ -4,7 +4,7 @@
 We planned the structure and design of our website as well as allocated work to each member of the team.
 
 ## 2. What do you commit to next?
-We want to create a demo website as well as implement an API call to get live stock data
+We want to create a demo website as well as implement an API call to make the login implementation
 
 ## 3. When do you think you will be done?
 We want to be done by 11-02-2025

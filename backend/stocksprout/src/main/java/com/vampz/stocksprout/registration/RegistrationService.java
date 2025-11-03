@@ -5,6 +5,8 @@ import com.vampz.stocksprout.appuser.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 import static com.vampz.stocksprout.appuser.AppUserRole.USER;
 
 @Service
@@ -13,12 +15,15 @@ public class RegistrationService {
     private final AppUserService appUserService;
     private final EmailValidator emailValidator;
 
-    public String register(RegistrationRequest request) {
+    public Map<String,String> register(RegistrationRequest request) {
         boolean isvalidEmail = emailValidator.test(request.getEmail());
         if (!isvalidEmail) {
-            throw new IllegalStateException("Invalid email address");
+            return Map.of(
+                    "status","error",
+                    "message","Invalid email address"
+            );
         }
-       return appUserService.signUpUser(
+       Map<String,String> result = appUserService.signUpUser(
                new AppUser(
                        request.getFirstName(),
                        request.getLastName(),
@@ -27,5 +32,7 @@ public class RegistrationService {
                        USER
                )
        );
+
+        return result;
     }
 }

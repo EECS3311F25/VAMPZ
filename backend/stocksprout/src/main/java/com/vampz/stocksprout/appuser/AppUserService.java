@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.appuser;
 
+import com.vampz.stocksprout.login.LoginRequest;
 import com.vampz.stocksprout.security.PasswordEncoder;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -21,16 +24,51 @@ public class AppUserService implements UserDetailsService {
                 () -> new UsernameNotFoundException("User not found for the email: " + email));
     }
 
-    public String signUpUser(AppUser appUser) {
+    public Map<String,String> signUpUser(AppUser appUser) {
         boolean isPresent = userRepository.findByEmail(appUser.getEmail()).isPresent();
         if (isPresent) {
-            throw new IllegalStateException("User already exists with email: " + appUser.getEmail());
+            return Map.of(
+                    "status","error",
+                    "message", "User with email already exists!");
         }
 
         String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
 
         appUser.setPassword(encodedPassword);
         userRepository.save(appUser);
-        return "User was registered successfully with email: " + appUser.getEmail();
+        return Map.of(
+                "status","success",
+                "message", "User was successfully signed up!"
+        );
     }
+
+    public Map<String, Object> loginUser(LoginRequest request) {
+        return userRepository.findByEmail(request.getEmail())
+                .map(user -> {
+                    boolean passwordMatches = bCryptPasswordEncoder.matches(request.getPassword(), user.getPassword());
+                    if (!passwordMatches) {
+                        return Map.<String,Object>of(
+                                "status", "error",
+                                "message", "Invalid email or password"
+                        );
+                    }
+                    return Map.<String,Object>of(
+                            "status", "success",
+                            "message", "Login successful",
+                            "user", Map.of(
+                                    "firstName", user.getFirstName(),
+                                    "lastName", user.getLastName(),
+                                    "email", user.getEmail()
+                            )
+                    );
+                }).orElse(Map.<String,Object>of(
+                        "status", "error",
+                        "message", "Invalid email or password"
+                ));
+    }
+
+
+
+
+
 }

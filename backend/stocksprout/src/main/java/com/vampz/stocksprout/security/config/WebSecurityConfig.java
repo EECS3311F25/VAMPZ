@@ -28,7 +28,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/registration/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(login -> login.permitAll());
+                .formLogin(form -> form.disable()) // disable default login form
+                .httpBasic(httpBasic -> httpBasic.disable());
 
         return http.build();
     }

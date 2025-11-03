@@ -25,7 +25,7 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/registration/**").permitAll()
+                        .requestMatchers("/api/registration/**","api/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable()) // disable default login form

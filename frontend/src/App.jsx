@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import './index.css'
-import { LoginPage, SignupPage, ForgotPasswordPage } from './components'
+
+import './components/LoginPage.jsx'
+import './components/SignupPage.jsx'
+import './components/ForgotPasswordPage.jsx'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')

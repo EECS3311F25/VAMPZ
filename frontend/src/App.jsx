@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import './index.css'
 
-import './components/LoginPage.jsx'
-import './components/SignupPage.jsx'
-import './components/ForgotPasswordPage.jsx'
+import {LoginPage} from "./Login-Signup-FP/LoginPage.jsx";
+import {SignupPage} from "./Login-Signup-FP/SignupPage.jsx";
+import {ForgotPasswordPage} from "./Login-Signup-FP/ForgotPasswordPage.jsx";
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')

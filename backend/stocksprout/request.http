@@ -1,2 +1,9 @@
-###
-GET http://localhost:8080/
+POST http://localhost:8080/api/registration
+Content-Type: application/json
+
+{
+  "firstName": "Manas",
+  "lastName": "Agrawal",
+  "email": "manas@test.com",
+  "password": "12345"
+}

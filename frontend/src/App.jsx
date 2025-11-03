@@ -1,3 +1,4 @@
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import TopBanner from './components/TopBanner';
 import Navbar from './components/Navbar';
 import TickerBar from './components/TickerBar';
@@ -7,18 +8,56 @@ import Pricing from './components/Pricing';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
 import ChatButton from './components/ChatButton';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import Dashboard from './pages/Dashboard';
 
 function App() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-white">
       <TopBanner />
       <Navbar />
-      <TickerBar />
-      <Hero />
-      <Features />
-      <Pricing />
-      <CTA />
-      <Footer />
+      <Routes>
+        <Route
+          path="/"
+          element={(
+            <>
+              <TickerBar />
+              <Hero />
+              <Features />
+              <Pricing />
+              <CTA />
+              <Footer />
+            </>
+          )}
+        />
+        <Route
+          path="/login"
+          element={(
+            <LoginPage
+              onLoginSuccess={() => navigate('/dashboard')}
+              onSwitchToSignup={() => navigate('/signup')}
+              onSwitchToForgotPassword={() => navigate('/forgot')}
+            />
+          )}
+        />
+        <Route
+          path="/signup"
+          element={(
+            <SignupPage onSwitchToLogin={() => navigate('/login')} />
+          )}
+        />
+        <Route
+          path="/forgot"
+          element={(
+            <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
+          )}
+        />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
       <ChatButton />
     </div>
   );

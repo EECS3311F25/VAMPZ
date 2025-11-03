@@ -1,8 +1,11 @@
 import { Search } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+  const navigate = useNavigate();
   const handleHomeClick = (e) => {
     e.preventDefault();
+    navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -47,10 +50,8 @@ export default function Navbar() {
             <button className="navbar-search-btn">
               <Search size={20} />
             </button>
-            <a href="#" className="navbar-signin">
-              Sign in <span>&gt;</span>
-            </a>
-            <button className="navbar-signup">
+            <Link to="/login" className="navbar-signin">Sign in <span>&gt;</span></Link>
+            <button className="navbar-signup" onClick={() => navigate('/signup')}>
               Sign Up
             </button>
           </div>

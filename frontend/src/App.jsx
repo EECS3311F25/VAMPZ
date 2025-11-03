@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import TopBanner from './components/TopBanner';
 import Navbar from './components/Navbar';
 import TickerBar from './components/TickerBar';
@@ -15,11 +15,17 @@ import Dashboard from './pages/Dashboard';
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-white">
-      <TopBanner />
-      <Navbar />
+      {isHomePage && (
+        <>
+          <TopBanner />
+          <Navbar />
+        </>
+      )}
       <Routes>
         <Route
           path="/"
@@ -58,7 +64,7 @@ function App() {
         />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
-      <ChatButton />
+      {isHomePage && <ChatButton />}
     </div>
   );
 }

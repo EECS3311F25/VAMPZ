@@ -1,138 +1,137 @@
 import { useState } from 'react'
-
-
+import { useAuth } from '../context/AuthContext.jsx'
 
 function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess }) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
 
-    const [email, setEmail] = useState('')
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
-    const [password, setPassword] = useState('')
-
-  
-
-    const handleSubmit = (e) => {
-
-      e.preventDefault()
-
-      // Handle login logic here
-
-      console.log('Login attempt:', { email, password })
-
-      if (email && password && onLoginSuccess) {
-        onLoginSuccess()
-      }
-
+    const result = await login(email, password)
+    if (result.success) {
+      onLoginSuccess()
+    } else {
+      setError(result.message || 'Login failed')
     }
+    setLoading(false)
+  }
 
-  
 
-    return (
 
-      <div className="login-container">
+  return (
 
-        <div className="left-section">
+    <div className="login-container">
 
-          <div className="branding">
+      <div className="left-section">
 
-            <span className="brand-bold">stock</span><span className="brand-regular">sprout</span>
+        <div className="branding">
 
-          </div>
-
-          <div className="promotional-content">
-
-            <h2 className="promotional-title">Sprout Your Wealth, One Trade at a Time</h2>
-
-            <p className="promotional-text">
-
-              StockSprout helps you learn the market, test strategies, and build confidence before investing for real.
-
-            </p>
-
-            <p className="promotional-text bold-text">
-
-              Sign in and start your journey to smarter investing today.
-
-            </p>
-
-          </div>
+          <span className="brand-bold">stock</span><span className="brand-regular">sprout</span>
 
         </div>
 
-        
+        <div className="promotional-content">
 
-        <div className="right-section">
+          <h2 className="promotional-title">Sprout Your Wealth, One Trade at a Time</h2>
 
-          <div className="login-card">
+          <p className="promotional-text">
 
-            <h1 className="login-title">Sign in</h1>
+            StockSprout helps you learn the market, test strategies, and build confidence before investing for real.
 
-            
+          </p>
 
-            <form onSubmit={handleSubmit}>
+          <p className="promotional-text bold-text">
 
-              <div className="input-group">
+            Sign in and start your journey to smarter investing today.
 
-                <label htmlFor="email">Email</label>
+          </p>
 
-                <input
+        </div>
 
-                  type="email"
+      </div>
 
-                  id="email"
 
-                  placeholder="e.g. john@domain.com"
 
-                  value={email}
+      <div className="right-section">
 
-                  onChange={(e) => setEmail(e.target.value)}
+        <div className="login-card">
 
-                  required
+          <h1 className="login-title">Sign in</h1>
 
-                />
 
-              </div>
 
-              
+          <form onSubmit={handleSubmit}>
 
-              <div className="input-group">
+            <div className="input-group">
 
-                <div className="label-row">
+              <label htmlFor="email">Email</label>
 
-                  <label htmlFor="password">Password</label>
+              <input
 
-                  <a href="#" className="forgot-link" onClick={(e) => { e.preventDefault(); onSwitchToForgotPassword(); }}>Forgot your password?</a>
+                type="email"
 
-                </div>
+                id="email"
 
-                <input
+                placeholder="e.g. john@domain.com"
 
-                  type="password"
+                value={email}
 
-                  id="password"
+                onChange={(e) => setEmail(e.target.value)}
 
-                  value={password}
+                required
 
-                  onChange={(e) => setPassword(e.target.value)}
-
-                  required
-
-                />
-
-              </div>
-
-              
-
-              <button type="submit" className="continue-button">Log in</button>
-
-            </form>
-
-            
-
-            <div className="signup-link">
-
-              Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToSignup(); }}>Sign up</a>
+              />
 
             </div>
+
+
+
+            <div className="input-group">
+
+              <div className="label-row">
+
+                <label htmlFor="password">Password</label>
+
+                <a href="#" className="forgot-link" onClick={(e) => { e.preventDefault(); onSwitchToForgotPassword(); }}>Forgot your password?</a>
+
+              </div>
+
+              <input
+
+                type="password"
+
+                id="password"
+
+                value={password}
+
+                onChange={(e) => setPassword(e.target.value)}
+
+                required
+
+              />
+
+            </div>
+
+
+
+            {error && <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+            <button type="submit" className="continue-button" disabled={loading}>
+              {loading ? 'Logging in...' : 'Log in'}
+            </button>
+
+          </form>
+
+
+
+          <div className="signup-link">
+
+            Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToSignup(); }}>Sign up</a>
 
           </div>
 
@@ -140,11 +139,13 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess 
 
       </div>
 
-    )
+    </div>
 
-  }
+  )
 
-  
+}
+
+
 
 export { LoginPage };
 

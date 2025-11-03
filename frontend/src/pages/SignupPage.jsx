@@ -1,180 +1,202 @@
 import { useState } from 'react'
-
-
+import { useAuth } from '../context/AuthContext.jsx'
+import { useNavigate } from 'react-router-dom'
 
 function SignupPage({ onSwitchToLogin }) {
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { signup } = useAuth()
+  const navigate = useNavigate()
 
-    const [fullName, setFullName] = useState('')
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
 
-    const [email, setEmail] = useState('')
-
-    const [password, setPassword] = useState('')
-
-    const [confirmPassword, setConfirmPassword] = useState('')
-
-  
-
-    const handleSubmit = (e) => {
-
-      e.preventDefault()
-
-      // Handle signup logic here
-
-      console.log('Signup attempt:', { fullName, email, password, confirmPassword })
-
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
     }
 
-  
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
 
-    return (
+    const nameParts = fullName.trim().split(' ')
+    const firstName = nameParts[0] || ''
+    const lastName = nameParts.slice(1).join(' ') || ''
 
-      <div className="login-container">
+    if (!firstName) {
+      setError('Please enter your full name')
+      return
+    }
 
-        <div className="left-section">
+    setLoading(true)
+    const result = await signup(firstName, lastName, email, password)
+    if (result.success) {
+      navigate('/login')
+    } else {
+      setError(result.message || 'Signup failed')
+    }
+    setLoading(false)
+  }
 
-          <div className="branding">
 
-            <span className="brand-bold">stock</span><span className="brand-regular">sprout</span>
 
-          </div>
+  return (
 
-          <div className="promotional-content">
+    <div className="login-container">
 
-            <h2 className="promotional-title">Sprout Your Wealth, One Trade at a Time</h2>
+      <div className="left-section">
 
-            <p className="promotional-text">
+        <div className="branding">
 
-              StockSprout helps you learn the market, test strategies, and build confidence before investing for real.
-
-            </p>
-
-            <p className="promotional-text bold-text">
-
-              Create an account and start your journey to smarter investing today.
-
-            </p>
-
-          </div>
+          <span className="brand-bold">stock</span><span className="brand-regular">sprout</span>
 
         </div>
 
-        
+        <div className="promotional-content">
 
-        <div className="right-section">
+          <h2 className="promotional-title">Sprout Your Wealth, One Trade at a Time</h2>
 
-          <div className="login-card">
+          <p className="promotional-text">
 
-            <h1 className="login-title">Create your account</h1>
+            StockSprout helps you learn the market, test strategies, and build confidence before investing for real.
 
-            
+          </p>
 
-            <form onSubmit={handleSubmit}>
+          <p className="promotional-text bold-text">
 
-              <div className="input-group">
+            Create an account and start your journey to smarter investing today.
 
-                <label htmlFor="fullName">Full name*</label>
+          </p>
 
-                <input
+        </div>
 
-                  type="text"
+      </div>
 
-                  id="fullName"
 
-                  placeholder="e.g. John Doe"
 
-                  value={fullName}
+      <div className="right-section">
 
-                  onChange={(e) => setFullName(e.target.value)}
+        <div className="login-card">
 
-                  required
+          <h1 className="login-title">Create your account</h1>
 
-                />
 
-              </div>
 
-              
+          <form onSubmit={handleSubmit}>
 
-              <div className="input-group">
+            <div className="input-group">
 
-                <label htmlFor="signupEmail">Email*</label>
+              <label htmlFor="fullName">Full name*</label>
 
-                <input
+              <input
 
-                  type="email"
+                type="text"
 
-                  id="signupEmail"
+                id="fullName"
 
-                  placeholder="e.g. john@domain.com"
+                placeholder="e.g. John Doe"
 
-                  value={email}
+                value={fullName}
 
-                  onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setFullName(e.target.value)}
 
-                  required
+                required
 
-                />
-
-              </div>
-
-              
-
-              <div className="input-group">
-
-                <label htmlFor="signupPassword">Password*</label>
-
-                <input
-
-                  type="password"
-
-                  id="signupPassword"
-
-                  value={password}
-
-                  onChange={(e) => setPassword(e.target.value)}
-
-                  required
-
-                />
-
-                <p className="password-hint">Minimum 8 characters</p>
-
-              </div>
-
-              
-
-              <div className="input-group">
-
-                <label htmlFor="confirmPassword">Confirm password*</label>
-
-                <input
-
-                  type="password"
-
-                  id="confirmPassword"
-
-                  value={confirmPassword}
-
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-
-                  required
-
-                />
-
-              </div>
-
-              
-
-              <button type="submit" className="continue-button">Create account</button>
-
-            </form>
-
-            
-
-            <div className="signup-link">
-
-              Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }}>Sign in</a>
+              />
 
             </div>
+
+
+
+            <div className="input-group">
+
+              <label htmlFor="signupEmail">Email*</label>
+
+              <input
+
+                type="email"
+
+                id="signupEmail"
+
+                placeholder="e.g. john@domain.com"
+
+                value={email}
+
+                onChange={(e) => setEmail(e.target.value)}
+
+                required
+
+              />
+
+            </div>
+
+
+
+            <div className="input-group">
+
+              <label htmlFor="signupPassword">Password*</label>
+
+              <input
+
+                type="password"
+
+                id="signupPassword"
+
+                value={password}
+
+                onChange={(e) => setPassword(e.target.value)}
+
+                required
+
+              />
+
+              <p className="password-hint">Minimum 8 characters</p>
+
+            </div>
+
+
+
+            <div className="input-group">
+
+              <label htmlFor="confirmPassword">Confirm password*</label>
+
+              <input
+
+                type="password"
+
+                id="confirmPassword"
+
+                value={confirmPassword}
+
+                onChange={(e) => setConfirmPassword(e.target.value)}
+
+                required
+
+              />
+
+            </div>
+
+
+
+            {error && <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+            <button type="submit" className="continue-button" disabled={loading}>
+              {loading ? 'Creating account...' : 'Create account'}
+            </button>
+
+          </form>
+
+
+
+          <div className="signup-link">
+
+            Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToLogin(); }}>Sign in</a>
 
           </div>
 
@@ -182,9 +204,11 @@ function SignupPage({ onSwitchToLogin }) {
 
       </div>
 
-    )
+    </div>
 
-  }
+  )
+
+}
 
 export { SignupPage };
 

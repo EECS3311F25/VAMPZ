@@ -11,6 +11,7 @@ import ChatButton from './components/ChatButton';
 import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ function App() {
           path="/login"
           element={(
             <LoginPage
+              onLoginSuccess={() => navigate('/dashboard')}
               onSwitchToSignup={() => navigate('/signup')}
               onSwitchToForgotPassword={() => navigate('/forgot')}
             />
@@ -54,6 +56,7 @@ function App() {
             <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
           )}
         />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
       <ChatButton />
     </div>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 
 
-function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword }) {
+function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess }) {
 
     const [email, setEmail] = useState('')
 
@@ -17,6 +17,10 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword }) {
       // Handle login logic here
 
       console.log('Login attempt:', { email, password })
+
+      if (email && password && onLoginSuccess) {
+        onLoginSuccess()
+      }
 
     }
 

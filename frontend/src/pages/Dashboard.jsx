@@ -246,7 +246,7 @@ export default function Dashboard() {
                     <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#081f3b', margin: '0 0 8px 0' }}>
                       {stat.value}
                     </p>
-                    <div className={widget-change ${stat.positive ? 'widget-change-positive' : 'widget-change-negative'}}>
+                    <div className={`widget-change ${stat.positive ? 'widget-change-positive' : 'widget-change-negative'}`}>
                       {stat.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                       <span>{stat.change} ({stat.changePercent})</span>
                     </div>
@@ -288,7 +288,7 @@ export default function Dashboard() {
                   {portfolioStocks.map((stock, idx) => (
                     <div key={idx} className="portfolio-item">
                       <div className="portfolio-item-left">
-                        <div className={portfolio-symbol-box ${stock.positive ? 'portfolio-symbol-box-positive' : 'portfolio-symbol-box-negative'}}>
+                        <div className={`portfolio-symbol-box ${stock.positive ? 'portfolio-symbol-box-positive' : 'portfolio-symbol-box-negative'}`}>
                           <span>{stock.symbol}</span>
                         </div>
                         <div className="portfolio-item-info">
@@ -300,7 +300,7 @@ export default function Dashboard() {
                       </div>
                       <div className="portfolio-item-right">
                         <p className="portfolio-item-price">${stock.price}</p>
-                        <p className={portfolio-item-change ${stock.positive ? 'portfolio-item-change-positive' : 'portfolio-item-change-negative'}}>
+                        <p className={`portfolio-item-change ${stock.positive ? 'portfolio-item-change-positive' : 'portfolio-item-change-negative'}`}>
                           {stock.positive ? '+' : ''}{stock.change} ({stock.changePercent})
                         </p>
                       </div>
@@ -325,7 +325,7 @@ export default function Dashboard() {
                         padding: '12px',
                         backgroundColor: '#F7F9FC',
                         borderRadius: '8px',
-                        borderLeft: 3px solid ${activity.positive ? '#059669' : '#dc2626'}
+                        borderLeft: `3px solid ${activity.positive ? '#059669' : '#dc2626'}`
                       }}
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>

@@ -32,3 +32,41 @@ export default function Dashboard() {
     { type: 'Buy', symbol: 'NFLX', shares: 8, price: '425.80', date: '2 days ago', positive: true },
     { type: 'Buy', symbol: 'AMD', shares: 20, price: '128.90', date: '3 days ago', positive: true },
   ]
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'portfolio', label: 'Portfolio', icon: Wallet },
+    { id: 'watchlist', label: 'Watchlist', icon: Eye },
+    { id: 'transactions', label: 'Transactions', icon: History },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ]
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      await checkAuth()
+      setFetching(false)
+    }
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    if (!loading && !fetching && !user) {
+      navigate('/login')
+    }
+  }, [user, loading, fetching, navigate])
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
+
+  if (loading || fetching) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <h1>Loading...</h1>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }

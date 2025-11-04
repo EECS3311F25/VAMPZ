@@ -1,13 +1,13 @@
 # [11-02-2025] - Sprint 1 Standup 2
 
 ## 1. What did you work on since last Standup?
-We created a demo website as well as implemented an API call to get live market data
+We implemented the homepage UI and completed the sign-up and login form designs. The routing between pages has also been set up, and both forms are now functional with validation.
 
 ## 2. What do you commit to next?
-We want to finish the rest of the requirements of Sprint 1, including building a functioning prototype.
+We plan to work on the dashboard page that users see after logging in, and connect the navigation flow between all pages.
 
 ## 3. When do you think you will be done?
 We want to be done by 11-03-2025
 
 ## 4. Do you have any blockers?
-No blockers as of yet
+No blockers at the moment — we just need to manage our time to complete UI polish and testing before the sprint deadline.

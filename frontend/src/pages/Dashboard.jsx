@@ -70,3 +70,41 @@ export default function Dashboard() {
   if (!user) {
     return null
   }
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'portfolio', label: 'Portfolio', icon: Wallet },
+    { id: 'watchlist', label: 'Watchlist', icon: Eye },
+    { id: 'transactions', label: 'Transactions', icon: History },
+    { id: 'settings', label: 'Settings', icon: Settings },
+  ]
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      await checkAuth()
+      setFetching(false)
+    }
+    fetchUser()
+  }, [])
+
+  useEffect(() => {
+    if (!loading && !fetching && !user) {
+      navigate('/login')
+    }
+  }, [user, loading, fetching, navigate])
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
+
+  if (loading || fetching) {
+    return (
+      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <h1>Loading...</h1>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }

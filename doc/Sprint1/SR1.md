@@ -21,9 +21,6 @@
    - Integrate portfolio logic with backend data once created.  
    - Show updated balance, gain/loss metrics, and transaction history.  
 
-3. **Learning Hub Content Integration**  
-   - Add educational resources and connect tutorial components.  
-
 ---
 
 ### *New User Stories for Sprint 2:*
@@ -39,12 +36,6 @@
 - *Acceptance Criteria:*  
   - Display a bar/line chart using mock performance data.  
   - Highlight total profit/loss trends.  
-
-#### **User Story: Learning Resources**
-- *As a beginner*, I want access to short, interactive lessons on trading basics so that I can understand the market before using advanced features.  
-- *Acceptance Criteria:*  
-  - Integrate a section for videos/articles.  
-  - Allow marking lessons as “completed.”  
 
 ---
 

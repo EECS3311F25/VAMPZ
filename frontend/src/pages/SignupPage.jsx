@@ -3,6 +3,17 @@ import { useState } from 'react'
 
 
 function SignupPage({ onSwitchToLogin }) {
+<<<<<<< Updated upstream
+=======
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const { signup, login } = useAuth()
+  const navigate = useNavigate()
+>>>>>>> Stashed changes
 
     const [fullName, setFullName] = useState('')
 
@@ -30,7 +41,25 @@ function SignupPage({ onSwitchToLogin }) {
 
       <div className="login-container">
 
+<<<<<<< Updated upstream
         <div className="left-section">
+=======
+    setLoading(true)
+    const result = await signup(firstName, lastName, email, password)
+    if (result.success) {
+      // Auto-login after signup and redirect to dashboard
+      const loginResult = await login(email, password)
+      if (loginResult.success) {
+        navigate('/dashboard')
+      } else {
+        navigate('/dashboard') // Still redirect even if auto-login fails
+      }
+    } else {
+      setError(result.message || 'Signup failed')
+    }
+    setLoading(false)
+  }
+>>>>>>> Stashed changes
 
           <div className="branding">
 

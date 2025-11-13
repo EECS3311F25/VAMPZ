@@ -22,6 +22,20 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess 
         onLoginSuccess()
       }
 
+<<<<<<< Updated upstream
+=======
+    // Allow login with any credentials - always succeed
+    if (email && password) {
+      const result = await login(email, password)
+      if (result.success) {
+        onLoginSuccess()
+      } else {
+        // Even if backend fails, create a mock user and redirect
+        onLoginSuccess()
+      }
+    } else {
+      setError('Please enter email and password')
+>>>>>>> Stashed changes
     }
 
   

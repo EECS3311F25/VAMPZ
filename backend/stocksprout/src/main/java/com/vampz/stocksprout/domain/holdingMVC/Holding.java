@@ -1,5 +1,6 @@
-package com.vampz.stocksprout.domain;
+package com.vampz.stocksprout.domain.holdingMVC;
 
+import com.vampz.stocksprout.domain.portfolioMVC.Portfolio;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.math.MathContext;

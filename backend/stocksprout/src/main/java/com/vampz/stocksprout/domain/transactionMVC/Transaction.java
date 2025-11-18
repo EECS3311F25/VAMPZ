@@ -3,11 +3,19 @@ package com.vampz.stocksprout.domain.transactionMVC;
 import com.vampz.stocksprout.domain.TransactionType;
 import com.vampz.stocksprout.domain.portfolioMVC.Portfolio;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +31,8 @@ public class Transaction {
     // stock identifier at the time of trade
     private String symbol;
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal quantity;
+    @Column
+    private int quantity;
 
     @Column(precision = 19, scale = 4)
     private BigDecimal pricePerUnit;
@@ -40,7 +48,7 @@ public class Transaction {
     public Transaction(TransactionType type,
                        Portfolio portfolio,
                        String symbol,
-                       BigDecimal quantity,
+                       int quantity,
                        BigDecimal pricePerUnit,
                        BigDecimal totalAmount,
                        Instant timestamp) {
@@ -52,74 +60,6 @@ public class Transaction {
         this.totalAmount = totalAmount;
         this.timestamp = timestamp;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public TransactionType getType() {
-        return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
-    }
-
-    public Portfolio getPortfolio() {
-        return portfolio;
-    }
-
-    public void setPortfolio(Portfolio portfolio) {
-        this.portfolio = portfolio;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
-    }
-
-    public BigDecimal getPricePerUnit() {
-        return pricePerUnit;
-    }
-
-    public void setPricePerUnit(BigDecimal pricePerUnit) {
-        this.pricePerUnit = pricePerUnit;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public Instant getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
-    }
-
-
-
-
 
 
 

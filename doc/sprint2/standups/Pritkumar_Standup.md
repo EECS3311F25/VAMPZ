@@ -27,3 +27,17 @@ I plan to complete the header and info layout by 11-15-2025.
 ## 4. Do you have any blockers?
 No major blockers 
 
+
+# [11-15-2025] - Sprint 2 Standup 3
+
+## 1. What did you work on since last Standup?
+I completed the entire page structure, including StockPageHeader.jsx, StockInfoHeader.jsx, and StockSubNavigation.jsx with tabs for Overview, Chart, Stats, and Trade. I also added responsive styling for both desktop and mobile views. Finally, I wired the page together using mock stock data (symbol, name, price, change).
+
+## 2. What do you commit to next?
+I’ll finalize the mock data pipeline, test the responsiveness across devices, and prepare the page for integration with real backend data in Sprint 2.
+
+## 3. When do you think you will be done?
+I expect to complete the final adjustments by end of day, 11-17-2025.
+
+## 4. Do you have any blockers?
+No major blockers

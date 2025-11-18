@@ -9,18 +9,6 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:8080/api/signup
-Content-Type: application/json
-
-{
-  "firstName": "Pranac asd",
-  "lastName": "Agrawal",
-  "email": "asd@s.coasdm",
-  "password": "12345678"
-}
-
-
-###
 GET http://localhost:8080/api/marketData/currentStockPrice
 
 
@@ -40,9 +28,8 @@ GET http://localhost:8080/api/login/me
 POST http://localhost:8080/api/login/logout
 
 ###
-GET http://localhost:8080/api/marketData/currentStockPrice?
-    symbol=NVDA
+GET http://localhost:8080/api/marketData/currentStockPrice?symbol=NVDA
 
 ###
 GET http://localhost:8080/api/marketData/StockPriceHistory?
-    symbol=NVDA
+    symbol=NVDA&startDate=2025-11-10&endDate=2025-11-17

@@ -19,7 +19,7 @@ public class marketDataService {
 
     private ObjectMapper mapper ;
 
-    private final String apiKey = "zmkyyBDHwBHD52ckQ0vyaDTaFrr8T1Wt";
+    private final String apiKey = "X1m2OKZEMNi8G0jgcC6a1JksoD9e1zYN";
 
     public marketDataService() {
         this.mapper = new ObjectMapper();
@@ -28,11 +28,13 @@ public class marketDataService {
     }
 
 
+
+
     public StockCurrentDTO getCurrentStockPrice(String symbol) {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://financialmodelingprep.com/stable/quote-short?symbol=" + symbol + "&apikey=zmkyyBDHwBHD52ckQ0vyaDTaFrr8T1Wt"))
+                .uri(URI.create("https://financialmodelingprep.com/stable/quote-short?symbol=" + symbol + "&apikey="+apiKey))
                 .GET()
                 .build();
 
@@ -57,11 +59,11 @@ public class marketDataService {
     }
 
 
-    public List<StockHistDTO> getStockPriceHistory(String symbol) {
+    public List<StockHistDTO> getStockPriceHistory(String symbol,String startDate,String endDate) {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://financialmodelingprep.com/stable/historical-price-eod/light?symbol="+symbol+"&from=2025-10-01&to=2025-11-17" + "&apikey="+apiKey))
+                .uri(URI.create("https://financialmodelingprep.com/stable/historical-price-eod/light?symbol="+symbol+"&from="+startDate+"&to="+endDate + "&apikey="+apiKey))
                 .GET()
                 .build();
 

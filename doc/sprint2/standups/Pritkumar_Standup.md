@@ -11,3 +11,19 @@ I expect to finish the initial chart with mock data by 11-10-2025
 
 ## 4. Do you have any blockers?
 No major blockers
+
+
+# [11-10-2025] - Sprint 2 Standup 2
+
+## 1. What did you work on since last Standup?
+I implemented the StockChart.jsx using mock data and connected it to the TimeframeSelector, so the chart updates when a new timeframe is chosen. I also ensured all components accept the correct props such as symbol, price, selectedTimeframe, and onChangeTimeframe.
+
+## 2. What do you commit to next?
+Next, I will focus on structuring the overall layout, including the StockPageHeader.jsx and StockInfoHeader.jsx for the top-level presentation of ticker info and key stats.
+
+## 3. When do you think you will be done?
+I plan to complete the header and info layout by 11-15-2025.
+
+## 4. Do you have any blockers?
+No major blockers 
+

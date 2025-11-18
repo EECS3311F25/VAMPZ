@@ -12,3 +12,18 @@ I expect the component refactoring to be done by 11-10-2025
 
 ## 4. Do you have any blockers?
 No major blockers
+
+# [11-10-2025] - Sprint 2 Standup 2
+
+## 1. What did you work on since last Standup?
+I finished splitting the dashboard into modular components (balance card, return card, buying power card, performance section, etc.). This made the layout easier to integrate with backend data. I also removed outdated or irrelevant sections, including TFSA-related elements
+
+## 2. What do you commit to next?
+I’ll begin connecting the backend portfolio data to the dashboard UI and ensure the dashboard renders initial user portfolio values correctly.
+
+## 3. When do you think you will be done?
+I expect to have the dashboard pulling basic portfolio data by 11-15-2025.
+
+## 4. Do you have any blockers?
+No major blockers 
+

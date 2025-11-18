@@ -38,3 +38,11 @@ GET http://localhost:8080/api/login/me
 
 ###
 POST http://localhost:8080/api/login/logout
+
+###
+GET http://localhost:8080/api/marketData/currentStockPrice?
+    symbol=NVDA
+
+###
+GET http://localhost:8080/api/marketData/StockPriceHistory?
+    symbol=NVDA

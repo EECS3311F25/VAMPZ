@@ -1,0 +1,13 @@
+# [11-05-2025] - Sprint 2 Standup 1
+
+## 1. What did you work on since last Standup?
+I drafted the initial UML class diagram for the system. This included identifying the main entities such as User, Portfolio, Holding, and Transaction. I also mapped out relationships and attributes needed for storing user assets and trading history.
+
+## 2. What do you commit to next?
+I plan to refine the class diagram, finalize inheritance/associations, and prepare it for backend implementation. I will also begin setting up the backend project structure.
+
+## 3. When do you think you will be done?
+I expect to finalize the class diagram by 11-10-2025
+
+## 4. Do you have any blockers?
+need to confirm how we want to store trades

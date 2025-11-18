@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 @Entity
-public class Holding {
+publicjava class Holding {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

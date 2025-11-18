@@ -7,7 +7,21 @@ I started drafting the structure for the dashboard page. This included planning 
 I will begin implementing the top portion of the dashboard UI, focusing on the “Hi, User” welcome header and the three metric cards (Total Balance, Total Return, Buying Power).
 
 ## 3. When do you think you will be done?
-By 11-02-2025, I should have the upper half of the dashboard UI implemented.
+By 11-10-2025, I should have the upper half of the dashboard UI implemented.
 
 ## 4. Do you have any blockers?
 No major blockers — just need to finalize icon choices and spacing for the component
+
+# [11-10-2025] - Sprint 2 Standup 2
+
+## 1. What did you work on since last Standup?
+I completed the top section of the dashboard, including the greeting header, metric cards, icons, and responsive layout styling. I also implemented the tab buttons (Day, Week, Month, All Time) for the portfolio performance section.
+
+## 2. What do you commit to next?
+I will work on adding the portfolio performance chart area and start building the “Popular Stocks” section seen on the reference dashboard.
+
+## 3. When do you think you will be done?
+I expect to complete the bottom section (popular stocks grid + view all button) by 11-15-2025.
+
+## 4. Do you have any blockers?
+No major blockers 

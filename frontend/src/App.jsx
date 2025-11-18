@@ -19,53 +19,7 @@ function App() {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen bg-white">
-      {isHomePage && (
-        <>
-          <TopBanner />
-          <Navbar />
-        </>
-      )}
-      <Routes>
-        <Route
-          path="/"
-          element={(
-            <>
-              <TickerBar />
-              <Hero />
-              <Features />
-              <Pricing />
-              <CTA />
-              <Footer />
-            </>
-          )}
-        />
-        <Route
-          path="/login"
-          element={(
-            <LoginPage
-              onLoginSuccess={() => navigate('/dashboard')}
-              onSwitchToSignup={() => navigate('/signup')}
-              onSwitchToForgotPassword={() => navigate('/forgot')}
-            />
-          )}
-        />
-        <Route
-          path="/signup"
-          element={(
-            <SignupPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route
-          path="/forgot"
-          element={(
-            <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-      {isHomePage && <ChatButton />}
-    </div>
+ <Dashboard />
   );
 }
 

@@ -30,7 +30,7 @@ No major blockers
 
 
 
-# [11-10-2025] - Sprint 2 Standup 3
+# [11-15-2025] - Sprint 2 Standup 3
 
 ## 1. What did you work on since last Standup?
 I finished the lower portion of the dashboard, including the portfolio performance section layout and the full popular stocks grid. I also polished the UI styling, card shadows, hover states, responsiveness, and overall spacing so the dashboard looks clean and professional
@@ -39,7 +39,7 @@ I finished the lower portion of the dashboard, including the portfolio performan
 I will do final UI refinements, ensure the routing from login → dashboard works smoothly, and prepare the dashboard for demo recording.
 
 ## 3. When do you think you will be done?
-I will complete the polishing and routing checks by end of day 11-15-2025.
+I will complete the polishing and routing checks by 11-17-2025.
 
 ## 4. Do you have any blockers?
 No major blockers

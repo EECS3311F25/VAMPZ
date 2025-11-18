@@ -10,7 +10,9 @@ I will begin implementing the top portion of the dashboard UI, focusing on the �
 By 11-10-2025, I should have the upper half of the dashboard UI implemented.
 
 ## 4. Do you have any blockers?
-No major blockers — just need to finalize icon choices and spacing for the component
+No major blockers
+
+
 
 # [11-10-2025] - Sprint 2 Standup 2
 
@@ -25,3 +27,19 @@ I expect to complete the bottom section (popular stocks grid + view all button) 
 
 ## 4. Do you have any blockers?
 No major blockers 
+
+
+
+# [11-10-2025] - Sprint 2 Standup 3
+
+## 1. What did you work on since last Standup?
+I finished the lower portion of the dashboard, including the portfolio performance section layout and the full popular stocks grid. I also polished the UI styling, card shadows, hover states, responsiveness, and overall spacing so the dashboard looks clean and professional
+
+## 2. What do you commit to next?
+I will do final UI refinements, ensure the routing from login → dashboard works smoothly, and prepare the dashboard for demo recording.
+
+## 3. When do you think you will be done?
+I will complete the polishing and routing checks by end of day 11-15-2025.
+
+## 4. Do you have any blockers?
+No major blockers

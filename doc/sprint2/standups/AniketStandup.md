@@ -25,3 +25,17 @@ I plan to finish the core backend functions by 11-15-2025.
 
 ## 4. Do you have any blockers?
 No major blockers 
+
+# [11-15-2025] - Sprint 2 Standup 3
+
+## 1. What did you work on since last Standup?
+I finished implementing the backend for portfolio and transaction management. This includes tracking all buys/sells, updating holdings, recalculating totals, and maintaining a clean object structure based on the class diagram. I also tested the main functions to ensure they behave as expected.
+
+## 2. What do you commit to next?
+I will clean up documentation, ensure the backend integrates smoothly with our upcoming frontend logic, and prepare materials to show this work during the sprint demo.
+
+## 3. When do you think you will be done?
+I should complete documentation and cleanup by 11-17-2025.
+
+## 4. Do you have any blockers?
+No major blockers

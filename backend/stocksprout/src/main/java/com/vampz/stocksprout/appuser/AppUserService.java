@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.appuser;
 
+import com.vampz.stocksprout.domain.portfolioMVC.PortfolioService;
 import com.vampz.stocksprout.login.LoginRequest;
 import com.vampz.stocksprout.security.PasswordEncoder;
 import lombok.AllArgsConstructor;
@@ -12,10 +13,16 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class AppUserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder  bCryptPasswordEncoder;
+    private final PortfolioService portfolioService;
+
+    public AppUserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PortfolioService portfolioService) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = passwordEncoder.bCryptPasswordEncoder();
+        this.portfolioService = portfolioService;
+    }
 
 
     @Override
@@ -35,7 +42,9 @@ public class AppUserService implements UserDetailsService {
         String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
 
         appUser.setPassword(encodedPassword);
+
         userRepository.save(appUser);
+        appUser.setPortfolio(portfolioService.newDefaultPortfolio(appUser));
         return Map.of(
                 "status","success",
                 "message", "User was successfully signed up!"

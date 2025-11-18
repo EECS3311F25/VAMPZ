@@ -5,7 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.vampz.stocksprout.domain.portfolioMVC.Portfolio;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -36,6 +36,8 @@ public class AppUser implements UserDetails {
     private AppUserRole role;
     private boolean enabled=false;
     private boolean locked=false;
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Portfolio portfolio;
 
     public AppUser(String firstName,
                    String lastName,
@@ -65,22 +67,6 @@ public class AppUser implements UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     @Override

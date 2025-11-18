@@ -9,8 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vampz.stocksprout.appuser.AppUser;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@ToString
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,73 +53,15 @@ public class Portfolio {
         this.owner = owner;
     }
 
-    // convenience: net worth = cash + stockValue
-    public BigDecimal getNetWorth() {
-        return cash.add(stockValue);
-    }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getCash() {
-        return cash;
-    }
-
-    public void setCash(BigDecimal cash) {
-        this.cash = cash;
-    }
-
-    public BigDecimal getInvested() {
-        return invested;
-    }
-
-    public void setInvested(BigDecimal invested) {
-        this.invested = invested;
-    }
-
-    public BigDecimal getStockValue() {
-        return stockValue;
-    }
-
-    public void setStockValue(BigDecimal stockValue) {
-        this.stockValue = stockValue;
-    }
-
-    public AppUser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AppUser owner) {
+    public Portfolio(AppUser owner){
+        this.name = owner.getFirstName() + " " + owner.getLastName();
         this.owner = owner;
+        this.cash = new BigDecimal("100000");
+        this.invested = new BigDecimal("0");
+        this.stockValue = new BigDecimal("0");
+        this.holdings = new ArrayList<>();
+        this.transactions = new ArrayList<>();
     }
 
-    public List<Holding> getHoldings() {
-        return holdings;
-    }
-
-    public void setHoldings(List<Holding> holdings) {
-        this.holdings = holdings;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-    
 
 }

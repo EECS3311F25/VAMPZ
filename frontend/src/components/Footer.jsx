@@ -14,28 +14,27 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-grid">
-          <div>
-            <div className="footer-brand">
-              <h3 className="footer-logo">
-                <span className="footer-logo-bold">Stock</span>
-                <span className="footer-logo-normal">Sprout</span>
+    <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
+          <div className="col-span-2 md:col-span-1">
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+                Stock<span className="text-teal-600">Sprout</span>
               </h3>
-              <p className="footer-description">
-                Real-time financial data APIs for developers. Fast, reliable, and scalable.
-              </p>
             </div>
+            <p className="text-slate-600 text-sm leading-relaxed max-w-xs">
+              Real-time financial data APIs for developers. Fast, reliable, and scalable.
+            </p>
           </div>
 
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="footer-column-title">{category}</h4>
-              <ul className="footer-links">
+              <h4 className="font-bold text-slate-900 mb-4">{category}</h4>
+              <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="footer-link">
+                    <a href="#" className="text-slate-600 hover:text-teal-600 text-sm transition-colors">
                       {link}
                     </a>
                   </li>
@@ -45,16 +44,16 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="footer-bottom">
-          <p className="footer-copyright">
+        <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-slate-500 text-sm">
             © 2025 StockSprout. All rights reserved.
           </p>
-          <div className="footer-social">
+          <div className="flex items-center gap-6">
             {socialLinks.map(({ icon: Icon, name, href }) => (
               <a
                 key={name}
                 href={href}
-                className="footer-social-link"
+                className="text-slate-400 hover:text-teal-600 transition-colors"
                 aria-label={name}
               >
                 <Icon size={20} />

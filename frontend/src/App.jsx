@@ -7,6 +7,16 @@ import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
 import PortfolioPage from './pages/PortfolioPage';
 
+// Homepage Components
+import HomeNavbar from './components/HomeNavbar';
+import TickerBar from './components/TickerBar';
+import Hero from './components/Hero';
+import Features from './components/Features';
+import Pricing from './components/Pricing';
+import CTA from './components/CTA';
+import Footer from './components/Footer';
+import ChatButton from './components/ChatButton';
+
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -31,11 +41,16 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
 
             <Route path="/" element={
-              <ProtectedRoute>
-                <Layout>
-                  <Navigate to="/dashboard" replace />
-                </Layout>
-              </ProtectedRoute>
+              <div className="min-h-screen bg-white">
+                <HomeNavbar />
+                <TickerBar />
+                <Hero />
+                <Features />
+                <Pricing />
+                <CTA />
+                <Footer />
+                <ChatButton />
+              </div>
             } />
 
             <Route path="/dashboard" element={

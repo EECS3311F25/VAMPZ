@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from './Navbar';
+import DashboardNavbar from './DashboardNavbar';
 
 export default function Layout({ children }) {
   return (
@@ -10,7 +10,7 @@ export default function Layout({ children }) {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-blue-500/10 blur-[100px]" />
       </div>
 
-      <Navbar />
+      <DashboardNavbar />
 
       <main className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-[calc(100vh-4rem)] animate-in fade-in duration-500">
         {children}

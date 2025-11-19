@@ -54,20 +54,20 @@ const plans = [
 
 export default function Pricing() {
   return (
-    <div id="pricing" className="pricing-section">
-      <div className="pricing-container">
+    <div id="pricing" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="pricing-header"
+          className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="pricing-title">Choose Your Plan</h2>
-          <p className="pricing-subtitle">Start with Free, upgrade when you're ready</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">Choose Your Plan</h2>
+          <p className="text-lg text-slate-600">Start with Free, upgrade when you're ready</p>
         </motion.div>
 
-        <div className="pricing-grid">
+        <div className="grid md:grid-cols-3 gap-8">
           {plans.map((plan, index) => (
             <motion.div
               key={plan.name}
@@ -75,20 +75,32 @@ export default function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`pricing-card ${plan.highlight ? 'pricing-card-highlight' : ''}`}
+              className={`relative rounded-2xl p-8 border ${plan.highlight
+                  ? 'border-teal-500 shadow-xl shadow-teal-500/10 bg-white'
+                  : 'border-slate-200 shadow-sm hover:shadow-md bg-white'
+                } transition-all duration-300`}
             >
-              {plan.highlight && <div className="pricing-badge">Popular</div>}
-              <h3 className="pricing-card-name">{plan.name}</h3>
-              <p className="pricing-card-desc">{plan.description}</p>
-              <ul className="pricing-features">
+              {plan.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-teal-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg shadow-teal-600/20">
+                  Popular
+                </div>
+              )}
+              <h3 className="text-2xl font-bold text-slate-900 mb-2">{plan.name}</h3>
+              <p className="text-slate-600 mb-8">{plan.description}</p>
+              <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, idx) => (
-                  <li key={idx} className="pricing-feature">
-                    <Check size={18} className="pricing-check" />
-                    <span>{feature}</span>
+                  <li key={idx} className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check size={18} className="text-teal-600" />
+                    </div>
+                    <span className="text-slate-600 text-sm leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
-              <button className={`pricing-button ${plan.highlight ? 'pricing-button-highlight' : ''}`}>
+              <button className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${plan.highlight
+                  ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/20'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-900'
+                }`}>
                 Get Started
               </button>
             </motion.div>
@@ -98,4 +110,3 @@ export default function Pricing() {
     </div>
   );
 }
-

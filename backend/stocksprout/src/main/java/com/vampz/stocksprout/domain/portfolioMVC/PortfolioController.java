@@ -40,7 +40,7 @@ public class PortfolioController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/buy ")   
+    @PostMapping("/buy ")
     public ResponseEntity<?> buyStock(
             @RequestBody HoldingREQ HoldingREQ,
             HttpServletRequest request) {
@@ -87,7 +87,7 @@ public class PortfolioController {
         }
     }
 
-    @PostMapping("/sell")   
+    @PostMapping("/sell")
     public ResponseEntity<?> sellStock(
             @RequestBody HoldingREQ HoldingREQ,
             HttpServletRequest request) {
@@ -109,7 +109,16 @@ public class PortfolioController {
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portolio = user.getPortfolio();
 
-        
+        Optional<Holding> holdingSellOpt = portolio.getHoldings().stream()
+                .filter(h -> h.getSymbol().equals(HoldingREQ.getSymbol()))
+                .findFirst();
+        if (holdingSell.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Holding not found"));
+        }
+        Holding holdingSell = holdingSellOpt.get();
+
 
         return null;
 

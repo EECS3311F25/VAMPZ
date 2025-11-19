@@ -107,17 +107,35 @@ public class PortfolioController {
         }
 
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Portfolio portolio = user.getPortfolio();
+        Portfolio portfolio = user.getPortfolio();
 
-        Optional<Holding> holdingSellOpt = portolio.getHoldings().stream()
+        Optional<Holding> holdingSellOpt = portfolio.getHoldings().stream()
                 .filter(h -> h.getSymbol().equals(HoldingREQ.getSymbol()))
                 .findFirst();
-        if (holdingSell.isEmpty()) {
+
+        if (holdingSellOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
                     "message", "Holding not found"));
         }
+
         Holding holdingSell = holdingSellOpt.get();
+
+        if (holdingSell.getQuantity() < HoldingREQ.getQuantity()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Insufficient stock quantity to sell"));
+        }   
+
+        double currentStockPrice = marketDataService.getCurrentStockPrice(HoldingREQ.getSymbol()).getPrice();
+        BigDecimal stockPrice = new BigDecimal(currentStockPrice).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity());
+        BigDecimal totalProceeds = stockPrice.multiply(stockQuantity).setScale(2, RoundingMode.HALF_UP);
+
+        portfolio.setCash(portfolio.getCash().add(totalProceeds));
+        holdingSell.setQuantity(holdingSell.getQuantity() - HoldingREQ.getQuantity());
+
+
 
 
         return null;

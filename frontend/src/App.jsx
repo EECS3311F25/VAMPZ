@@ -15,7 +15,6 @@ import Features from './components/Features';
 import Pricing from './components/Pricing';
 
 import Footer from './components/Footer';
-import ChatButton from './components/ChatButton';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -49,7 +48,6 @@ function App() {
                 <Pricing />
 
                 <Footer />
-                <ChatButton />
               </div>
             } />
 

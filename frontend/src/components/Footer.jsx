@@ -2,9 +2,9 @@ import { Github, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const footerLinks = {
-    Product: ['API', 'Pricing', 'Documentation'],
+    Product: ['Trading', 'Portfolio', 'Learn'],
     Company: ['About', 'Careers', 'Contact'],
-    Resources: ['Blog', 'Status', 'Support'],
+    Resources: ['Tutorials', 'Market Data', 'Support'],
   };
 
   const socialLinks = [
@@ -24,7 +24,7 @@ export default function Footer() {
               </h3>
             </div>
             <p className="text-slate-600 text-sm leading-relaxed max-w-xs">
-              Real-time financial data APIs for developers. Fast, reliable, and scalable.
+              Practice trading with virtual money. Learn stock market strategies risk-free in a realistic trading environment.
             </p>
           </div>
 

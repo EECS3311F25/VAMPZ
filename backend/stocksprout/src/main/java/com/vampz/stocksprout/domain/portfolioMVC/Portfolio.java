@@ -3,6 +3,10 @@ package com.vampz.stocksprout.domain.portfolioMVC;
 import com.vampz.stocksprout.domain.transactionMVC.Transaction;
 import com.vampz.stocksprout.domain.holdingMVC.Holding;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,6 +15,10 @@ import java.util.List;
 import com.vampz.stocksprout.appuser.AppUser;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,69 +57,4 @@ public class Portfolio {
     public BigDecimal getNetWorth() {
         return cash.add(stockValue);
     }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getCash() {
-        return cash;
-    }
-
-    public void setCash(BigDecimal cash) {
-        this.cash = cash;
-    }
-
-    public BigDecimal getInvested() {
-        return invested;
-    }
-
-    public void setInvested(BigDecimal invested) {
-        this.invested = invested;
-    }
-
-    public BigDecimal getStockValue() {
-        return stockValue;
-    }
-
-    public void setStockValue(BigDecimal stockValue) {
-        this.stockValue = stockValue;
-    }
-
-    public AppUser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AppUser owner) {
-        this.owner = owner;
-    }
-
-    public List<Holding> getHoldings() {
-        return holdings;
-    }
-
-    public void setHoldings(List<Holding> holdings) {
-        this.holdings = holdings;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-    
-
 }

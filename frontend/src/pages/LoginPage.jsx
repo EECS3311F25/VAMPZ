@@ -1,152 +1,140 @@
-import { useState } from 'react'
-import { useAuth } from '../context/AuthContext.jsx'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import AuthLayout from '../components/AuthLayout';
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 
-function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess }) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const { login } = useAuth()
+const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const result = await login(email, password)
+    const result = await login(email, password);
     if (result.success) {
-      onLoginSuccess()
+      navigate('/dashboard');
     } else {
-      setError(result.message || 'Login failed')
+      setError(result.message || 'Login failed');
     }
-    setLoading(false)
-  }
-
-
+    setLoading(false);
+  };
 
   return (
-
-    <div className="login-container">
-
-      <div className="left-section">
-
-        <div className="branding">
-
-          <span className="brand-bold">stock</span><span className="brand-regular">sprout</span>
-
-        </div>
-
-        <div className="promotional-content">
-
-          <h2 className="promotional-title">Sprout Your Wealth, One Trade at a Time</h2>
-
-          <p className="promotional-text">
-
-            StockSprout helps you learn the market, test strategies, and build confidence before investing for real.
-
-          </p>
-
-          <p className="promotional-text bold-text">
-
-            Sign in and start your journey to smarter investing today.
-
-          </p>
-
-        </div>
-
-      </div>
-
-
-
-      <div className="right-section">
-
-        <div className="login-card">
-
-          <h1 className="login-title">Sign in</h1>
-
-
-
-          <form onSubmit={handleSubmit}>
-
-            <div className="input-group">
-
-              <label htmlFor="email">Email</label>
-
-              <input
-
-                type="email"
-
-                id="email"
-
-                placeholder="e.g. john@domain.com"
-
-                value={email}
-
-                onChange={(e) => setEmail(e.target.value)}
-
-                required
-
-              />
-
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Enter your credentials to access your account"
+    >
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-slate-600 dark:text-slate-300"
+          >
+            Email address
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Mail className="h-5 w-5 text-slate-400 dark:text-slate-500" />
             </div>
-
-
-
-            <div className="input-group">
-
-              <div className="label-row">
-
-                <label htmlFor="password">Password</label>
-
-                <a href="#" className="forgot-link" onClick={(e) => { e.preventDefault(); onSwitchToForgotPassword(); }}>Forgot your password?</a>
-
-              </div>
-
-              <input
-
-                type="password"
-
-                id="password"
-
-                value={password}
-
-                onChange={(e) => setPassword(e.target.value)}
-
-                required
-
-              />
-
-            </div>
-
-
-
-            {error && <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-            <button type="submit" className="continue-button" disabled={loading}>
-              {loading ? 'Logging in...' : 'Log in'}
-            </button>
-
-          </form>
-
-
-
-          <div className="signup-link">
-
-            Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToSignup(); }}>Sign up</a>
-
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+              placeholder="name@example.com"
+            />
           </div>
-
         </div>
 
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-slate-600 dark:text-slate-300"
+            >
+              Password
+            </label>
+            <Link to="/forgot-password" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors">
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+            </div>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
+        {error && (
+          <div className="p-3 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+            <p className="text-sm text-red-600 dark:text-red-400 text-center">{error}</p>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex justify-center items-center py-2.5 px-4 border border-transparent rounded-lg shadow-lg shadow-teal-600/20 text-sm font-medium text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4" />
+              Signing in...
+            </>
+          ) : (
+            <>
+              Sign in
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className="mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-slate-900 text-slate-500">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors">
+              Sign up for free
+            </Link>
+          </p>
+        </div>
       </div>
+    </AuthLayout>
+  );
+};
 
-    </div>
-
-  )
-
-}
-
-
-
-export { LoginPage };
-
-
+export default LoginPage;

@@ -1,68 +1,41 @@
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { motion } from 'framer-motion';
 
-export default function DataWidget({ 
-  title, 
-  symbol, 
-  price, 
-  change, 
-  changePercent, 
-  positive, 
+export default function DataWidget({
+  title,
+  symbol,
+  price,
+  change,
+  changePercent,
+  positive,
   details,
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="data-widget"
-    >
-      <div className="widget-header">
+    <div className="glass-card rounded-xl p-6">
+      <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="widget-title">{title}</h3>
-          <p className="widget-symbol">{symbol}</p>
+          <h3 className="text-sm font-medium text-slate-400">{title}</h3>
+          <p className="text-xs text-slate-500 mt-0.5">{symbol}</p>
         </div>
       </div>
-      
+
       <div>
-        <p className="widget-price">{price}</p>
-        <div className={`widget-change ${positive ? 'widget-change-positive' : 'widget-change-negative'}`}>
-          {positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+        <p className="text-2xl font-bold text-white">{price}</p>
+        <div className={`flex items-center mt-2 text-sm font-medium ${positive ? 'text-emerald-400' : 'text-red-400'}`}>
+          {positive ? <TrendingUp size={16} className="mr-1" /> : <TrendingDown size={16} className="mr-1" />}
           <span>{change} {changePercent}</span>
         </div>
       </div>
-      
+
       {details && (
-        <>
-          <div className="widget-details">
-            {details.map((detail, idx) => (
-              <div key={idx} className="widget-detail-item">
-                <span>{detail.label}</span>
-                <span className="widget-detail-value">{detail.value}</span>
-              </div>
-            ))}
-          </div>
-          <div className="widget-chart">
-            <div className="chart-bars">
-              {['Fri 18', 'Mon 21', 'Tue 22'].map((day, idx) => (
-                <div key={day} className="chart-bar-container">
-                  <div className="chart-bar-label">{day}</div>
-                  <div 
-                    className="chart-bar"
-                    style={{ height: `${65 + idx * 15}%` }}
-                  />
-                </div>
-              ))}
+        <div className="mt-4 pt-4 border-t border-slate-700/50 space-y-2">
+          {details.map((detail, idx) => (
+            <div key={idx} className="flex justify-between items-center text-xs">
+              <span className="text-slate-500">{detail.label}</span>
+              <span className="font-medium text-slate-300">{detail.value}</span>
             </div>
-            {details && details.length > 0 && (
-              <div className="chart-indicator">
-                <div className="chart-dot"></div>
-                <span className="chart-indicator-text">Current</span>
-              </div>
-            )}
-          </div>
-        </>
+          ))}
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

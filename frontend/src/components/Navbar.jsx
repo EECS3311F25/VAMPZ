@@ -1,62 +1,120 @@
-import { Search } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, TrendingUp, User, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { ThemeToggle } from './ThemeToggle';
 
-export default function Navbar() {
-  const navigate = useNavigate();
-  const handleHomeClick = (e) => {
-    e.preventDefault();
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { user, logout } = useAuth();
+  const location = useLocation();
 
-  const handlePricingClick = (e) => {
-    e.preventDefault();
-    const pricingSection = document.getElementById('pricing');
-    if (pricingSection) {
-      pricingSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Portfolio', path: '/portfolio' },
+    { name: 'Markets', path: '/markets' },
+    { name: 'Learn', path: '/learn' },
+  ];
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <div className="navbar-content">
-          <div>
-            <a href="#" onClick={handleHomeClick} className="navbar-logo-link">
-              <h1 className="navbar-logo">
-                <span className="navbar-logo-bold">Stock</span>
-                <span className="navbar-logo-normal">Sprout</span>
-              </h1>
-            </a>
-          </div>
-          
-          <div className="navbar-menu">
-            <a href="#" onClick={handleHomeClick} className="navbar-menu-item">Home</a>
-            <a href="#" onClick={handlePricingClick} className="navbar-menu-item">Pricing</a>
-            <a href="#" className="navbar-menu-item">Docs</a>
-            <div className="navbar-dropdown">
-              <a href="#" className="navbar-menu-item">Contact</a>
-              <div className="navbar-dropdown-menu">
-                <a href="mailto:support@stocksprout.com" className="navbar-dropdown-item">
-                  Email: support@stocksprout.com
-                </a>
-                <a href="#" className="navbar-dropdown-item">FAQ</a>
-                <a href="#" className="navbar-dropdown-item">Our Team</a>
-              </div>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800' : 'bg-transparent'
+      }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center text-white">
+              <TrendingUp size={20} />
+            </div>
+            <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
+            </span>
+          </Link>
+
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-baseline space-x-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${location.pathname === link.path
+                    ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                    }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
             </div>
           </div>
-          
-          <div className="navbar-actions">
-            <button className="navbar-search-btn">
-              <Search size={20} />
-            </button>
-            <Link to="/login" className="navbar-signin">Sign in <span>&gt;</span></Link>
-            <button className="navbar-signup" onClick={() => navigate('/signup')}>
-              Sign Up
+
+          <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
+            {user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{user.email}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium text-sm px-3 py-2">
+                  Sign In
+                </Link>
+                <Link to="/signup" className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-teal-600/20">
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="md:hidden flex items-center gap-4">
+            <ThemeToggle />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                onClick={() => setIsOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {!user && (
+              <div className="pt-4 flex flex-col gap-2">
+                <Link to="/login" className="block px-3 py-2 text-center rounded-md text-base font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/50">
+                  Sign In
+                </Link>
+                <Link to="/signup" className="block px-3 py-2 text-center rounded-md text-base font-medium text-white bg-teal-600 hover:bg-teal-700">
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
-}
+};
+
+export default Navbar;

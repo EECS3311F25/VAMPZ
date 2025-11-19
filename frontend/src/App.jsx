@@ -1,71 +1,62 @@
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import TopBanner from './components/TopBanner';
-import Navbar from './components/Navbar';
-import TickerBar from './components/TickerBar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import Pricing from './components/Pricing';
-import CTA from './components/CTA';
-import Footer from './components/Footer';
-import ChatButton from './components/ChatButton';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import Layout from './components/Layout';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
+import PortfolioPage from './pages/PortfolioPage';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 function App() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
   return (
-    <div className="min-h-screen bg-white">
-      {isHomePage && (
-        <>
-          <TopBanner />
-          <Navbar />
-        </>
-      )}
-      <Routes>
-        <Route
-          path="/"
-          element={(
-            <>
-              <TickerBar />
-              <Hero />
-              <Features />
-              <Pricing />
-              <CTA />
-              <Footer />
-            </>
-          )}
-        />
-        <Route
-          path="/login"
-          element={(
-            <LoginPage
-              onLoginSuccess={() => navigate('/dashboard')}
-              onSwitchToSignup={() => navigate('/signup')}
-              onSwitchToForgotPassword={() => navigate('/forgot')}
-            />
-          )}
-        />
-        <Route
-          path="/signup"
-          element={(
-            <SignupPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route
-          path="/forgot"
-          element={(
-            <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-      {isHomePage && <ChatButton />}
-    </div>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Navigate to="/dashboard" replace />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/portfolio" element={
+              <ProtectedRoute>
+                <Layout>
+                  <PortfolioPage />
+                </Layout>
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

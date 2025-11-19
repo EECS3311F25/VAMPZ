@@ -41,3 +41,21 @@ Content-Type: application/json
   "symbol": "AAPL",
   "quantity": 5
 }
+###
+POST http://localhost:8080/api/portfolio/buy
+Content-Type: application/json
+
+{
+  "symbol": "AAPL",
+  "quantity": 5
+}
+
+###
+POST http://localhost:8080/api/portfolio/sell
+Content-Type: application/json
+
+{
+  "symbol": "AAPL",
+  "quantity": 1
+}
+

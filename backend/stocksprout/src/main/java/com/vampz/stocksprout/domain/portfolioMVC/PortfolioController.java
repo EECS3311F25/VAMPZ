@@ -101,8 +101,8 @@ public class PortfolioController {
                     TransactionType.BUY,
                     portolio,
                     holdingToSave.getSymbol(),
-                    HoldingREQ.getQuantity(), // Log the quantity of this specific transaction
-                    stockPrice, // Log the price for this specific transaction
+                    HoldingREQ.getQuantity(),
+                    stockPrice,
                     totalCost);
             transactionService.saveTransaction(transaction);
             portfolioService.refresh(portolio);

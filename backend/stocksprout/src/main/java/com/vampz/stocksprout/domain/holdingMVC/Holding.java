@@ -9,7 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.math.RoundingMode;
 
 @Entity
 @Getter
@@ -34,49 +34,24 @@ public class Holding {
 
     private int quantity;
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal avgBuyPrice;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal buyPrice;
 
-    @Column(precision = 19, scale = 4)
+    @Column(precision = 19, scale = 2)
     private BigDecimal currentPrice;
 
     public Holding() {
     }
 
-    public Holding(Portfolio portfolio, String symbol, int quantity, BigDecimal currentPrice)
+    public Holding(Portfolio portfolio, String symbol, int quantity, BigDecimal buyPrice)
              {
         this.portfolio = portfolio;
         this.symbol = symbol;
+        this.name = symbol;
         this.quantity = quantity;
-        this.currentPrice = currentPrice;
+        this.buyPrice = buyPrice.setScale(2, RoundingMode.HALF_UP);
+        this.currentPrice = buyPrice.setScale(2, RoundingMode.HALF_UP);
     }
-
-//    public BigDecimal getCurrentValue() {
-//        if (quantity == null || currentPrice == null) {
-//            return BigDecimal.ZERO;
-//        }
-//        return currentPrice.multiply(quantity);
-//    }
-//
-//    public BigDecimal getGainLoss() {
-//        if (quantity == null || avgBuyPrice == null || currentPrice == null) {
-//            return BigDecimal.ZERO;
-//        }
-//        return currentPrice.subtract(avgBuyPrice).multiply(quantity);
-//    }
-//
-//    public BigDecimal getGainLossPercent() {
-//        if (avgBuyPrice == null
-//                || avgBuyPrice.compareTo(BigDecimal.ZERO) == 0
-//                || currentPrice == null) {
-//            return BigDecimal.ZERO;
-//        }
-//        return currentPrice
-//                .subtract(avgBuyPrice)
-//                .divide(avgBuyPrice, MathContext.DECIMAL64)
-//                .multiply(BigDecimal.valueOf(100));
-//    }
-
 
 
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 @Entity
@@ -34,10 +35,10 @@ public class Transaction {
     @Column
     private int quantity;
 
-    @Column(precision = 19, scale = 4)
+    @Column(precision = 19, scale = 2)
     private BigDecimal pricePerUnit;
 
-    @Column(precision = 19, scale = 4)
+    @Column(precision = 19, scale = 2)
     private BigDecimal totalAmount;
 
     private Instant timestamp;
@@ -56,8 +57,8 @@ public class Transaction {
         this.portfolio = portfolio;
         this.symbol = symbol;
         this.quantity = quantity;
-        this.pricePerUnit = pricePerUnit;
-        this.totalAmount = totalAmount;
+        this.pricePerUnit = pricePerUnit.setScale(2, RoundingMode.HALF_UP);
+        this.totalAmount = totalAmount.setScale(2, RoundingMode.HALF_UP);
         this.timestamp = Instant.now();
     }
 

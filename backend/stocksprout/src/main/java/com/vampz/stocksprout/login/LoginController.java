@@ -2,6 +2,7 @@ package com.vampz.stocksprout.login;
 
 import com.vampz.stocksprout.appuser.AppUser;
 import com.vampz.stocksprout.appuser.UserRepository;
+import com.vampz.stocksprout.domain.portfolioMVC.PortfolioService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class LoginController {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PortfolioService portfolioService;
 
     @PostMapping
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
@@ -34,6 +36,7 @@ public class LoginController {
                     HttpSession session = httpRequest.getSession(true);
                     session.setAttribute("USER_ID", user.getId());
                     session.setMaxInactiveInterval(60 * 60);
+                    portfolioService.refresh(user.getPortfolio());
                     return ResponseEntity.ok(Map.of(
                             "status", "success",
                             "message", "Login successful",

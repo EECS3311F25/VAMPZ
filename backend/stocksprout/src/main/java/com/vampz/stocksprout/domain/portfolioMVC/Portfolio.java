@@ -6,6 +6,7 @@ import com.vampz.stocksprout.domain.holdingMVC.Holding;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +28,14 @@ public class Portfolio {
 
     private String name;
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal cash = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal cash = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal invested = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal invested = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal stockValue = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal stockValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
     @OneToOne
     @JsonIgnore
@@ -58,9 +59,9 @@ public class Portfolio {
     public Portfolio(AppUser owner){
         this.name = owner.getFirstName() + " " + owner.getLastName();
         this.owner = owner;
-        this.cash = new BigDecimal("100000");
-        this.invested = new BigDecimal("0");
-        this.stockValue = new BigDecimal("0");
+        this.cash = new BigDecimal("100000").setScale(2, RoundingMode.HALF_UP);
+        this.invested = new BigDecimal("0").setScale(2, RoundingMode.HALF_UP);
+        this.stockValue = new BigDecimal("0").setScale(2, RoundingMode.HALF_UP);
         this.holdings = new ArrayList<>();
         this.transactions = new ArrayList<>();
     }

@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,9 +64,9 @@ public class PortfolioController {
         AppUser user= userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portolio = user.getPortfolio();
         double currentStockPrice = marketDataService.getCurrentStockPrice(HoldingREQ.getSymbol()).getPrice();
-        BigDecimal stockPrice = new BigDecimal(currentStockPrice);
-        BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity());
-        BigDecimal totalCost = stockPrice.multiply(stockQuantity);
+        BigDecimal stockPrice = new BigDecimal(currentStockPrice).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal totalCost = stockPrice.multiply(stockQuantity).setScale(2, RoundingMode.HALF_UP);
         if(portolio.getCash().compareTo(totalCost)==-1)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
@@ -86,6 +87,7 @@ public class PortfolioController {
                     holding.getCurrentPrice(),
                     totalCost);
             transactionService.saveTransaction(transaction);
+            portfolioService.refresh(portolio);
             return ResponseEntity.ok(holding);
         }
     }

@@ -18,6 +18,4 @@ public class StockCurrentDTO{
     private String symbol;
     private double price;
     private LocalDateTime dateTimeStamp;
-
-
 }

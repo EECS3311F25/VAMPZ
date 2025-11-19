@@ -31,7 +31,8 @@ public class PortfolioController {
     private final HoldingService holdingService;
     private final TransactionService transactionService;
 
-    public PortfolioController(PortfolioService portfolioService, UserRepository userRepository, marketDataService marketDataService, HoldingService holdingService, TransactionService transactionService) {
+    public PortfolioController(PortfolioService portfolioService, UserRepository userRepository,
+            marketDataService marketDataService, HoldingService holdingService, TransactionService transactionService) {
         this.portfolioService = portfolioService;
         this.userRepository = userRepository;
         this.marketDataService = marketDataService;
@@ -39,42 +40,36 @@ public class PortfolioController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping
+    @PostMapping("/buy ")   
     public ResponseEntity<?> buyStock(
             @RequestBody HoldingREQ HoldingREQ,
-            HttpServletRequest request){
+            HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
         if (session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
-                    "message", "Not authenticated"
-            ));
+                    "message", "Not authenticated"));
         }
 
         Object userId = session.getAttribute("USER_ID");
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
-                    "message", "Not authenticated"
-            ));
+                    "message", "Not authenticated"));
         }
 
-
-        AppUser user= userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portolio = user.getPortfolio();
         double currentStockPrice = marketDataService.getCurrentStockPrice(HoldingREQ.getSymbol()).getPrice();
         BigDecimal stockPrice = new BigDecimal(currentStockPrice).setScale(2, RoundingMode.HALF_UP);
         BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalCost = stockPrice.multiply(stockQuantity).setScale(2, RoundingMode.HALF_UP);
-        if(portolio.getCash().compareTo(totalCost)==-1)
-        {
+        if (portolio.getCash().compareTo(totalCost) == -1) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
-                    "message", "Insufficient funds"
-            ));
-        }
-        else{
+                    "message", "Insufficient funds"));
+        } else {
             portolio.setCash(portolio.getCash().subtract(totalCost));
             Holding holding = new Holding(portolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
 
@@ -92,48 +87,31 @@ public class PortfolioController {
         }
     }
 
-    @PostMapping
-    @PostMapping("/sell")
+    @PostMapping("/sell")   
     public ResponseEntity<?> sellStock(
             @RequestBody HoldingREQ HoldingREQ,
-            HttpServletRequest request){
+            HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
         if (session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
-                    "message", "Not authenticated"
-            ));
+                    "message", "Not authenticated"));
         }
 
         Object userId = session.getAttribute("USER_ID");
         if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
-                    "message", "Not authenticated"
-            ));
+                    "message", "Not authenticated"));
         }
 
-                
-        // --- Implementation Steps ---
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Portfolio portolio = user.getPortfolio();
 
-        // 1. Get User and Portfolio (same as buyStock)
-        // AppUser user = userRepository.findById((Long) userId).orElseThrow(...);
-        // Portfolio portfolio = user.getPortfolio();
+        
 
-                return null;
-        // 2. Find the specific holding to sell from the portfolio's holdings list.
-        // Optional<Holding> holdingToSell = portfolio.getHoldings().stream()...
+        return null;
 
-                
-            }
-        // 3. Validate: Does the holding exist? Is the quantity sufficient?
-
-        // 4. Calculate proceeds and update portfolio cash and holding quantity.
-
-        // 5. Create a SELL transaction and save it.
-
-        // 6. Refresh portfolio and return a success response.
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Sell functionality not yet implemented.");
     }
 }

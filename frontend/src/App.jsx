@@ -13,7 +13,7 @@ import TickerBar from './components/TickerBar';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Pricing from './components/Pricing';
-import CTA from './components/CTA';
+
 import Footer from './components/Footer';
 import ChatButton from './components/ChatButton';
 
@@ -42,12 +42,12 @@ function App() {
 
             <Route path="/" element={
               <div className="min-h-screen bg-white">
-                <HomeNavbar />
                 <TickerBar />
+                <HomeNavbar />
                 <Hero />
                 <Features />
                 <Pricing />
-                <CTA />
+
                 <Footer />
                 <ChatButton />
               </div>

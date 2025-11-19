@@ -11,7 +11,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.vampz.stocksprout.domain.marketDataService.StockCurrentDTO;
 @Service
@@ -19,7 +21,7 @@ public class marketDataService {
 
     private ObjectMapper mapper ;
 
-    private final String apiKey = "X1m2OKZEMNi8G0jgcC6a1JksoD9e1zYN";
+    private final String apiKey = "zmkyyBDHwBHD52ckQ0vyaDTaFrr8T1Wt";
 
     public marketDataService() {
         this.mapper = new ObjectMapper();
@@ -84,6 +86,49 @@ public class marketDataService {
         return null;
     }
 
+    public StockCurrentDTO getYesterdayStockPrice(String symbol) {
+        // Get yesterday's date
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        String formattedDate = yesterday.format(DateTimeFormatter.ISO_DATE);
+
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://financialmodelingprep.com/stable/historical-price-eod/light?symbol="
+                        + symbol + "&from=" + formattedDate + "&to=" + formattedDate + "&apikey=" + apiKey))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Status: " + response.statusCode());
+            System.out.println("Response: " + response.body());
+
+            // Parse response as a list of StockHistDTO
+            List<StockHistDTO> list = mapper.readValue(
+                    response.body(),
+                    mapper.getTypeFactory().constructCollectionType(List.class, StockHistDTO.class)
+            );
+
+            if (list.isEmpty()) return null;
+
+            StockHistDTO yesterdayData = list.get(0);
+
+            // Map StockHistDTO to StockCurrentDTO
+            StockCurrentDTO currentDTO = new StockCurrentDTO();
+            currentDTO.setSymbol(yesterdayData.getSymbol());
+            currentDTO.setPrice(yesterdayData.getPrice()); // use close price for "yesterday's price"
+            currentDTO.setDateTimeStamp(LocalDateTime.now()); // or you can convert yesterdayData.getDate() to LocalDateTime
+
+            return currentDTO;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
 }
 

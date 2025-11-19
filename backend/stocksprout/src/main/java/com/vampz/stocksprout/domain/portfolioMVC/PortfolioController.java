@@ -40,7 +40,7 @@ public class PortfolioController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/buy ")
+    @PostMapping("/buy")
     public ResponseEntity<?> buyStock(
             @RequestBody HoldingREQ HoldingREQ,
             HttpServletRequest request) {
@@ -134,6 +134,23 @@ public class PortfolioController {
 
         portfolio.setCash(portfolio.getCash().add(totalProceeds));
         holdingSell.setQuantity(holdingSell.getQuantity() - HoldingREQ.getQuantity());
+
+        if (holdingSell.getQuantity() == 0) {
+            portfolio.getHoldings().remove(holdingSell); // JPA will handle deletion due to orphanRemoval=true
+        } else {
+            holdingService.saveHolding(holdingSell);
+        }
+
+        Transaction transaction = new Transaction(TransactionType.SELL, portfolio, holdingSell.getSymbol(), HoldingREQ.getQuantity(), stockPrice, totalProceeds);
+        transactionService.saveTransaction(transaction);
+
+        portfolioService.refresh(portfolio);
+        return ResponseEntity.ok(Map.of("status", "success", "message", "Sale successful"));
+
+
+
+
+
 
 
 

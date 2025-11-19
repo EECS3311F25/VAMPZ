@@ -14,27 +14,27 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-slate-50 border-t border-slate-200 pt-16 pb-8">
+    <footer className="bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pt-16 pb-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
           <div className="col-span-2 md:col-span-1">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                 Stock<span className="text-teal-600">Sprout</span>
               </h3>
             </div>
-            <p className="text-slate-600 text-sm leading-relaxed max-w-xs">
+            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xs">
               Practice trading with virtual money. Learn stock market strategies risk-free in a realistic trading environment.
             </p>
           </div>
 
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="font-bold text-slate-900 mb-4">{category}</h4>
+              <h4 className="font-bold text-slate-900 dark:text-white mb-4">{category}</h4>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-slate-600 hover:text-teal-600 text-sm transition-colors">
+                    <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 text-sm transition-colors">
                       {link}
                     </a>
                   </li>
@@ -44,7 +44,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="border-t border-slate-200 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-sm">
             © 2025 StockSprout. All rights reserved.
           </p>

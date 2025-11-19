@@ -1,7 +1,7 @@
 import { Search, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { ThemeToggle } from './ThemeToggle';
+
 
 export default function HomeNavbar() {
     const navigate = useNavigate();
@@ -22,7 +22,8 @@ export default function HomeNavbar() {
     };
 
     return (
-        <nav className="sticky top-0 z-40 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+        <nav className="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 relative">
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -60,7 +61,7 @@ export default function HomeNavbar() {
                         <button className="p-2 text-slate-400 dark:text-slate-500 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
                             <Search size={20} />
                         </button>
-                        <ThemeToggle />
+
                         <Link to="/login" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors">
                             Sign in <span aria-hidden="true">&rarr;</span>
                         </Link>
@@ -74,7 +75,7 @@ export default function HomeNavbar() {
 
                     {/* Mobile menu button */}
                     <div className="md:hidden flex items-center gap-2">
-                        <ThemeToggle />
+
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white p-2"

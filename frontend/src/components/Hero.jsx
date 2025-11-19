@@ -17,7 +17,7 @@ export default function Hero() {
 
 
   return (
-    <div className="relative overflow-hidden bg-white min-h-[80vh] flex items-center pt-16 pb-24">
+    <div className="relative overflow-hidden bg-white dark:bg-slate-950 min-h-[80vh] flex items-center pt-16 pb-24 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -26,11 +26,11 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="max-w-2xl"
           >
-            <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 tracking-tight leading-tight mb-6">
+            <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-6">
               Grow your portfolio,<br />Grow your{' '}
-              <span className="text-teal-600">potential</span>
+              <span className="text-teal-600 dark:text-teal-400">potential</span>
             </h1>
-            <p className="text-xl text-slate-600 mb-8 leading-relaxed">
+            <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
               Develop your investing skills with real-time risk free simulations.
             </p>
             <div className="flex flex-wrap gap-4">
@@ -46,7 +46,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/login')}
-                className="flex items-center gap-2 px-8 py-4 text-slate-600 hover:text-teal-600 font-medium transition-colors bg-slate-100 rounded-xl"
+                className="flex items-center gap-2 px-8 py-4 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors bg-slate-100 dark:bg-slate-800 rounded-xl"
               >
                 Login <span aria-hidden="true">&rarr;</span>
               </motion.button>

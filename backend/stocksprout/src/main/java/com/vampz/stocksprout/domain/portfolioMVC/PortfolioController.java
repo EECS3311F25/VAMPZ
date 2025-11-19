@@ -91,4 +91,49 @@ public class PortfolioController {
             return ResponseEntity.ok(holding);
         }
     }
+
+    @PostMapping
+    @PostMapping("/sell")
+    public ResponseEntity<?> sellStock(
+            @RequestBody HoldingREQ HoldingREQ,
+            HttpServletRequest request){
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"
+            ));
+        }
+
+        Object userId = session.getAttribute("USER_ID");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"
+            ));
+        }
+
+                
+        // --- Implementation Steps ---
+
+        // 1. Get User and Portfolio (same as buyStock)
+        // AppUser user = userRepository.findById((Long) userId).orElseThrow(...);
+        // Portfolio portfolio = user.getPortfolio();
+
+                return null;
+        // 2. Find the specific holding to sell from the portfolio's holdings list.
+        // Optional<Holding> holdingToSell = portfolio.getHoldings().stream()...
+
+                
+            }
+        // 3. Validate: Does the holding exist? Is the quantity sufficient?
+
+        // 4. Calculate proceeds and update portfolio cash and holding quantity.
+
+        // 5. Create a SELL transaction and save it.
+
+        // 6. Refresh portfolio and return a success response.
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Sell functionality not yet implemented.");
+    }
 }

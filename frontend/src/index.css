@@ -6,6 +6,23 @@
   padding: 0;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.login-container {
+    display: flex;
+    min-height: 100vh;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -1008,225 +1025,266 @@ body {
 
 /* Auth Pages (Login/Signup/Forgot Password) */
 .login-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
+    width: 100%;
+    /* Set height to 100vh for a true full-screen experience */
+    min-height: 100vh;
+    display: flex;
 }
 .left-section {
-  flex: 1;
-  background-color: #F5F5F0;
-  display: flex;
-  flex-direction: column;
-  padding: 40px;
-  position: relative;
+    flex: 1;
+    background-color: #F5F5F0;
+    display: flex;
+    flex-direction: column;
+    /* Reduced initial padding for a cleaner flex layout, will adjust for desktop */
+    padding: 40px;
+    justify-content: center;
 }
+
+/* Desktop-specific adjustments for left section */
+@media (min-width: 1025px) {
+    .left-section {
+        padding: 120px; /* Use larger padding for desktop view */
+    }
+}
+
 .branding {
-  font-size: 20px;
-  color: #000000;
-  margin-bottom: 60px;
+    font-size: 30px;
+    color: #000000;
+    /* Moved out of promotional-content flow */
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    /* Ensures branding is visible on desktop left section */
+    z-index: 10;
 }
+
 .promotional-content {
-  max-width: 500px;
+    max-width: 500px;
+    /* Center the content horizontally within the flex item */
+    margin: 0 auto;
 }
 .promotional-title {
-  font-size: 48px;
-  font-weight: 700;
-  color: #000000;
-  margin-bottom: 24px;
-  line-height: 1.2;
+    font-size: 55px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 24px;
+    line-height: 1.2;
 }
 .promotional-text {
-  font-size: 18px;
-  color: #333333;
-  line-height: 1.6;
-  margin-bottom: 16px;
+    font-size: 18px;
+    color: #333333;
+    line-height: 1.6;
+    margin-bottom: 16px;
 }
 .bold-text {
-  font-weight: 600;
+    font-weight: 600;
 }
 .right-section {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Increased padding to prevent the card from touching the edges on mobile/tablet */
+    padding: 40px 20px;
+    background-color: #F7F9FC; /* Ensure background matches body if not covered by card */
 }
 .brand-bold {
-  font-weight: 700;
+    font-weight: 700;
 }
 .brand-regular {
-  font-weight: 400;
+    font-weight: 400;
 }
 .login-card {
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 40px;
-  width: 100%;
-  max-width: 450px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow for pop */
 }
 .login-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: #000000;
-  margin-bottom: 32px;
-  text-align: left;
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 32px;
+    text-align: left;
 }
 .login-title + .subtitle {
-  margin-top: -24px;
-  margin-bottom: 32px;
+    margin-top: -24px;
+    margin-bottom: 32px;
 }
 .subtitle {
-  font-size: 14px;
-  font-weight: 400;
-  color: #666666;
-  margin-bottom: 32px;
-  text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    margin-bottom: 32px;
+    text-align: left;
 }
 .instruction-text {
-  font-size: 14px;
-  font-weight: 400;
-  color: #000000;
-  margin-bottom: 32px;
-  line-height: 1.5;
-  text-align: left;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000000;
+    margin-bottom: 32px;
+    line-height: 1.5;
+    text-align: left;
 }
 .password-hint {
-  font-size: 12px;
-  color: #666666;
-  margin-top: 4px;
-  margin-bottom: 0;
+    font-size: 12px;
+    color: #666666;
+    margin-top: 4px;
+    margin-bottom: 0;
 }
 .input-group {
-  margin-bottom: 24px;
+    margin-bottom: 24px;
 }
 .input-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #000000;
-  margin-bottom: 8px;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 8px;
 }
 .label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .input-group input {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 14px;
-  border: 1px solid #E0E0E0;
-  border-radius: 8px;
-  background-color: #ffffff;
-  color: #000000;
-  outline: none;
-  transition: border-color 0.2s;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s;
 }
 .input-group input:focus {
-  border-color: #4285F4;
+    border-color: #4285F4;
 }
 .input-group input::placeholder {
-  color: #9E9E9E;
+    color: #9E9E9E;
 }
 .forgot-link {
-  font-size: 14px;
-  color: #4285F4;
-  text-decoration: none;
-  font-weight: 400;
+    font-size: 14px;
+    color: #4285F4;
+    text-decoration: none;
+    font-weight: 400;
 }
 .forgot-link:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .continue-button {
-  width: 100%;
-  padding: 14px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;
-  background-color: #4285F4;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  margin-top: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #4285F4;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 8px;
 }
 .continue-button:hover {
-  background-color: #357AE8;
+    background-color: #357AE8;
 }
 .continue-button:active {
-  background-color: #2968D8;
+    background-color: #2968D8;
 }
 .signup-link {
-  text-align: center;
-  margin-top: 32px;
-  font-size: 14px;
-  color: #000000;
+    text-align: center;
+    margin-top: 32px;
+    font-size: 14px;
+    color: #000000;
 }
 .signup-link a {
-  color: #4285F4;
-  text-decoration: none;
-  font-weight: 400;
+    color: #4285F4;
+    text-decoration: none;
+    font-weight: 400;
 }
 .signup-link a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
+
+/* Media Queries for Responsiveness */
+
 @media (max-width: 1024px) {
-  .login-container {
-    flex-direction: column;
-  }
-  
-  .left-section {
-    padding: 20px;
-  }
-  
-  .promotional-title {
-    font-size: 36px;
-  }
-  
-  .promotional-text {
-    font-size: 16px;
-  }
+    .login-container {
+        flex-direction: column;
+        min-height: auto; /* Let content determine height when stacked */
+    }
+
+    .left-section {
+        padding: 60px 20px; /* Adjusted padding when stacked */
+    }
+
+    /* Reset branding position when stacked */
+    .branding {
+        position: static;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .promotional-content {
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .promotional-title {
+        font-size: 36px;
+    }
+
+    .promotional-text {
+        font-size: 16px;
+    }
+
+    .right-section {
+        padding: 40px 20px; /* Ensure sufficient padding around the card */
+    }
 }
+
 @media (max-width: 640px) {
-  .left-section {
-    padding: 20px;
-  }
-  
-  .branding {
-    font-size: 18px;
-    margin-bottom: 30px;
-  }
-  
-  .promotional-title {
-    font-size: 28px;
-    margin-bottom: 16px;
-  }
-  
-  .promotional-text {
-    font-size: 14px;
-  }
-  
-  .right-section {
-    padding: 10px;
-  }
-  
-  .login-card {
-    padding: 32px 24px;
-  }
-  
-  .login-title {
-    font-size: 24px;
-    margin-bottom: 24px;
-  }
-  
-  .login-title + .subtitle {
-    margin-top: -20px;
-    margin-bottom: 24px;
-  }
-  
-  .subtitle {
-    font-size: 13px;
-    margin-bottom: 24px;
-  }
+    .left-section {
+        padding: 40px 20px; /* Smaller padding for smaller screens */
+    }
+
+    .branding {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+    .promotional-title {
+        font-size: 28px;
+        margin-bottom: 16px;
+    }
+
+    .promotional-text {
+        font-size: 14px;
+    }
+
+    .right-section {
+        padding: 20px 10px; /* Minimal padding on very small screens */
+    }
+
+    .login-card {
+        padding: 32px 24px;
+    }
+
+    .login-title {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .login-title + .subtitle {
+        margin-top: -20px;
+        margin-bottom: 24px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+        margin-bottom: 24px;
+    }
 }

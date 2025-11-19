@@ -18,6 +18,4 @@ public class StockHistDTO{
     private String symbol;
     private double price;
     private LocalDate date;
-
-
 }

@@ -50,15 +50,15 @@ public class Transaction {
                        String symbol,
                        int quantity,
                        BigDecimal pricePerUnit,
-                       BigDecimal totalAmount,
-                       Instant timestamp) {
+                       BigDecimal totalAmount
+                         ) {
         this.type = type;
         this.portfolio = portfolio;
         this.symbol = symbol;
         this.quantity = quantity;
         this.pricePerUnit = pricePerUnit;
         this.totalAmount = totalAmount;
-        this.timestamp = timestamp;
+        this.timestamp = Instant.now();
     }
 
 

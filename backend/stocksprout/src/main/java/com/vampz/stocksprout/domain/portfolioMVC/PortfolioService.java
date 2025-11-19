@@ -23,4 +23,6 @@ public class PortfolioService {
         Portfolio portfolio = new Portfolio(owner);
         return portfolioRepository.save(portfolio);
     }
+
+
 }

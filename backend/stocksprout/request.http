@@ -8,8 +8,7 @@ Content-Type: application/json
   "password": "12345678"
 }
 
-###
-GET http://localhost:8080/api/marketData/currentStockPrice
+
 
 
 ###
@@ -33,3 +32,12 @@ GET http://localhost:8080/api/marketData/currentStockPrice?symbol=NVDA
 ###
 GET http://localhost:8080/api/marketData/StockPriceHistory?
     symbol=NVDA&startDate=2025-11-10&endDate=2025-11-17
+
+###
+POST http://localhost:8080/api/portfolio
+Content-Type: application/json
+
+{
+  "symbol": "AAPL",
+  "quantity": 5
+}

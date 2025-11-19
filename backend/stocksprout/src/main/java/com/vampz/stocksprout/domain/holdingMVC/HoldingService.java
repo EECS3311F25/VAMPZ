@@ -14,4 +14,8 @@ public class HoldingService {
         return holdingRepository.findById(id).orElseThrow();
     }
 
+    public Holding saveHolding(Holding holding) {
+        return holdingRepository.save(holding);
+    }
+
 }

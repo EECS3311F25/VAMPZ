@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.domain.portfolioMVC;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vampz.stocksprout.domain.transactionMVC.Transaction;
 import com.vampz.stocksprout.domain.holdingMVC.Holding;
 import jakarta.persistence.*;
@@ -36,6 +37,7 @@ public class Portfolio {
     private BigDecimal stockValue = BigDecimal.ZERO;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private AppUser owner;
 

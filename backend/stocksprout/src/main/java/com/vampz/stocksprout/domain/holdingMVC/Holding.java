@@ -35,7 +35,8 @@ public class Holding {
     private int quantity;
 
     @Column(precision = 19, scale = 2)
-    private BigDecimal buyPrice;
+    private BigDecimal
+            e;
 
     @Column(precision = 19, scale = 2)
     private BigDecimal currentPrice;

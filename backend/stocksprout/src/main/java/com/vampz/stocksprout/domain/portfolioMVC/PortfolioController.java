@@ -60,29 +60,57 @@ public class PortfolioController {
         }
 
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Portfolio portolio = user.getPortfolio();
+        Portfolio portfolio = user.getPortfolio();
         double currentStockPrice = marketDataService.getCurrentStockPrice(HoldingREQ.getSymbol()).getPrice();
         BigDecimal stockPrice = new BigDecimal(currentStockPrice).setScale(2, RoundingMode.HALF_UP);
         BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalCost = stockPrice.multiply(stockQuantity).setScale(2, RoundingMode.HALF_UP);
-        if (portolio.getCash().compareTo(totalCost) == -1) {
+        if (portfolio.getCash().compareTo(totalCost) == -1) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
                     "message", "Insufficient funds"));
         } else {
-            portolio.setCash(portolio.getCash().subtract(totalCost));
-            Holding holding = new Holding(portolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
+            portfolio.setCash(portfolio.getCash().subtract(totalCost));
 
-            holdingService.saveHolding(holding);
+            Optional<Holding> existingHoldingOpt = portfolio.getHoldings().stream()
+                    .filter(h -> h.getSymbol().equalsIgnoreCase(HoldingREQ.getSymbol()))
+                    .findFirst();
+
+            Holding holdingToSave;
+            if (existingHoldingOpt.isPresent()) {
+                holdingToSave = existingHoldingOpt.get();
+                int oldQuantity = holdingToSave.getQuantity();
+                int newQuantity = HoldingREQ.getQuantity();
+                BigDecimal oldBuyPrice = holdingToSave.getBuyPrice();
+
+                BigDecimal oldTotalValue = oldBuyPrice.multiply(BigDecimal.valueOf(oldQuantity));
+                BigDecimal newTotalValue = stockPrice.multiply(BigDecimal.valueOf(newQuantity));
+                int totalQuantity = oldQuantity + newQuantity;
+                BigDecimal newAvgPrice = (oldTotalValue.add(newTotalValue)).divide(BigDecimal.valueOf(totalQuantity), 2,
+                        RoundingMode.HALF_UP);
+
+                holdingToSave.setQuantity(totalQuantity);
+                holdingToSave.setBuyPrice(newAvgPrice);
+            } else {
+                // If not, create a new holding
+                holdingToSave = new Holding(portfolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
+            }
+
+            holdingService.saveHolding(holdingToSave);
+
             Transaction transaction = new Transaction(
                     TransactionType.BUY,
-                    portolio,
-                    holding.getSymbol(),
-                    holding.getQuantity(),
-                    holding.getCurrentPrice(),
+                    portfolio,
+                    holdingToSave.getSymbol(),
+                    HoldingREQ.getQuantity(),
+                    stockPrice,
                     totalCost);
             transactionService.saveTransaction(transaction);
-            portfolioService.refresh(po            return ResponseEntity.ok(holding);
+
+            portfolio.getHoldings().add(holdingToSave);
+            portfolio.getTransactions().add(transaction);
+            portfolioService.refresh(portfolio);
+            return ResponseEntity.ok(holdingToSave);
         }
     }
 

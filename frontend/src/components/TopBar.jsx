@@ -18,12 +18,14 @@ const TopBar = ({ onToggleSidebar }) => {
                 >
                     <Menu size={24} />
                 </button>
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center shadow-md shadow-teal-500/20">
-                        <span className="text-white font-bold text-lg">S</span>
-                    </div>
-                    <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 bg-clip-text text-transparent hidden sm:block">
-                        StockSprout
+                <div className="flex items-center gap-1.5">
+                    <img
+                        src="/images/logo-icon.png"
+                        alt="StockSprout Logo"
+                        className="h-11 w-auto md:h-12 flex-shrink-0"
+                    />
+                    <span className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-['Outfit'] leading-none hidden sm:block">
+                        Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
                     </span>
                 </div>
             </div>
@@ -35,7 +37,6 @@ const TopBar = ({ onToggleSidebar }) => {
 
             {/* Right Side - Learn, Notifications, Profile */}
             <div className="flex items-center gap-4">
-
 
                 {/* Theme Toggle */}
                 <ThemeToggle />

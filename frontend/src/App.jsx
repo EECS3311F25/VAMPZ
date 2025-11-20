@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import PortfolioPage from './pages/PortfolioPage';
 import TransactionsPage from './pages/TransactionsPage';
 import WatchlistPage from './pages/WatchlistPage';
+import FAQPage from './pages/FAQPage';
 
 // Homepage Components
 import HomeNavbar from './components/HomeNavbar';
@@ -71,6 +72,12 @@ function App() {
             <Route path="/watchlist" element={
               <ProtectedRoute>
                 <WatchlistPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/faq" element={
+              <ProtectedRoute>
+                <FAQPage />
               </ProtectedRoute>
             } />
           </Routes>

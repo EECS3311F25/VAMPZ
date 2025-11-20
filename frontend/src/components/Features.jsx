@@ -47,7 +47,7 @@ export default function Features() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow border border-slate-100 dark:border-slate-700"
+                className="glass-card rounded-2xl p-8 hover:shadow-lg transition-all duration-300"
               >
                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-6 ${feature.color}`}>
                   <Icon size={28} />

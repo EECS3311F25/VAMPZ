@@ -7,8 +7,8 @@ const TermsModal = ({ isOpen, onAccept }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-800">
+        <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="glass-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-200 dark:border-slate-800">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Terms & Conditions</h2>
@@ -87,7 +87,7 @@ const TermsModal = ({ isOpen, onAccept }) => {
                                 className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 cursor-pointer"
                             />
                         </div>
-                        <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                        <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-all duration-200">
                             I have read and agree to the Terms & Conditions and understand that this is a paper trading platform for educational purposes only.
                         </span>
                     </label>
@@ -96,8 +96,8 @@ const TermsModal = ({ isOpen, onAccept }) => {
                         onClick={onAccept}
                         disabled={!agreed}
                         className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${agreed
-                                ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
-                                : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
+                            ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
+                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
                             }`}
                     >
                         {agreed ? (

@@ -75,9 +75,9 @@ export default function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
-              className={`relative rounded-2xl p-8 border ${plan.highlight
-                ? 'border-teal-500 shadow-xl shadow-teal-500/10 bg-white dark:bg-slate-900'
-                : 'border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md bg-white dark:bg-slate-900'
+              className={`glass-card relative rounded-2xl p-8 border ${plan.highlight
+                ? 'border-teal-500 shadow-xl shadow-teal-500/10'
+                : 'border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl'
                 } transition-all duration-300`}
             >
               {plan.highlight && (
@@ -97,8 +97,8 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-3 px-6 rounded-xl font-medium transition-all ${plan.highlight
-                ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/20'
+              <button className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 ${plan.highlight
+                ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/30 hover:shadow-xl'
                 : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
                 }`}>
                 Get Started

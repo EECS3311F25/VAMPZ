@@ -11,12 +11,14 @@ const HomeNavbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:shadow-lg group-hover:shadow-teal-500/30 transition-all">
-                            <span className="text-white font-bold text-lg">S</span>
-                        </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 bg-clip-text text-transparent">
-                            StockSprout
+                    <Link to="/" className="flex items-center gap-1.5 group">
+                        <img
+                            src="/images/logo-icon.png"
+                            alt="StockSprout Logo"
+                            className="h-11 w-auto md:h-12 flex-shrink-0 group-hover:scale-110 transition-transform duration-200"
+                        />
+                        <span className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-['Outfit'] leading-none">
+                            Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
                         </span>
                     </Link>
 

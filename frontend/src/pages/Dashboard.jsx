@@ -1,16 +1,52 @@
 import { useState } from 'react';
-import { TrendingUp, TrendingDown, Search, DollarSign, PieChart, BarChart3, Activity, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Search, DollarSign, PieChart, BarChart3, Activity, Plus, Wallet, TrendingUpIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
-import DataWidget from '../components/DataWidget';
 import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
+import ConfirmTradeModal from '../components/ConfirmTradeModal';
 
 const statsCards = [
-  { title: 'Portfolio Value', value: '$125,430.50', change: '+$2,450.20', changePercent: '+2.00%', positive: true, icon: DollarSign },
-  { title: 'Total Gain', value: '+$15,430.50', change: '+$1,230.40', changePercent: '+8.67%', positive: true, icon: TrendingUp },
-  { title: 'Active Positions', value: '12', change: '+2', changePercent: 'This month', positive: true, icon: PieChart },
-  { title: 'Win Rate', value: '68%', change: '+5%', changePercent: 'vs last month', positive: true, icon: Activity },
+  {
+    title: 'Portfolio Value',
+    value: '$125,430.50',
+    change: '+$2,450.20',
+    changePercent: '+2.00%',
+    label: 'Today',
+    positive: true,
+    icon: DollarSign,
+    gradient: 'from-teal-500/10 to-blue-500/10'
+  },
+  {
+    title: 'Total Gain',
+    value: '+$15,430.50',
+    change: '+8.67%',
+    changePercent: '+$1,230.40',
+    label: 'Since inception',
+    positive: true,
+    icon: TrendingUp,
+    gradient: 'from-emerald-500/10 to-teal-500/10'
+  },
+  {
+    title: 'Active Positions',
+    value: '12',
+    change: '+2',
+    changePercent: 'This month',
+    label: 'Holdings',
+    positive: true,
+    icon: PieChart,
+    gradient: 'from-blue-500/10 to-indigo-500/10'
+  },
+  {
+    title: 'Win Rate',
+    value: '68%',
+    change: '+5%',
+    changePercent: 'vs last month',
+    label: 'Success rate',
+    positive: true,
+    icon: Activity,
+    gradient: 'from-purple-500/10 to-pink-500/10'
+  },
 ];
 
 const portfolioStocks = [
@@ -31,186 +67,222 @@ const recentActivity = [
 const Dashboard = () => {
   const { user } = useAuth();
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingTrade, setPendingTrade] = useState(null);
+
+  const handleTradeSubmit = (tradeData) => {
+    setPendingTrade(tradeData);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmTrade = () => {
+    console.log('Trade confirmed:', pendingTrade);
+    setShowConfirmModal(false);
+    setPendingTrade(null);
+    // Here you would call your actual trade API
+  };
 
   return (
     <DashboardLayout activeMenu="dashboard">
-      {/* Header */}
-      <div className="p-6 md:p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {user.firstName}!</h1>
-            <p className="text-slate-500 dark:text-slate-400 mt-1">
-              Here's your portfolio overview for today.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <button className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-lg transition-colors text-sm font-medium border border-slate-300 dark:border-slate-700">
-              Download Report
-            </button>
-            <button className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-colors text-sm font-medium shadow-lg shadow-teal-600/20 flex items-center gap-2">
-              <Plus size={16} />
-              Add Funds
-            </button>
-          </div>
-        </div>
-
-        {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statsCards.map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <div key={idx} className="glass-card rounded-xl p-6 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <Icon size={64} />
-                </div>
-                <div className="flex justify-between items-start mb-4 relative z-10">
-                  <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400">{stat.title}</h3>
-                  <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
-                    <Icon size={20} />
-                  </div>
-                </div>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white mb-2 relative z-10">{stat.value}</p>
-                <div className={`flex items-center text-sm font-medium relative z-10 ${stat.positive ? 'text-teal-600 dark:text-teal-400' : 'text-red-500 dark:text-red-400'}`}>
-                  {stat.positive ? <TrendingUp size={16} className="mr-1" /> : <TrendingDown size={16} className="mr-1" />}
-                  <span>{stat.change} ({stat.changePercent})</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Market Overview Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <div className="lg:col-span-2 glass-panel rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedSymbol}</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Stock Analysis</p>
-              </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">$150.00</p>
-                <p className="text-sm font-medium text-teal-600 dark:text-teal-400">+1.25%</p>
-              </div>
+      {/* Background gradient for depth */}
+      <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        {/* Header with more spacing */}
+        <div className="p-6 md:p-8 pt-10 md:pt-12">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {user.firstName}!</h1>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">
+                Here's your portfolio overview for today.
+              </p>
             </div>
-            <StockChart />
-          </div>
-          <div>
-            <TradePanel symbol={selectedSymbol} onSymbolChange={setSelectedSymbol} />
-          </div>
-        </div>
-
-        {/* Portfolio and Activity Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Portfolio Section */}
-          <div className="lg:col-span-2 glass-panel rounded-xl overflow-hidden">
-            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">My Portfolio</h2>
-              <button className="px-3 py-1.5 bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 hover:bg-teal-100 dark:hover:bg-teal-900/30 text-sm font-medium rounded-lg transition-colors">
-                View All
+            <div className="flex gap-3">
+              <button className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-all text-sm font-medium border border-slate-200 dark:border-slate-700 shadow-sm">
+                Download Report
+              </button>
+              <button className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white rounded-xl transition-all text-sm font-medium shadow-lg shadow-teal-600/30 flex items-center gap-2 hover:shadow-xl hover:shadow-teal-600/40">
+                <Plus size={16} />
+                Add Funds
               </button>
             </div>
-            <div className="p-6">
-              <div className="relative mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="Search stocks..."
-                  className="pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg w-full text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                />
+          </div>
+
+          {/* Mini Portfolio Summary Row */}
+          <div className="glass-panel rounded-xl p-4 mb-8 shadow-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                  <Wallet className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Cash</p>
+                  <p className="text-lg font-bold text-slate-900 dark:text-white">$10,000</p>
+                </div>
               </div>
-              <div className="space-y-4">
-                {portfolioStocks.map((stock, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setSelectedSymbol(stock.symbol)}
-                    className={`flex items-center justify-between p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group ${selectedSymbol === stock.symbol ? 'bg-slate-100 dark:bg-slate-800/50 ring-1 ring-teal-500/50' : ''}`}
-                  >
-                    <div className="flex items-center">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ${stock.positive ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400' : 'bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400'}`}>
-                        {stock.symbol.charAt(0)}
-                      </div>
-                      <div className="ml-4">
-                        <p className="font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{stock.symbol}</p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">{stock.shares} shares</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-slate-900 dark:text-white">${stock.price}</p>
-                      <p className={`text-sm font-medium ${stock.positive ? 'text-teal-600 dark:text-teal-400' : 'text-red-500 dark:text-red-400'}`}>
-                        {stock.positive ? '+' : ''}{stock.change} ({stock.changePercent})
-                      </p>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Investments</p>
+                  <p className="text-lg font-bold text-slate-900 dark:text-white">$115,430</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Unrealized P/L</p>
+                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">+$15,430</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">24h Change</p>
+                  <p className="text-lg font-bold text-teal-600 dark:text-teal-400">+2.00%</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Recent Activity Section */}
-          <div className="glass-panel rounded-xl overflow-hidden">
-            <div className="p-6 border-b border-slate-800 flex items-center gap-2">
-              <Activity size={20} className="text-blue-400" />
-              <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
-            </div>
-            <div className="p-6 space-y-4">
-              {recentActivity.map((activity, idx) => (
-                <div key={idx} className="flex gap-4 relative pb-4 last:pb-0 last:after:hidden after:absolute after:left-[19px] after:top-10 after:bottom-0 after:w-0.5 after:bg-slate-800">
-                  <div className={`relative z-10 w-10 h-10 rounded-full border-2 flex items-center justify-center shrink-0 ${activity.positive ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400' : 'border-red-500/20 bg-red-500/10 text-red-400'}`}>
-                    {activity.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+          {/* Stats Cards Grid with improved styling */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            {statsCards.map((stat, idx) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={idx}
+                  className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br ${stat.gradient}`}
+                  style={{
+                    boxShadow: idx === 0 ? '0 4px 12px rgba(0,0,0,0.05)' : idx === 1 ? '0 6px 14px rgba(0,0,0,0.06)' : idx === 2 ? '0 8px 16px rgba(0,0,0,0.07)' : '0 10px 18px rgba(0,0,0,0.08)'
+                  }}
+                >
+                  <div className="flex justify-between items-start mb-3 relative z-10">
+                    <div>
+                      <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">{stat.title}</h3>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5">{stat.label}</p>
+                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
+                      <Icon size={20} className="text-teal-600 dark:text-teal-400" />
+                    </div>
                   </div>
-                  <div className="flex-1 pt-1">
-                    <div className="flex justify-between items-start mb-1">
-                      <span className="text-sm font-medium text-white">
-                        {activity.type} {activity.shares} {activity.symbol}
-                      </span>
-                      <span className="text-xs text-slate-500">{activity.date}</span>
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      @ ${activity.price}
-                    </div>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">{stat.value}</p>
+                  <div className={`flex items-center text-xs font-medium relative z-10 ${stat.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {stat.positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                    <span>{stat.change}</span>
+                    <span className="text-slate-500 dark:text-slate-500 ml-1">• {stat.changePercent}</span>
                   </div>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+
+          {/* Market Overview Section with Trade Box */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Stock Chart */}
+            <div className="lg:col-span-2 glass-panel rounded-2xl p-6 shadow-sm">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Market Overview</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Track price movements for {selectedSymbol}</p>
+              </div>
+              <StockChart symbol={selectedSymbol} />
+            </div>
+
+            {/* Trade Panel */}
+            <div className="glass-panel rounded-2xl p-6 shadow-sm">
+              <TradePanel
+                selectedSymbol={selectedSymbol}
+                onSymbolChange={setSelectedSymbol}
+                onTradeSubmit={handleTradeSubmit}
+              />
             </div>
           </div>
-        </div>
 
-        {/* Watchlist/Featured Stocks */}
-        <div>
-          <h2 className="text-xl font-bold text-white mb-6">Featured Stocks</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DataWidget
-              title="Bitcoin - Binance"
-              symbol="BTC"
-              price="42,617.94 USD"
-              change="+1,285.32"
-              changePercent="+3.11%"
-              positive={true}
-            />
-            <DataWidget
-              title="Apple Inc."
-              symbol="AAPL"
-              price="175.43 USD"
-              change="+2.34"
-              changePercent="+1.35%"
-              positive={true}
-              details={[
-                { label: 'Open', value: '173.20' },
-                { label: 'Prev Close', value: '173.09' },
-                { label: 'Volume', value: '45.2M' },
-              ]}
-            />
-            <DataWidget
-              title="Microsoft Corp."
-              symbol="MSFT"
-              price="378.85 USD"
-              change="-1.23"
-              changePercent="-0.32%"
-              positive={false}
-            />
+          {/* Portfolio Holdings */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* My Portfolio */}
+            <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">My Portfolio</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Click to view details and trade</p>
+              </div>
+              <div className="p-4">
+                <div className="space-y-2">
+                  {portfolioStocks.map((stock) => (
+                    <button
+                      key={stock.symbol}
+                      onClick={() => setSelectedSymbol(stock.symbol)}
+                      className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-2 ${selectedSymbol === stock.symbol
+                        ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-500/50 shadow-md'
+                        : 'bg-white dark:bg-slate-800/50 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700'
+                        }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${stock.positive
+                          ? 'bg-teal-100 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-400'
+                          : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'
+                          }`}>
+                          {stock.symbol.charAt(0)}
+                        </div>
+                        <div className="text-left">
+                          <div className="font-bold text-slate-900 dark:text-white">{stock.symbol}</div>
+                          <div className="text-xs text-slate-600 dark:text-slate-400">{stock.shares} shares</div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-bold text-slate-900 dark:text-white">${stock.price}</div>
+                        <div className={`text-xs font-medium ${stock.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {stock.change}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
+              <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Recent Activity</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Your latest trades</p>
+              </div>
+              <div className="p-4">
+                <div className="space-y-3">
+                  {recentActivity.map((activity, idx) => (
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
+                      <div className="flex items-center gap-3">
+                        <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${activity.type === 'Buy'
+                          ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
+                          : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                          }`}>
+                          {activity.type}
+                        </div>
+                        <div>
+                          <div className="font-bold text-sm text-slate-900 dark:text-white">{activity.symbol}</div>
+                          <div className="text-xs text-slate-600 dark:text-slate-400">{activity.shares} shares @ ${activity.price}</div>
+                        </div>
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">{activity.date}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <ConfirmTradeModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmTrade}
+        tradeData={pendingTrade || {}}
+      />
     </DashboardLayout>
   );
 };

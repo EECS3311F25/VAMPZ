@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Footer from './components/Footer';
-import Layout from './components/Layout';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
@@ -56,17 +55,13 @@ function App() {
 
             <Route path="/dashboard" element={
               <ProtectedRoute>
-                <Layout>
-                  <Dashboard />
-                </Layout>
+                <Dashboard />
               </ProtectedRoute>
             } />
 
             <Route path="/portfolio" element={
               <ProtectedRoute>
-                <Layout>
-                  <PortfolioPage />
-                </Layout>
+                <PortfolioPage />
               </ProtectedRoute>
             } />
           </Routes>

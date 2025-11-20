@@ -96,12 +96,6 @@ const Dashboard = () => {
               </p>
 
             </div>
-            <div className="flex gap-3">
-              <button className="px-4 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-all text-sm font-medium border border-slate-200 dark:border-slate-700 shadow-sm">
-                Download Report
-              </button>
-
-            </div>
           </div>
 
           {/* Stats Cards Grid with improved styling */}

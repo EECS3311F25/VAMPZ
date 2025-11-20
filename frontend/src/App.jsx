@@ -6,6 +6,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import Dashboard from './pages/Dashboard';
 import PortfolioPage from './pages/PortfolioPage';
+import TransactionsPage from './pages/TransactionsPage';
+import WatchlistPage from './pages/WatchlistPage';
 
 // Homepage Components
 import HomeNavbar from './components/HomeNavbar';
@@ -57,6 +59,18 @@ function App() {
             <Route path="/portfolio" element={
               <ProtectedRoute>
                 <PortfolioPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/transactions" element={
+              <ProtectedRoute>
+                <TransactionsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/watchlist" element={
+              <ProtectedRoute>
+                <WatchlistPage />
               </ProtectedRoute>
             } />
           </Routes>

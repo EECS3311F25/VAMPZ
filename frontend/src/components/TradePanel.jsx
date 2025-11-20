@@ -1,9 +1,16 @@
-import { useState } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Info } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { DollarSign, TrendingUp, TrendingDown, Info, Search } from 'lucide-react';
+
+const POPULAR_STOCKS = [
+    'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
+];
 
 const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) => {
     const [type, setType] = useState('Buy');
     const [quantity, setQuantity] = useState(1);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
+    const wrapperRef = useRef(null);
 
     // Mock current price - in production, this would come from real-time data
     const currentPrice = 150.00;
@@ -11,6 +18,47 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
     const portfolioValue = 125430.50;
     const portfolioAfter = type === 'Buy' ? portfolioValue - total : portfolioValue + total;
     const portfolioChange = ((total / portfolioValue) * 100).toFixed(2);
+
+    useEffect(() => {
+        // Filter suggestions when selectedSymbol changes
+        if (selectedSymbol) {
+            const filtered = POPULAR_STOCKS.filter(stock =>
+                stock.toLowerCase().includes(selectedSymbol.toLowerCase()) &&
+                stock !== selectedSymbol
+            ).slice(0, 5); // Limit to 5 suggestions
+            setSuggestions(filtered);
+        } else {
+            setSuggestions([]);
+        }
+    }, [selectedSymbol]);
+
+    useEffect(() => {
+        // Handle clicking outside to close suggestions
+        function handleClickOutside(event) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [wrapperRef]);
+
+    const handleSymbolChange = (e) => {
+        const value = e.target.value.toUpperCase();
+        if (onSymbolChange) {
+            onSymbolChange(value);
+        }
+        setShowSuggestions(true);
+    };
+
+    const handleSelectSuggestion = (symbol) => {
+        if (onSymbolChange) {
+            onSymbolChange(symbol);
+        }
+        setShowSuggestions(false);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -58,17 +106,40 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Symbol Input */}
-                <div>
+                <div className="relative" ref={wrapperRef}>
                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
                         Symbol
                     </label>
-                    <input
-                        type="text"
-                        value={selectedSymbol}
-                        onChange={(e) => onSymbolChange && onSymbolChange(e.target.value.toUpperCase())}
-                        className="block w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-bold text-lg uppercase placeholder-slate-300 dark:placeholder-slate-600"
-                        placeholder="e.g. AAPL"
-                    />
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={selectedSymbol}
+                            onChange={handleSymbolChange}
+                            onFocus={() => setShowSuggestions(true)}
+                            className="block w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-bold text-lg uppercase placeholder-slate-300 dark:placeholder-slate-600"
+                            placeholder="e.g. AAPL"
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                            <Search size={20} />
+                        </div>
+                    </div>
+
+                    {/* Autocomplete Dropdown */}
+                    {showSuggestions && suggestions.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
+                            {suggestions.map((symbol) => (
+                                <button
+                                    key={symbol}
+                                    type="button"
+                                    onClick={() => handleSelectSuggestion(symbol)}
+                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center justify-between group"
+                                >
+                                    <span className="font-bold text-slate-900 dark:text-white">{symbol}</span>
+                                    <span className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400">Select</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Current Price Display */}
@@ -90,17 +161,46 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                     <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
                         Quantity
                     </label>
-                    <div className="relative">
-                        <input
-                            type="number"
-                            min="1"
-                            value={quantity}
-                            onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                            className="block w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-semibold text-lg"
-                        />
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-medium pointer-events-none">
-                            Shares
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-full bg-white dark:bg-slate-900/50">
+                            <button
+                                type="button"
+                                onClick={() => setQuantity(Math.max(1, (parseInt(quantity) || 0) - 1))}
+                                className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                                -
+                            </button>
+                            <input
+                                type="number"
+                                min="1"
+                                value={quantity}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '') {
+                                        setQuantity('');
+                                    } else {
+                                        const parsed = parseInt(val);
+                                        if (!isNaN(parsed) && parsed >= 0) {
+                                            setQuantity(parsed);
+                                        }
+                                    }
+                                }}
+                                onBlur={() => {
+                                    if (quantity === '' || quantity < 1) {
+                                        setQuantity(1);
+                                    }
+                                }}
+                                className="w-12 text-center bg-transparent border-none outline-none text-slate-900 dark:text-white font-semibold text-lg no-spinner appearance-none"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setQuantity((parseInt(quantity) || 0) + 1)}
+                                className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            >
+                                +
+                            </button>
                         </div>
+                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Shares</span>
                     </div>
                 </div>
 

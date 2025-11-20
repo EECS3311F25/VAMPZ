@@ -8,9 +8,7 @@ import {
   Wallet,
   Eye,
   History,
-  Settings,
   ChevronRight,
-  TrendingUp
 } from 'lucide-react';
 
 const menuItems = [
@@ -18,8 +16,6 @@ const menuItems = [
   { id: 'portfolio', label: 'Portfolio', icon: Wallet, path: '/portfolio' },
   { id: 'watchlist', label: 'Watchlist', icon: Eye, path: '/watchlist' },
   { id: 'transactions', label: 'Transactions', icon: History, path: '/transactions' },
-  { id: 'performance', label: 'Performance', icon: TrendingUp, path: '/performance' },
-  { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
 ];
 
 const DashboardLayout = ({ children, activeMenu }) => {

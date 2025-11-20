@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -9,6 +10,7 @@ import PortfolioPage from './pages/PortfolioPage';
 import TransactionsPage from './pages/TransactionsPage';
 import WatchlistPage from './pages/WatchlistPage';
 import FAQPage from './pages/FAQPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Homepage Components
 import HomeNavbar from './components/HomeNavbar';
@@ -33,57 +35,64 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
 
-            <Route path="/" element={
-              <div className="min-h-screen bg-white dark:bg-slate-950 relative transition-colors duration-300">
-                <TickerBar />
-                <HomeNavbar />
-                <Hero />
-                <Features />
-                <Pricing />
-                <Footer />
-              </div>
-            } />
+              <Route path="/" element={
+                <div className="min-h-screen bg-white dark:bg-slate-950 relative transition-colors duration-300">
+                  <TickerBar />
+                  <HomeNavbar />
+                  <main>
+                    <Hero />
+                    <Features />
+                    <Pricing />
+                  </main>
+                  <Footer />
+                </div>
+              } />
 
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
 
-            <Route path="/portfolio" element={
-              <ProtectedRoute>
-                <PortfolioPage />
-              </ProtectedRoute>
-            } />
+              <Route path="/portfolio" element={
+                <ProtectedRoute>
+                  <PortfolioPage />
+                </ProtectedRoute>
+              } />
 
-            <Route path="/transactions" element={
-              <ProtectedRoute>
-                <TransactionsPage />
-              </ProtectedRoute>
-            } />
+              <Route path="/transactions" element={
+                <ProtectedRoute>
+                  <TransactionsPage />
+                </ProtectedRoute>
+              } />
 
-            <Route path="/watchlist" element={
-              <ProtectedRoute>
-                <WatchlistPage />
-              </ProtectedRoute>
-            } />
+              <Route path="/watchlist" element={
+                <ProtectedRoute>
+                  <WatchlistPage />
+                </ProtectedRoute>
+              } />
 
-            <Route path="/faq" element={
-              <ProtectedRoute>
-                <FAQPage />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+              <Route path="/faq" element={
+                <ProtectedRoute>
+                  <FAQPage />
+                </ProtectedRoute>
+              } />
+
+              {/* 404 Catch-all Route */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

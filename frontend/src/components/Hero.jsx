@@ -17,7 +17,7 @@ export default function Hero() {
 
 
   return (
-    <div className="relative overflow-hidden bg-white dark:bg-slate-950 min-h-[80vh] flex items-center pt-16 pb-24 transition-colors duration-300">
+    <section className="relative overflow-hidden bg-white dark:bg-slate-950 min-h-[80vh] flex items-center pt-16 pb-24 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -36,12 +36,15 @@ export default function Hero() {
               </span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
               Grow your portfolio,<br />Grow your{' '}
               <span className="text-teal-600 dark:text-teal-400">potential</span>
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-lg">
-              Practice real-time trading with virtual money. Test strategies, learn risk management, and build confidence before investing for real.
+            <p className="text-xl text-slate-700 dark:text-slate-300 mb-6 leading-relaxed max-w-lg font-medium">
+              Practice real-time trading with virtual money, powered by live market data and risk analytics.
+            </p>
+            <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-lg">
+              Paper trading and portfolio analytics for students and new investors. Test strategies, learn risk management, and build confidence without real risk.
             </p>
             <div className="flex flex-wrap gap-4">
               <motion.button
@@ -50,16 +53,32 @@ export default function Hero() {
                 onClick={() => navigate('/signup')}
                 className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-teal-600/20 transition-all"
               >
-                Get started – it’s free
+                Get started – create free paper account
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/features')} // Changed to features or demo link if available
+                onClick={() => {
+                  const featuresSection = document.getElementById('features');
+                  featuresSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="flex items-center gap-2 px-8 py-4 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors bg-transparent border border-slate-200 dark:border-slate-700 hover:border-teal-600 dark:hover:border-teal-400 rounded-xl"
               >
                 View demo
               </motion.button>
+            </div>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
+              No real money, no card required.
+            </p>
+
+            {/* Powered by strip */}
+            <div className="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Market data powered by:</p>
+              <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                <span className="font-medium">Finnhub</span>
+                <span className="text-slate-300 dark:text-slate-600">•</span>
+                <span className="font-medium">Alpha Vantage</span>
+              </div>
             </div>
           </motion.div>
 
@@ -105,6 +124,6 @@ export default function Hero() {
 
 
       </div>
-    </div>
+    </section>
   );
 }

@@ -183,9 +183,19 @@ const TransactionsPage = () => {
 
                         {/* Empty State */}
                         {filteredTransactions.length === 0 && (
-                            <div className="text-center py-12">
-                                <p className="text-slate-500 dark:text-slate-400">No transactions found</p>
-                                <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Try adjusting your search or filters</p>
+                            <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="w-32 h-32 mx-auto mb-4 relative">
+                                    <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
+                                    <img
+                                        src="/images/empty-transactions.png"
+                                        alt="No Transactions"
+                                        className="w-full h-full object-contain relative z-10 opacity-80"
+                                    />
+                                </div>
+                                <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions found</p>
+                                <p className="text-slate-500 dark:text-slate-400 text-sm">
+                                    {searchQuery || filterType !== 'All' ? 'Try adjusting your filters' : 'Your trading history will appear here'}
+                                </p>
                             </div>
                         )}
                     </div>

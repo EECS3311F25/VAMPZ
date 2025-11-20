@@ -1,10 +1,53 @@
 import { Link } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const HomeNavbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('');
+
+    // Intersection Observer for active section highlighting
+    useEffect(() => {
+        const sections = document.querySelectorAll('section[id]');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-20% 0px -70% 0px', // Adjust trigger points
+            threshold: 0,
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        sections.forEach((section) => {
+            observer.observe(section);
+        });
+
+        return () => {
+            sections.forEach((section) => {
+                observer.unobserve(section);
+            });
+        };
+    }, []);
+
+    const scrollToSection = (sectionId) => {
+        const section = document.getElementById(sectionId);
+        section?.scrollIntoView({ behavior: 'smooth' });
+        setIsMenuOpen(false);
+    };
+
+    const navItems = [
+        { id: 'features', label: 'Features' },
+        { id: 'pricing', label: 'Pricing' },
+    ];
 
     return (
         <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50">
@@ -24,24 +67,30 @@ const HomeNavbar = () => {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-8">
-                        <Link
-                            to="/features"
-                            className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-                        >
-                            Features
-                        </Link>
-                        <Link
-                            to="/pricing"
-                            className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-                        >
-                            Pricing
-                        </Link>
-                        <Link
-                            to="/about"
+                        {navItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => scrollToSection(item.id)}
+                                className={`text-sm font-medium transition-colors relative ${activeSection === item.id
+                                        ? 'text-teal-600 dark:text-teal-400'
+                                        : 'text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400'
+                                    }`}
+                            >
+                                {item.label}
+                                {activeSection === item.id && (
+                                    <span className="absolute -bottom-[21px] left-0 right-0 h-0.5 bg-teal-600 dark:bg-teal-400" />
+                                )}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => {
+                                const footerSection = document.querySelector('footer');
+                                footerSection?.scrollIntoView({ behavior: 'smooth' });
+                            }}
                             className="text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
                         >
                             About
-                        </Link>
+                        </button>
                     </div>
 
                     {/* Right Side - Consistent position: Search | Theme | Auth */}
@@ -85,27 +134,28 @@ const HomeNavbar = () => {
                 {/* Mobile Menu */}
                 {isMenuOpen && (
                     <div className="md:hidden py-4 space-y-3 border-t border-slate-200 dark:border-slate-800">
-                        <Link
-                            to="/features"
-                            className="block px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Features
-                        </Link>
-                        <Link
-                            to="/pricing"
-                            className="block px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            Pricing
-                        </Link>
-                        <Link
-                            to="/about"
-                            className="block px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                            onClick={() => setIsMenuOpen(false)}
+                        {navItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => scrollToSection(item.id)}
+                                className={`block w-full text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeSection === item.id
+                                        ? 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/20'
+                                        : 'text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                    }`}
+                            >
+                                {item.label}
+                            </button>
+                        ))}
+                        <button
+                            onClick={() => {
+                                const footerSection = document.querySelector('footer');
+                                footerSection?.scrollIntoView({ behavior: 'smooth' });
+                                setIsMenuOpen(false);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                         >
                             About
-                        </Link>
+                        </button>
                         <div className="pt-3 space-y-2">
                             <Link
                                 to="/login"

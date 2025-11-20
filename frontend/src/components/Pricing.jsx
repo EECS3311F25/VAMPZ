@@ -3,7 +3,8 @@ import { Check } from 'lucide-react';
 
 const plans = [
   {
-    name: 'Free',
+    name: 'Core Simulator',
+    badge: 'Free',
     description: 'Perfect for getting started',
     features: [
       '💸 $10,000 virtual balance for paper trading',
@@ -15,9 +16,12 @@ const plans = [
       '🧠 Introductory trading tutorials',
     ],
     highlight: false,
+    available: true,
+    buttonText: 'Get Started',
   },
   {
-    name: 'Student Plan',
+    name: 'Analytics Pack',
+    badge: 'Coming Soon',
     description: 'For serious learners',
     features: [
       '💸 $100,000 virtual balance',
@@ -32,9 +36,12 @@ const plans = [
       '☁️ Save multiple portfolios',
     ],
     highlight: true,
+    available: false,
+    buttonText: 'Coming Soon',
   },
   {
-    name: 'Pro Plan',
+    name: 'Institutional',
+    badge: 'Concept Only',
     description: 'For advanced traders',
     features: [
       '💸 $1,000,000 virtual balance',
@@ -49,12 +56,14 @@ const plans = [
       '🎓 Priority support and mentorship sessions',
     ],
     highlight: false,
+    available: false,
+    buttonText: 'Concept Only',
   },
 ];
 
 export default function Pricing() {
   return (
-    <div id="pricing" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
+    <section id="pricing" className="py-24 bg-white dark:bg-slate-950 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,7 +72,7 @@ export default function Pricing() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Choose Your Plan</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Choose how deep you want to go</h2>
           <p className="text-lg text-slate-600 dark:text-slate-400">Start with Free, upgrade when you're ready</p>
         </motion.div>
 
@@ -76,37 +85,79 @@ export default function Pricing() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               className={`glass-card relative rounded-2xl p-8 border ${plan.highlight
-                ? 'border-teal-500 shadow-xl shadow-teal-500/10'
-                : 'border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl'
-                } transition-all duration-300`}
+                  ? 'border-teal-500 shadow-xl shadow-teal-500/10'
+                  : 'border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-xl'
+                } transition-all duration-300 ${!plan.available ? 'opacity-90' : ''}`}
             >
               {plan.highlight && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-teal-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg shadow-teal-600/20">
                   Popular
                 </div>
               )}
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{plan.name}</h3>
+
+              <div className="flex items-start justify-between mb-4">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{plan.name}</h3>
+                {plan.badge && (
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${plan.available
+                      ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'
+                    }`}>
+                    {plan.badge}
+                  </span>
+                )}
+              </div>
+
               <p className="text-slate-600 dark:text-slate-400 mb-8">{plan.description}</p>
+
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">
-                      <Check size={18} className="text-teal-600" />
+                      <Check size={18} className={plan.available ? 'text-teal-600' : 'text-slate-400'} />
                     </div>
-                    <span className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feature}</span>
+                    <span className={`text-sm leading-relaxed ${plan.available
+                        ? 'text-slate-600 dark:text-slate-400'
+                        : 'text-slate-500 dark:text-slate-500'
+                      }`}>
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
-              <button className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 ${plan.highlight
-                ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/30 hover:shadow-xl'
-                : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
-                }`}>
-                Get Started
+
+              <button
+                disabled={!plan.available}
+                className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 ${plan.highlight
+                    ? plan.available
+                      ? 'bg-teal-600 hover:bg-teal-700 text-white shadow-lg shadow-teal-600/30 hover:shadow-xl'
+                      : 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                    : plan.available
+                      ? 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                  }`}
+              >
+                {plan.buttonText}
               </button>
             </motion.div>
           ))}
         </div>
+
+        {/* Educational Disclaimer */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="mt-12 text-center"
+        >
+          <div className="inline-block bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-6 py-4 max-w-3xl">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              <span className="font-semibold text-slate-900 dark:text-white">Academic Project: </span>
+              This is a research and learning project created for EECS 3311. Only the Core Simulator is implemented in this version.
+            </p>
+          </div>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 }

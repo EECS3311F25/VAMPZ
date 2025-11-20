@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Info, Search } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check } from 'lucide-react';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -10,6 +10,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
     const [quantity, setQuantity] = useState(1);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
     const wrapperRef = useRef(null);
 
     // Mock current price - in production, this would come from real-time data
@@ -27,8 +28,10 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                 stock !== selectedSymbol
             ).slice(0, 5); // Limit to 5 suggestions
             setSuggestions(filtered);
+            setSelectedIndex(-1); // Reset selection when suggestions change
         } else {
             setSuggestions([]);
+            setSelectedIndex(-1);
         }
     }, [selectedSymbol]);
 
@@ -51,6 +54,37 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
             onSymbolChange(value);
         }
         setShowSuggestions(true);
+        setSelectedIndex(-1);
+    };
+
+    const handleKeyDown = (e) => {
+        if (!showSuggestions || suggestions.length === 0) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setSelectedIndex(prev =>
+                    prev < suggestions.length - 1 ? prev + 1 : prev
+                );
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+                    handleSelectSuggestion(suggestions[selectedIndex]);
+                }
+                break;
+            case 'Escape':
+                e.preventDefault();
+                setShowSuggestions(false);
+                setSelectedIndex(-1);
+                break;
+            default:
+                break;
+        }
     };
 
     const handleSelectSuggestion = (symbol) => {
@@ -58,6 +92,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
             onSymbolChange(symbol);
         }
         setShowSuggestions(false);
+        setSelectedIndex(-1);
     };
 
     const handleSubmit = (e) => {
@@ -81,12 +116,18 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Trade Stock</h3>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Paper trading • No fees</p>
                 </div>
-                <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 shadow-inner relative">
-                    {/* Sliding background could be added here with framer-motion, but for now we use simple transitions */}
+                <div className="flex bg-gradient-to-br from-slate-100/80 via-slate-50/80 to-slate-100/80 dark:from-slate-800/80 dark:via-slate-700/80 dark:to-slate-800/80 backdrop-blur-xl rounded-xl p-1 shadow-lg shadow-slate-300/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-600/50 relative">
+                    {/* Sliding background indicator */}
+                    <div
+                        className={`absolute top-1 bottom-1 w-1/2 bg-white/90 dark:bg-slate-700/90 backdrop-blur-md rounded-lg shadow-lg transition-all duration-200 ease-out ${type === 'Buy'
+                            ? 'left-1 shadow-teal-500/20 dark:shadow-teal-400/20 border border-teal-200/50 dark:border-teal-600/50'
+                            : 'left-[calc(50%-0.25rem)] shadow-red-500/20 dark:shadow-red-400/20 border border-red-200/50 dark:border-red-600/50'
+                            }`}
+                    />
                     <button
                         onClick={() => setType('Buy')}
-                        className={`relative z-10 px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${type === 'Buy'
-                            ? 'bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm'
+                        className={`relative z-10 px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ease-out ${type === 'Buy'
+                            ? 'text-teal-600 dark:text-teal-400'
                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                             }`}
                     >
@@ -94,8 +135,8 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                     </button>
                     <button
                         onClick={() => setType('Sell')}
-                        className={`relative z-10 px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-300 ${type === 'Sell'
-                            ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm'
+                        className={`relative z-10 px-6 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ease-out ${type === 'Sell'
+                            ? 'text-red-600 dark:text-red-400'
                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                             }`}
                     >
@@ -115,6 +156,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                             type="text"
                             value={selectedSymbol}
                             onChange={handleSymbolChange}
+                            onKeyDown={handleKeyDown}
                             onFocus={() => setShowSuggestions(true)}
                             className="block w-full px-4 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-bold text-lg uppercase placeholder-slate-300 dark:placeholder-slate-600"
                             placeholder="e.g. AAPL"
@@ -127,15 +169,28 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                     {/* Autocomplete Dropdown */}
                     {showSuggestions && suggestions.length > 0 && (
                         <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
-                            {suggestions.map((symbol) => (
+                            {suggestions.map((symbol, index) => (
                                 <button
                                     key={symbol}
                                     type="button"
                                     onClick={() => handleSelectSuggestion(symbol)}
-                                    className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors flex items-center justify-between group"
+                                    onMouseEnter={() => setSelectedIndex(index)}
+                                    className={`w-full text-left px-4 py-3 transition-all duration-150 flex items-center justify-between group ${index === selectedIndex
+                                        ? 'bg-teal-50 dark:bg-teal-900/30 border-l-2 border-teal-500'
+                                        : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                        }`}
                                 >
-                                    <span className="font-bold text-slate-900 dark:text-white">{symbol}</span>
-                                    <span className="text-xs text-slate-500 dark:text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400">Select</span>
+                                    <span className={`font-bold transition-colors ${index === selectedIndex
+                                        ? 'text-teal-700 dark:text-teal-300'
+                                        : 'text-slate-900 dark:text-white'
+                                        }`}>{symbol}</span>
+                                    <Check
+                                        size={18}
+                                        className={`transition-all duration-200 ${index === selectedIndex
+                                            ? 'text-teal-600 dark:text-teal-400 opacity-100 scale-100'
+                                            : 'text-slate-400 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 group-hover:text-teal-600 dark:group-hover:text-teal-400'
+                                            }`}
+                                    />
                                 </button>
                             ))}
                         </div>

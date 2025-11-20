@@ -60,7 +60,7 @@ const WatchlistPage = () => {
             <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
                 {/* Header */}
                 <div className="p-6 md:p-8 pt-10 md:pt-12">
-                    <div className="mb-6 flex items-start justify-between">
+                    <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Watchlist</h1>
                             <p className="text-slate-600 dark:text-slate-400 mt-1">
@@ -69,7 +69,7 @@ const WatchlistPage = () => {
                         </div>
                         <button
                             onClick={() => setShowAddModal(true)}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30"
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30"
                         >
                             <Plus size={18} />
                             Add Stock
@@ -199,12 +199,28 @@ const WatchlistPage = () => {
 
                     {/* Empty State */}
                     {filteredWatchlist.length === 0 && (
-                        <div className="text-center py-16 glass-card rounded-2xl">
-                            <Eye size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
-                            <p className="text-slate-500 dark:text-slate-400 font-medium">No stocks in your watchlist</p>
-                            <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
-                                {searchQuery ? 'Try adjusting your search' : 'Click "Add Stock" to get started'}
+                        <div className="text-center py-20 glass-card rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <div className="w-40 h-40 mx-auto mb-6 relative">
+                                <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
+                                <img
+                                    src="/images/empty-watchlist.png"
+                                    alt="Empty Watchlist"
+                                    className="w-full h-full object-contain relative z-10 drop-shadow-xl"
+                                />
+                            </div>
+                            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Your Watchlist is Empty</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-sm mx-auto">
+                                {searchQuery ? 'No stocks found matching your search.' : 'Keep track of your favorite stocks by adding them here.'}
                             </p>
+                            {!searchQuery && (
+                                <button
+                                    onClick={() => setShowAddModal(true)}
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30 hover:shadow-teal-600/40 hover:-translate-y-1"
+                                >
+                                    <Plus size={20} />
+                                    Add First Stock
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

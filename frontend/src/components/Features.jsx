@@ -5,26 +5,26 @@ const features = [
   {
     icon: LineChart,
     title: 'Realistic Market Simulation',
-    description: 'Practice trading with live market data and dynamic price movements.',
+    description: 'Trade US equities and crypto with 15-minute delayed prices and $100k virtual balance.',
     color: 'bg-yellow-100 text-yellow-600',
   },
   {
     icon: GraduationCap,
     title: 'Guided Learning Experience',
-    description: 'Understand the “why” behind every trade with built-in tutorials and feedback.',
+    description: 'See P/L per trade, risk per position, and warning labels when you over-concentrate.',
     color: 'bg-blue-100 text-blue-600',
   },
   {
     icon: BarChart3,
     title: 'Interactive Portfolio Tracking',
-    description: 'Visualize growth through detailed performance charts, trade history and analytics.',
+    description: 'Track daily returns, top movers, and allocation by sector in one dashboard.',
     color: 'bg-green-100 text-green-600',
   },
 ];
 
 export default function Features() {
   return (
-    <div className="py-24 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <div id="features" className="py-24 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,7 +34,7 @@ export default function Features() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Why Choose StockSprout?</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400">Built for developers who need reliable financial data</p>
+          <p className="text-lg text-slate-600 dark:text-slate-400">Built for learners who want to practice real markets without real risk.</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">

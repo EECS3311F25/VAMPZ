@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Search, DollarSign, PieChart, BarChart3, Activity, Plus, Wallet, TrendingUpIcon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
 import ConfirmTradeModal from '../components/ConfirmTradeModal';
+import StatsCard from '../components/ui/StatsCard';
+import { SkeletonSummaryCard } from '../components/Skeleton';
 
 const statsCards = [
   {
@@ -69,6 +71,14 @@ const Dashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingTrade, setPendingTrade] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleTradeSubmit = (tradeData) => {
     setPendingTrade(tradeData);
@@ -94,7 +104,6 @@ const Dashboard = () => {
               <p className="text-slate-600 dark:text-slate-400 mt-1">
                 Here's your portfolio overview for today.
               </p>
-
             </div>
           </div>
 
@@ -102,34 +111,29 @@ const Dashboard = () => {
           <div className="mb-10">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {statsCards.map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div
+              {loading ? (
+                <>
+                  <SkeletonSummaryCard />
+                  <SkeletonSummaryCard />
+                  <SkeletonSummaryCard />
+                  <SkeletonSummaryCard />
+                </>
+              ) : (
+                statsCards.map((stat, idx) => (
+                  <StatsCard
                     key={idx}
-                    className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br ${stat.gradient}`}
-                    style={{
-                      boxShadow: idx === 0 ? '0 4px 12px rgba(0,0,0,0.05)' : idx === 1 ? '0 6px 14px rgba(0,0,0,0.06)' : idx === 2 ? '0 8px 16px rgba(0,0,0,0.07)' : '0 10px 18px rgba(0,0,0,0.08)'
-                    }}
-                  >
-                    <div className="flex justify-between items-start mb-3 relative z-10">
-                      <div>
-                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{stat.title}</h3>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">{stat.label}</p>
-                      </div>
-                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                        <Icon size={20} className="text-teal-600 dark:text-teal-400" />
-                      </div>
-                    </div>
-                    <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">{stat.value}</p>
-                    <div className={`flex items-center text-xs font-medium relative z-10 ${stat.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                      {stat.positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                      <span>{stat.change}</span>
-                      <span className="text-slate-400 dark:text-slate-500 ml-1 font-normal">• {stat.changePercent}</span>
-                    </div>
-                  </div>
-                );
-              })}
+                    title={stat.title}
+                    label={stat.label}
+                    value={stat.value}
+                    change={stat.change}
+                    changePercent={stat.changePercent}
+                    positive={stat.positive}
+                    icon={stat.icon}
+                    gradient={stat.gradient}
+                    className="hover:shadow-xl"
+                  />
+                ))
+              )}
             </div>
           </div>
 

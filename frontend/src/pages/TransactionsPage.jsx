@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { Calendar, Filter, Download, TrendingUp, TrendingDown, Search, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { useState } from 'react';
+import StatsCard from '../components/ui/StatsCard';
+import { SkeletonSummaryCard, SkeletonTransactionTable } from '../components/Skeleton';
 
 const transactionsData = [
     { id: 1, type: 'Buy', symbol: 'AAPL', name: 'Apple Inc.', shares: 50, price: 172.50, total: 8625.00, date: '2025-01-18', time: '10:23 AM', status: 'Completed' },
@@ -16,6 +18,14 @@ const transactionsData = [
 const TransactionsPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterType, setFilterType] = useState('All');
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
     const filteredTransactions = transactionsData.filter(transaction => {
         const matchesSearch = transaction.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -39,46 +49,39 @@ const TransactionsPage = () => {
                     {/* Stats Summary */}
                     <div className="mb-8">
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Summary</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-teal-500/10 to-blue-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Trades</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">All time</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <ArrowUpRight size={20} className="text-teal-600 dark:text-teal-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">8</p>
+                        {loading ? (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <SkeletonSummaryCard />
+                                <SkeletonSummaryCard />
+                                <SkeletonSummaryCard />
                             </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <StatsCard
+                                    title="Total Trades"
+                                    label="All time"
+                                    value="8"
+                                    icon={ArrowUpRight}
+                                    gradient="from-teal-500/10 to-blue-500/10"
+                                />
 
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-emerald-500/10 to-teal-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Volume</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Bought + Sold</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <TrendingUp size={20} className="text-teal-600 dark:text-teal-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">$40,681.50</p>
-                            </div>
+                                <StatsCard
+                                    title="Total Volume"
+                                    label="Bought + Sold"
+                                    value="$40,681.50"
+                                    icon={TrendingUp}
+                                    gradient="from-emerald-500/10 to-teal-500/10"
+                                />
 
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-blue-500/10 to-indigo-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Avg. Trade Size</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Per transaction</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <Calendar size={20} className="text-teal-600 dark:text-teal-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">$5,085.19</p>
+                                <StatsCard
+                                    title="Avg. Trade Size"
+                                    label="Per transaction"
+                                    value="$5,085.19"
+                                    icon={Calendar}
+                                    gradient="from-blue-500/10 to-indigo-500/10"
+                                />
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Filters and Search */}
@@ -120,85 +123,89 @@ const TransactionsPage = () => {
                     </div>
 
                     {/* Transactions Table */}
-                    <div className="glass-card rounded-2xl overflow-hidden">
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Type</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Stock</th>
-                                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Shares</th>
-                                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Price</th>
-                                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Total</th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                    {filteredTransactions.map((transaction) => (
-                                        <tr
-                                            key={transaction.id}
-                                            className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <span
-                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${transaction.type === 'Buy'
-                                                        ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
-                                                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                                        }`}
-                                                >
-                                                    {transaction.type === 'Buy' ? (
-                                                        <ArrowUpRight size={12} />
-                                                    ) : (
-                                                        <ArrowDownRight size={12} />
-                                                    )}
-                                                    {transaction.type}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <p className="font-semibold text-slate-900 dark:text-white">{transaction.symbol}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.name}</p>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="font-medium text-slate-900 dark:text-white">{transaction.shares}</span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="font-medium text-slate-900 dark:text-white">${transaction.price.toFixed(2)}</span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="font-bold text-slate-900 dark:text-white">${transaction.total.toFixed(2)}</span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm">
-                                                    <p className="font-medium text-slate-900 dark:text-white">{transaction.date}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.time}</p>
-                                                </div>
-                                            </td>
+                    {loading ? (
+                        <SkeletonTransactionTable />
+                    ) : (
+                        <div className="glass-card rounded-2xl overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                                        <tr>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Type</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Stock</th>
+                                            <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Shares</th>
+                                            <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Price</th>
+                                            <th className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Total</th>
+                                            <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Date</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Empty State */}
-                        {filteredTransactions.length === 0 && (
-                            <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="w-32 h-32 mx-auto mb-4 relative">
-                                    <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
-                                    <img
-                                        src="/images/empty-transactions.png"
-                                        alt="No Transactions"
-                                        className="w-full h-full object-contain relative z-10 opacity-80"
-                                    />
-                                </div>
-                                <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions found</p>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm">
-                                    {searchQuery || filterType !== 'All' ? 'Try adjusting your filters' : 'Your trading history will appear here'}
-                                </p>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                        {filteredTransactions.map((transaction) => (
+                                            <tr
+                                                key={transaction.id}
+                                                className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors"
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <span
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${transaction.type === 'Buy'
+                                                            ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
+                                                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                                                            }`}
+                                                    >
+                                                        {transaction.type === 'Buy' ? (
+                                                            <ArrowUpRight size={12} />
+                                                        ) : (
+                                                            <ArrowDownRight size={12} />
+                                                        )}
+                                                        {transaction.type}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <p className="font-semibold text-slate-900 dark:text-white">{transaction.symbol}</p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.name}</p>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="font-medium text-slate-900 dark:text-white">{transaction.shares}</span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="font-medium text-slate-900 dark:text-white">${transaction.price.toFixed(2)}</span>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <span className="font-bold text-slate-900 dark:text-white">${transaction.total.toFixed(2)}</span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="text-sm">
+                                                        <p className="font-medium text-slate-900 dark:text-white">{transaction.date}</p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.time}</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
-                        )}
-                    </div>
+
+                            {/* Empty State */}
+                            {filteredTransactions.length === 0 && (
+                                <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="w-32 h-32 mx-auto mb-4 relative">
+                                        <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
+                                        <img
+                                            src="/images/empty-transactions.png"
+                                            alt="No Transactions"
+                                            className="w-full h-full object-contain relative z-10 opacity-80"
+                                        />
+                                    </div>
+                                    <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions found</p>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm">
+                                        {searchQuery || filterType !== 'All' ? 'Try adjusting your filters' : 'Your trading history will appear here'}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </DashboardLayout>

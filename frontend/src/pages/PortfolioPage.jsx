@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, TrendingUp, TrendingDown, DollarSign, PieChart, ArrowUpRight, ArrowDownRight, MoreVertical, Wallet, TrendingUpIcon, Activity, Eye, Star, ShoppingCart, DollarSignIcon, X } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { SkeletonPortfolioTable, SkeletonSummaryCard } from '../components/Skeleton';
+import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from '../components/Skeleton';
+import StatsCard from '../components/ui/StatsCard';
 
 const portfolioStocks = [
   { symbol: 'AAPL', name: 'Apple Inc.', price: '175.43', change: '+2.34', changePercent: '+1.35%', positive: true, shares: 50, value: 8771.50 },
@@ -109,60 +110,37 @@ const PortfolioPage = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div
-                  className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-teal-500/10 to-blue-500/10"
-                  style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-                >
-                  <div className="flex justify-between items-start mb-3 relative z-10">
-                    <div>
-                      <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Portfolio Value</h3>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Total holdings</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                      <DollarSign size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$125,430.50</p>
-                  <div className="flex items-center text-xs font-medium relative z-10 text-teal-600 dark:text-emerald-400">
-                    <TrendingUp size={14} className="mr-1" />
-                    <span>+$2,450.20</span>
-                    <span className="text-slate-400 dark:text-slate-500 ml-1 font-normal">• +2.00%</span>
-                  </div>
-                </div>
+                <StatsCard
+                  title="Portfolio Value"
+                  label="Total holdings"
+                  value="$125,430.50"
+                  change="+$2,450.20"
+                  changePercent="+2.00%"
+                  positive={true}
+                  icon={DollarSign}
+                  gradient="from-teal-500/10 to-blue-500/10"
+                />
 
-                <div
-                  className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-500/10 to-teal-500/10"
-                  style={{ boxShadow: '0 6px 14px rgba(0,0,0,0.06)' }}
-                >
-                  <div className="flex justify-between items-start mb-3 relative z-10">
-                    <div>
-                      <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Gain/Loss</h3>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Since inception</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                      <TrendingUp size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">+$15,430.50</p>
-                  <p className="text-xs text-teal-600 dark:text-emerald-400 mt-2 font-medium relative z-10">+14.05% All time</p>
-                </div>
+                <StatsCard
+                  title="Total Gain/Loss"
+                  label="Since inception"
+                  value="+$15,430.50"
+                  change="+14.05%"
+                  changePercent="All time"
+                  positive={true}
+                  icon={TrendingUp}
+                  gradient="from-emerald-500/10 to-teal-500/10"
+                />
 
-                <div
-                  className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
-                  style={{ boxShadow: '0 8px 16px rgba(0,0,0,0.07)' }}
-                >
-                  <div className="flex justify-between items-start mb-3 relative z-10">
-                    <div>
-                      <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Available Cash</h3>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Ready to invest</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                      <Wallet size={20} className="text-teal-600 dark:text-teal-400" />
-                    </div>
-                  </div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$10,000.00</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 relative z-10">Paper trading balance</p>
-                </div>
+                <StatsCard
+                  title="Available Cash"
+                  label="Ready to invest"
+                  value="$10,000.00"
+                  change="Paper trading balance"
+                  positive={true}
+                  icon={Wallet}
+                  gradient="from-blue-500/10 to-indigo-500/10"
+                />
               </div>
 
 
@@ -170,46 +148,50 @@ const PortfolioPage = () => {
           </div>
 
           {/* Mini Summary Row */}
-          <div className="glass-panel rounded-2xl p-4 mb-8 shadow-sm">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
-                  <PieChart className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+          {loading ? (
+            <SkeletonMiniSummary />
+          ) : (
+            <div className="glass-panel rounded-2xl p-4 mb-8 shadow-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
+                    <PieChart className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Holdings</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white">7 Assets</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Holdings</p>
-                  <p className="text-lg font-bold text-slate-900 dark:text-white">7 Assets</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Gainers</p>
+                    <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">5</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                    <TrendingDown className="w-5 h-5 text-red-600 dark:text-red-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Losers</p>
+                    <p className="text-lg font-bold text-red-600 dark:text-red-400">2</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Gainers</p>
-                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">5</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                  <TrendingDown className="w-5 h-5 text-red-600 dark:text-red-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Losers</p>
-                  <p className="text-lg font-bold text-red-600 dark:text-red-400">2</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Avg Return</p>
-                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400">+8.2%</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Avg Return</p>
+                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400">+8.2%</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Portfolio Table */}
           {loading ? (

@@ -18,7 +18,7 @@ const TopBar = ({ onToggleSidebar }) => {
                 >
                     <Menu size={24} />
                 </button>
-                <div className="flex items-center gap-1.5">
+                <Link to="/dashboard" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
                     <img
                         src="/images/logo-icon.png"
                         alt="StockSprout Logo"
@@ -27,7 +27,7 @@ const TopBar = ({ onToggleSidebar }) => {
                     <span className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-['Outfit'] leading-none hidden sm:block">
                         Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
                     </span>
-                </div>
+                </Link>
             </div>
 
             {/* Center - Search (optional, can add later) */}

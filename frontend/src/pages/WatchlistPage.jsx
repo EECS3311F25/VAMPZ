@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Plus, X, TrendingUp, TrendingDown, Star, StarOff, Eye } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
+import StatsCard from '../components/ui/StatsCard';
+import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skeleton';
 
 const initialWatchlist = [
     { symbol: 'AAPL', name: 'Apple Inc.', price: 175.43, change: 2.34, changePercent: 1.35, positive: true, marketCap: '2.74T' },
@@ -26,6 +28,19 @@ const WatchlistPage = () => {
     const [showAddModal, setShowAddModal] = useState(false);
     const [selectedStock, setSelectedStock] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    // Trade Modal State
+    const [showTradeModal, setShowTradeModal] = useState(false);
+    const [tradeType, setTradeType] = useState('Buy');
+    const [tradeQuantity, setTradeQuantity] = useState(1);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
     const removeFromWatchlist = (symbol) => {
         setWatchlist(watchlist.filter(stock => stock.symbol !== symbol));
@@ -42,6 +57,20 @@ const WatchlistPage = () => {
     const viewStockDetails = (stock) => {
         setSelectedStock(stock);
         setShowDetailModal(true);
+    };
+
+    const handleTrade = (stock, type) => {
+        setSelectedStock(stock);
+        setTradeType(type);
+        setTradeQuantity(1);
+        setShowDetailModal(false); // Close detail modal if open
+        setShowTradeModal(true);
+    };
+
+    const confirmTrade = () => {
+        // In a real app, this would call an API to execute the trade
+        alert(`${tradeType} order placed: ${tradeQuantity} shares of ${selectedStock.symbol}`);
+        setShowTradeModal(false);
     };
 
     const filteredWatchlist = watchlist.filter(stock =>
@@ -79,50 +108,39 @@ const WatchlistPage = () => {
                     {/* Stats Summary */}
                     <div className="mb-8">
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-teal-500/10 to-blue-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Watching</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Total stocks</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <Eye size={20} className="text-teal-600 dark:text-teal-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">{watchlist.length}</p>
+                        {loading ? (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <SkeletonSummaryCard />
+                                <SkeletonSummaryCard />
+                                <SkeletonSummaryCard />
                             </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <StatsCard
+                                    title="Watching"
+                                    label="Total stocks"
+                                    value={watchlist.length.toString()}
+                                    icon={Eye}
+                                    gradient="from-teal-500/10 to-blue-500/10"
+                                />
 
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-emerald-500/10 to-teal-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Gainers</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Positive today</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <TrendingUp size={20} className="text-teal-600 dark:text-teal-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                    {watchlist.filter(s => s.positive).length}
-                                </p>
-                            </div>
+                                <StatsCard
+                                    title="Gainers"
+                                    label="Positive today"
+                                    value={watchlist.filter(s => s.positive).length.toString()}
+                                    icon={TrendingUp}
+                                    gradient="from-emerald-500/10 to-teal-500/10"
+                                />
 
-                            <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-red-500/10 to-pink-500/10">
-                                <div className="flex justify-between items-start mb-3">
-                                    <div>
-                                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Losers</h3>
-                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Negative today</p>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                                        <TrendingDown size={20} className="text-red-600 dark:text-red-400" />
-                                    </div>
-                                </div>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                    {watchlist.filter(s => !s.positive).length}
-                                </p>
+                                <StatsCard
+                                    title="Losers"
+                                    label="Negative today"
+                                    value={watchlist.filter(s => !s.positive).length.toString()}
+                                    icon={TrendingDown}
+                                    gradient="from-red-500/10 to-orange-500/10"
+                                />
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Search */}
@@ -140,62 +158,74 @@ const WatchlistPage = () => {
                     </div>
 
                     {/* Watchlist Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredWatchlist.map((stock) => (
-                            <div
-                                key={stock.symbol}
-                                className="glass-card rounded-2xl p-6 hover:shadow-lg transition-all group relative overflow-hidden"
-                            >
-                                <button
-                                    onClick={() => removeFromWatchlist(stock.symbol)}
-                                    className="absolute top-4 right-4 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all z-10"
-                                    title="Remove from watchlist"
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <SkeletonWatchlistCard />
+                            <SkeletonWatchlistCard />
+                            <SkeletonWatchlistCard />
+                            <SkeletonWatchlistCard />
+                            <SkeletonWatchlistCard />
+                            <SkeletonWatchlistCard />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                            {filteredWatchlist.map((stock) => (
+                                <div
+                                    key={stock.symbol}
+                                    className="glass-card rounded-2xl p-6 hover:shadow-lg transition-all group relative overflow-hidden"
                                 >
-                                    <X size={16} />
-                                </button>
+                                    <button
+                                        onClick={() => removeFromWatchlist(stock.symbol)}
+                                        className="absolute top-4 right-4 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all z-10"
+                                        title="Remove from watchlist"
+                                    >
+                                        <X size={16} />
+                                    </button>
 
-                                <div className="mb-4">
-                                    <div className="flex items-start justify-between mb-2">
-                                        <div>
-                                            <h3 className="text-xl font-bold text-slate-900 dark:text-white">{stock.symbol}</h3>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stock.name}</p>
+                                    <div className="mb-4">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{stock.symbol}</h3>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stock.name}</p>
+                                            </div>
                                         </div>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                            Market Cap: {stock.marketCap}
+                                        </p>
                                     </div>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                                        Market Cap: {stock.marketCap}
-                                    </p>
-                                </div>
 
-                                <div className="space-y-2">
-                                    <div className="flex items-baseline justify-between">
-                                        <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                                            ${stock.price.toFixed(2)}
-                                        </span>
-                                        <div className={`flex items-center gap-1 text-sm font-semibold ${stock.positive
-                                            ? 'text-emerald-600 dark:text-emerald-400'
-                                            : 'text-red-600 dark:text-red-400'
+                                    <div className="space-y-2">
+                                        <div className="flex items-baseline justify-between">
+                                            <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                                                ${stock.price.toFixed(2)}
+                                            </span>
+                                            <div className={`flex items-center gap-1 text-sm font-semibold ${stock.positive
+                                                ? 'text-emerald-600 dark:text-emerald-400'
+                                                : 'text-red-600 dark:text-red-400'
+                                                }`}>
+                                                {stock.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                                <span>{stock.positive ? '+' : ''}{stock.change.toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${stock.positive
+                                            ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
+                                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                                             }`}>
-                                            {stock.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                            <span>{stock.positive ? '+' : ''}{stock.change.toFixed(2)}</span>
+                                            {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
                                         </div>
                                     </div>
-                                    <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${stock.positive
-                                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
-                                        : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                        }`}>
-                                        {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                                    </div>
-                                </div>
 
-                                <button
-                                    onClick={() => viewStockDetails(stock)}
-                                    className="mt-4 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-                                >
-                                    View Details
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                                    <button
+                                        onClick={() => viewStockDetails(stock)}
+                                        className="mt-4 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                                    >
+                                        View Details
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     {/* Empty State */}
                     {filteredWatchlist.length === 0 && (
@@ -369,8 +399,17 @@ const WatchlistPage = () => {
 
                             {/* Action Buttons */}
                             <div className="flex gap-3">
-                                <button className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold transition-all shadow-lg shadow-teal-600/30">
-                                    Trade {selectedStock.symbol}
+                                <button
+                                    onClick={() => handleTrade(selectedStock, 'Buy')}
+                                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-lg shadow-emerald-600/30"
+                                >
+                                    Buy
+                                </button>
+                                <button
+                                    onClick={() => handleTrade(selectedStock, 'Sell')}
+                                    className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition-all shadow-lg shadow-red-600/30"
+                                >
+                                    Sell
                                 </button>
                                 <button
                                     onClick={() => {
@@ -380,6 +419,108 @@ const WatchlistPage = () => {
                                     className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-all"
                                 >
                                     Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {/* Trade Modal */}
+            {showTradeModal && selectedStock && (
+                <>
+                    <div
+                        className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
+                        onClick={() => setShowTradeModal(false)}
+                    />
+                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50 p-4">
+                        <div className="glass-card rounded-2xl p-6 shadow-2xl">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                                    {tradeType} {selectedStock.symbol}
+                                </h2>
+                                <button
+                                    onClick={() => setShowTradeModal(false)}
+                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    <X size={20} className="text-slate-500" />
+                                </button>
+                            </div>
+
+                            {/* Price */}
+                            <div className="mb-4">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Current Price</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white">${selectedStock.price.toFixed(2)}</p>
+                            </div>
+
+                            {/* Quantity Input */}
+                            <div className="mb-6">
+                                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                                    Quantity
+                                </label>
+                                <div className="flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50">
+                                    <button
+                                        type="button"
+                                        onClick={() => setTradeQuantity(Math.max(1, tradeQuantity - 1))}
+                                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-bold"
+                                    >
+                                        −
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={tradeQuantity}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === '') {
+                                                setTradeQuantity('');
+                                                return;
+                                            }
+                                            const numVal = parseInt(val);
+                                            if (isNaN(numVal) || numVal < 1) return;
+                                            setTradeQuantity(numVal);
+                                        }}
+                                        onBlur={() => {
+                                            if (tradeQuantity === '' || tradeQuantity < 1) {
+                                                setTradeQuantity(1);
+                                            }
+                                        }}
+                                        className="flex-1 text-center bg-transparent border-none outline-none text-slate-900 dark:text-white font-semibold text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setTradeQuantity(tradeQuantity + 1)}
+                                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-bold"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Total */}
+                            <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total {tradeType === 'Buy' ? 'Cost' : 'Value'}</p>
+                                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                                    ${(selectedStock.price * tradeQuantity).toFixed(2)}
+                                </p>
+                            </div>
+
+                            {/* Buttons */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setShowTradeModal(false)}
+                                    className="flex-1 px-4 py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-all font-semibold"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmTrade}
+                                    className={`flex-1 px-4 py-3 ${tradeType === 'Buy'
+                                        ? 'bg-teal-600 hover:bg-teal-500 shadow-teal-600/30'
+                                        : 'bg-red-600 hover:bg-red-500 shadow-red-600/30'
+                                        } text-white rounded-xl transition-all font-semibold shadow-lg`}
+                                >
+                                    Confirm {tradeType}
                                 </button>
                             </div>
                         </div>

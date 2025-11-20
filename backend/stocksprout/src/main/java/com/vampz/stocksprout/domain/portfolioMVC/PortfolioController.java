@@ -71,42 +71,18 @@ public class PortfolioController {
                     "message", "Insufficient funds"));
         } else {
             portolio.setCash(portolio.getCash().subtract(totalCost));
+            Holding holding = new Holding(portolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
 
-            Optional<Holding> existingHoldingOpt = portolio.getHoldings().stream()
-                    .filter(h -> h.getSymbol().equalsIgnoreCase(HoldingREQ.getSymbol()))
-                    .findFirst();
-
-            Holding holdingToSave;
-            if (existingHoldingOpt.isPresent()) {
-                // Update existing holding
-                holdingToSave = existingHoldingOpt.get();
-                int oldQuantity = holdingToSave.getQuantity();
-                int newQuantity = HoldingREQ.getQuantity();
-                BigDecimal oldBuyPrice = holdingToSave.getBuyPrice();
-
-                BigDecimal oldTotalValue = oldBuyPrice.multiply(BigDecimal.valueOf(oldQuantity));
-                BigDecimal newTotalValue = stockPrice.multiply(BigDecimal.valueOf(newQuantity));
-                int totalQuantity = oldQuantity + newQuantity;
-                BigDecimal newAvgPrice = (oldTotalValue.add(newTotalValue)).divide(BigDecimal.valueOf(totalQuantity), 2,
-                        RoundingMode.HALF_UP);
-
-                holdingToSave.setQuantity(totalQuantity);
-                holdingToSave.setBuyPrice(newAvgPrice);
-            } else {
-                holdingToSave = new Holding(portolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
-            }
-
-            holdingService.saveHolding(holdingToSave);
+            holdingService.saveHolding(holding);
             Transaction transaction = new Transaction(
                     TransactionType.BUY,
                     portolio,
-                    holdingToSave.getSymbol(),
-                    HoldingREQ.getQuantity(),
-                    stockPrice,
+                    holding.getSymbol(),
+                    holding.getQuantity(),
+                    holding.getCurrentPrice(),
                     totalCost);
             transactionService.saveTransaction(transaction);
-            portfolioService.refresh(portolio);
-            return ResponseEntity.ok(holdingToSave);
+            portfolioService.refresh(po            return ResponseEntity.ok(holding);
         }
     }
 

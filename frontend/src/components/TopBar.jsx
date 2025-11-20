@@ -9,10 +9,10 @@ const TopBar = () => {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     return (
-        <div className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-xl bg-white/90 dark:bg-slate-900/90">
+        <div className="h-16 bg-white dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-700/50 px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-xl shadow-sm dark:shadow-slate-900/50">
             {/* Logo */}
             <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center shadow-md shadow-teal-500/20">
                     <span className="text-white font-bold text-lg">S</span>
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-teal-600 to-blue-600 dark:from-teal-400 dark:to-blue-400 bg-clip-text text-transparent">
@@ -30,16 +30,16 @@ const TopBar = () => {
                 {/* Learn Link */}
                 <Link
                     to="/learn"
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                 >
                     <BookOpen size={18} />
-                    Learn
+                    <span className="hidden sm:inline">Learn</span>
                 </Link>
 
                 {/* Notifications */}
-                <button className="relative p-2 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                <button className="relative p-2 text-slate-700 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                     <Bell size={20} />
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white dark:ring-slate-900"></span>
                 </button>
 
                 {/* Theme Toggle */}
@@ -49,9 +49,9 @@ const TopBar = () => {
                 <div className="relative">
                     <button
                         onClick={() => setShowProfileMenu(!showProfileMenu)}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                     >
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-teal-500/20">
                             {user?.firstName?.[0]?.toUpperCase() || 'U'}
                         </div>
                         <div className="hidden md:block text-left">
@@ -59,7 +59,7 @@ const TopBar = () => {
                                 {user?.firstName || 'User'}
                             </p>
                         </div>
-                        <ChevronDown size={16} className="text-slate-500" />
+                        <ChevronDown size={16} className="text-slate-500 dark:text-slate-400" />
                     </button>
 
                     {/* Dropdown Menu */}

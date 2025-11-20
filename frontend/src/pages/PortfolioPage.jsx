@@ -26,60 +26,63 @@ const PortfolioPage = () => {
           </div>
 
           {/* Portfolio Summary Cards with improved styling */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div
-              className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-teal-500/10 to-blue-500/10"
-              style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
-            >
-              <div className="flex justify-between items-start mb-3 relative z-10">
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Portfolio Value</h3>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5">Total holdings</p>
+          <div className="mb-10">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-teal-500/10 to-blue-500/10"
+                style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+              >
+                <div className="flex justify-between items-start mb-3 relative z-10">
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Portfolio Value</h3>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Total holdings</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
+                    <DollarSign size={20} className="text-teal-600 dark:text-teal-400" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                  <DollarSign size={20} className="text-teal-600 dark:text-teal-400" />
+                <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$125,430.50</p>
+                <div className="flex items-center text-xs font-medium relative z-10 text-teal-600 dark:text-emerald-400">
+                  <TrendingUp size={14} className="mr-1" />
+                  <span>+$2,450.20</span>
+                  <span className="text-slate-400 dark:text-slate-500 ml-1 font-normal">• +2.00%</span>
                 </div>
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$125,430.50</p>
-              <div className="flex items-center text-xs font-medium relative z-10 text-teal-600 dark:text-emerald-400">
-                <TrendingUp size={14} className="mr-1" />
-                <span>+$2,450.20</span>
-                <span className="text-slate-500 dark:text-slate-500 ml-1">• +2.00%</span>
-              </div>
-            </div>
 
-            <div
-              className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-500/10 to-teal-500/10"
-              style={{ boxShadow: '0 6px 14px rgba(0,0,0,0.06)' }}
-            >
-              <div className="flex justify-between items-start mb-3 relative z-10">
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Total Gain/Loss</h3>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5">Since inception</p>
+              <div
+                className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-emerald-500/10 to-teal-500/10"
+                style={{ boxShadow: '0 6px 14px rgba(0,0,0,0.06)' }}
+              >
+                <div className="flex justify-between items-start mb-3 relative z-10">
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Gain/Loss</h3>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Since inception</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
+                    <TrendingUp size={20} className="text-teal-600 dark:text-teal-400" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                  <TrendingUp size={20} className="text-teal-600 dark:text-teal-400" />
-                </div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">+$15,430.50</p>
+                <p className="text-xs text-teal-600 dark:text-emerald-400 mt-2 font-medium relative z-10">+14.05% All time</p>
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">+$15,430.50</p>
-              <p className="text-xs text-teal-600 dark:text-emerald-400 mt-2 font-medium relative z-10">+14.05% All time</p>
-            </div>
 
-            <div
-              className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
-              style={{ boxShadow: '0 8px 16px rgba(0,0,0,0.07)' }}
-            >
-              <div className="flex justify-between items-start mb-3 relative z-10">
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">Available Cash</h3>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5">Ready to invest</p>
+              <div
+                className="glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
+                style={{ boxShadow: '0 8px 16px rgba(0,0,0,0.07)' }}
+              >
+                <div className="flex justify-between items-start mb-3 relative z-10">
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Available Cash</h3>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">Ready to invest</p>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
+                    <Wallet size={20} className="text-teal-600 dark:text-teal-400" />
+                  </div>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                  <Wallet size={20} className="text-teal-600 dark:text-teal-400" />
-                </div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$10,000.00</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 relative z-10">Paper trading balance</p>
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">$10,000.00</p>
-              <p className="text-xs text-slate-600 dark:text-slate-500 mt-2 relative z-10">Paper trading balance</p>
             </div>
           </div>
 
@@ -129,8 +132,8 @@ const PortfolioPage = () => {
           <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
             <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Your Positions</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{portfolioStocks.length} holdings • Updated just now</p>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Holdings</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">{portfolioStocks.length} assets • Updated just now</p>
               </div>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
@@ -148,16 +151,16 @@ const PortfolioPage = () => {
                     <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                       Asset
                     </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                       Shares
                     </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                       Price
                     </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                       Today's Change
                     </th>
-                    <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                    <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                       Value
                     </th>
                     <th scope="col" className="relative px-6 py-4">
@@ -179,15 +182,15 @@ const PortfolioPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 font-medium">{stock.shares}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold">${stock.price}</td>
-                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${stock.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                        <div className="flex items-center">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 font-medium text-right">{stock.shares}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold text-right">${stock.price}</td>
+                      <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${stock.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                        <div className="flex items-center justify-end">
                           {stock.positive ? <ArrowUpRight size={16} className="mr-1" /> : <ArrowDownRight size={16} className="mr-1" />}
                           {stock.change} ({stock.changePercent})
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold">${stock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold text-right">${stock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                           <MoreVertical size={18} />

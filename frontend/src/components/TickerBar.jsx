@@ -90,17 +90,13 @@ export default function TickerBar() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="h-10 bg-slate-50 border-b border-slate-200 flex items-center justify-center">
-        <span className="text-xs text-slate-400">Loading market data...</span>
-      </div>
-    );
+    return null;
   }
 
   if (tickers.length === 0) return null;
 
   return (
-    <div className="bg-slate-50 border-b border-slate-200 overflow-hidden py-2">
+    <div className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 overflow-hidden py-2">
       <div className="flex whitespace-nowrap">
         <motion.div
           // Move by 1/3 of the width (since we have 3 sets of data)
@@ -115,9 +111,9 @@ export default function TickerBar() {
           {/* Render 3 copies for seamless looping */}
           {[...tickers, ...tickers, ...tickers].map((ticker, index) => (
             <div key={`${ticker.symbol}-${index}`} className="flex items-center gap-2 text-sm font-medium">
-              <span className="text-slate-900">{ticker.symbol}</span>
-              <span className="text-slate-600">{ticker.price}</span>
-              <span className={ticker.positive ? 'text-green-600' : 'text-red-600'}>
+              <span className="text-slate-900 dark:text-white">{ticker.symbol}</span>
+              <span className="text-slate-600 dark:text-slate-400">{ticker.price}</span>
+              <span className={ticker.positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
                 {ticker.change} ({ticker.changePercent})
               </span>
             </div>

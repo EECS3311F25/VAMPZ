@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/login/me', {
+            const response = await fetch('/api/login/me', {
                 credentials: 'include',
             });
             if (response.ok) {
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
 
     const login = async (email, password) => {
         try {
-            const response = await fetch('http://localhost:8080/api/login', {
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -51,7 +51,7 @@ export function AuthProvider({ children }) {
 
     const signup = async (firstName, lastName, email, password) => {
         try {
-            const response = await fetch('http://localhost:8080/api/signup', {
+            const response = await fetch('/api/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
 
     const logout = async () => {
         try {
-            await fetch('http://localhost:8080/api/login/logout', {
+            await fetch('/api/login/logout', {
                 method: 'POST',
                 credentials: 'include',
             });

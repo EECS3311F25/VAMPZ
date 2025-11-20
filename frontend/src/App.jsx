@@ -13,7 +13,6 @@ import TickerBar from './components/TickerBar';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Pricing from './components/Pricing';
-import { ThemeToggle } from './components/ThemeToggle';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -40,15 +39,11 @@ function App() {
 
             <Route path="/" element={
               <div className="min-h-screen bg-white dark:bg-slate-950 relative transition-colors duration-300">
-                <div className="fixed top-4 right-4 z-50">
-                  <ThemeToggle />
-                </div>
                 <TickerBar />
                 <HomeNavbar />
                 <Hero />
                 <Features />
                 <Pricing />
-
                 <Footer />
               </div>
             } />

@@ -12,39 +12,39 @@ const statsCards = [
     value: '$125,430.50',
     change: '+$2,450.20',
     changePercent: '+2.00%',
-    label: 'Today',
+    label: 'Total balance',
     positive: true,
     icon: DollarSign,
     gradient: 'from-teal-500/10 to-blue-500/10'
   },
   {
-    title: 'Total Gain',
-    value: '+$15,430.50',
-    change: '+8.67%',
-    changePercent: '+$1,230.40',
-    label: 'Since inception',
+    title: 'Cash',
+    value: '$10,000.00',
+    change: '+$0.00',
+    changePercent: 'Available',
+    label: 'Buying power',
     positive: true,
-    icon: TrendingUp,
+    icon: Wallet,
     gradient: 'from-emerald-500/10 to-teal-500/10'
   },
   {
-    title: 'Active Positions',
-    value: '12',
-    change: '+2',
-    changePercent: 'This month',
-    label: 'Holdings',
+    title: 'Unrealized P/L',
+    value: '+$15,430.00',
+    change: '+12.5%',
+    changePercent: 'All time',
+    label: 'Total return',
     positive: true,
-    icon: PieChart,
+    icon: TrendingUp,
     gradient: 'from-blue-500/10 to-indigo-500/10'
   },
   {
-    title: 'Win Rate',
-    value: '68%',
-    change: '+5%',
-    changePercent: 'vs last month',
-    label: 'Success rate',
+    title: 'Investments',
+    value: '$115,430.50',
+    change: '+2.00%',
+    changePercent: '24h change',
+    label: 'Market value',
     positive: true,
-    icon: Activity,
+    icon: BarChart3,
     gradient: 'from-purple-500/10 to-pink-500/10'
   },
 ];
@@ -106,78 +106,39 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Mini Portfolio Summary Row */}
-          <div className="glass-panel rounded-xl p-4 mb-8 shadow-sm">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
-                  <Wallet className="w-5 h-5 text-teal-600 dark:text-teal-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Cash</p>
-                  <p className="text-lg font-bold text-slate-900 dark:text-white">$10,000</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Investments</p>
-                  <p className="text-lg font-bold text-slate-900 dark:text-white">$115,430</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                  <TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Unrealized P/L</p>
-                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">+$15,430</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-teal-600 dark:text-teal-400" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">24h Change</p>
-                  <p className="text-lg font-bold text-teal-600 dark:text-teal-400">+2.00%</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Stats Cards Grid with improved styling */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {statsCards.map((stat, idx) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={idx}
-                  className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br ${stat.gradient}`}
-                  style={{
-                    boxShadow: idx === 0 ? '0 4px 12px rgba(0,0,0,0.05)' : idx === 1 ? '0 6px 14px rgba(0,0,0,0.06)' : idx === 2 ? '0 8px 16px rgba(0,0,0,0.07)' : '0 10px 18px rgba(0,0,0,0.08)'
-                  }}
-                >
-                  <div className="flex justify-between items-start mb-3 relative z-10">
-                    <div>
-                      <h3 className="text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wide">{stat.title}</h3>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-500 mt-0.5">{stat.label}</p>
+          <div className="mb-10">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {statsCards.map((stat, idx) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={idx}
+                    className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br ${stat.gradient}`}
+                    style={{
+                      boxShadow: idx === 0 ? '0 4px 12px rgba(0,0,0,0.05)' : idx === 1 ? '0 6px 14px rgba(0,0,0,0.06)' : idx === 2 ? '0 8px 16px rgba(0,0,0,0.07)' : '0 10px 18px rgba(0,0,0,0.08)'
+                    }}
+                  >
+                    <div className="flex justify-between items-start mb-3 relative z-10">
+                      <div>
+                        <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{stat.title}</h3>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">{stat.label}</p>
+                      </div>
+                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
+                        <Icon size={20} className="text-teal-600 dark:text-teal-400" />
+                      </div>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-                      <Icon size={20} className="text-teal-600 dark:text-teal-400" />
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">{stat.value}</p>
+                    <div className={`flex items-center text-xs font-medium relative z-10 ${stat.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {stat.positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                      <span>{stat.change}</span>
+                      <span className="text-slate-400 dark:text-slate-500 ml-1 font-normal">• {stat.changePercent}</span>
                     </div>
                   </div>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1 relative z-10">{stat.value}</p>
-                  <div className={`flex items-center text-xs font-medium relative z-10 ${stat.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                    {stat.positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                    <span>{stat.change}</span>
-                    <span className="text-slate-500 dark:text-slate-500 ml-1">• {stat.changePercent}</span>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
           {/* Market Overview Section with Trade Box */}
@@ -185,7 +146,7 @@ const Dashboard = () => {
             {/* Stock Chart */}
             <div className="lg:col-span-2 glass-panel rounded-2xl p-6 shadow-sm">
               <div className="mb-4">
-                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Market Overview</h2>
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Performance</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400">Track price movements for {selectedSymbol}</p>
               </div>
               <StockChart symbol={selectedSymbol} />
@@ -193,6 +154,10 @@ const Dashboard = () => {
 
             {/* Trade Panel */}
             <div className="glass-panel rounded-2xl p-6 shadow-sm">
+              <div className="mb-4">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Trade</h2>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Buy or sell assets</p>
+              </div>
               <TradePanel
                 selectedSymbol={selectedSymbol}
                 onSymbolChange={setSelectedSymbol}
@@ -215,13 +180,13 @@ const Dashboard = () => {
                     <button
                       key={stock.symbol}
                       onClick={() => setSelectedSymbol(stock.symbol)}
-                      className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-2 ${selectedSymbol === stock.symbol
+                      className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-2 group ${selectedSymbol === stock.symbol
                         ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-500/50 shadow-md'
                         : 'bg-white dark:bg-slate-800/50 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700'
                         }`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm ${stock.positive
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm transition-transform group-hover:scale-105 ${stock.positive
                           ? 'bg-teal-100 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-400'
                           : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'
                           }`}>
@@ -253,7 +218,7 @@ const Dashboard = () => {
               <div className="p-4">
                 <div className="space-y-3">
                   {recentActivity.map((activity, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${activity.type === 'Buy'
                           ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'

@@ -26,12 +26,22 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="max-w-2xl"
           >
-            <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-6">
+            <div className="absolute top-0 left-0 -mt-12 mb-4">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-900/20 text-xs font-medium text-teal-700 dark:text-teal-300 border border-teal-100 dark:border-teal-800">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                </span>
+                Live market data • Updating...
+              </span>
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-8">
               Grow your portfolio,<br />Grow your{' '}
               <span className="text-teal-600 dark:text-teal-400">potential</span>
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-              Develop your investing skills with real-time risk free simulations.
+            <p className="text-xl text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-lg">
+              Practice real-time trading with virtual money. Test strategies, learn risk management, and build confidence before investing for real.
             </p>
             <div className="flex flex-wrap gap-4">
               <motion.button
@@ -40,15 +50,15 @@ export default function Hero() {
                 onClick={() => navigate('/signup')}
                 className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg shadow-teal-600/20 transition-all"
               >
-                Start now
+                Get started – it’s free
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/login')}
-                className="flex items-center gap-2 px-8 py-4 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors bg-slate-100 dark:bg-slate-800 rounded-xl"
+                onClick={() => navigate('/features')} // Changed to features or demo link if available
+                className="flex items-center gap-2 px-8 py-4 text-slate-600 dark:text-slate-300 hover:text-teal-600 dark:hover:text-teal-400 font-medium transition-colors bg-transparent border border-slate-200 dark:border-slate-700 hover:border-teal-600 dark:hover:border-teal-400 rounded-xl"
               >
-                Login <span aria-hidden="true">&rarr;</span>
+                View demo
               </motion.button>
             </div>
           </motion.div>

@@ -4,6 +4,7 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skeleton';
 import TradeModal from '../components/TradeModal';
+import SparklineChart from '../components/SparklineChart';
 
 const WatchlistPage = () => {
     const [watchlist, setWatchlist] = useState([
@@ -375,13 +376,9 @@ const WatchlistPage = () => {
                                 </div>
                             </div>
 
-                            {/* Chart Placeholder */}
-                            <div className="mb-4 p-6 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                <div className="text-center">
-                                    <TrendingUp size={48} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">Price Chart</p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Chart visualization coming soon</p>
-                                </div>
+                            {/* Chart */}
+                            <div className="mb-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                <SparklineChart symbol={selectedStock.symbol} range="3M" />
                             </div>
 
                             {/* Additional Stats */}

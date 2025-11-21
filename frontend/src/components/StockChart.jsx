@@ -5,7 +5,7 @@ import { useTheme } from '../context/ThemeContext';
 import { getChartData, getSymbolBasePrice } from '../utils/chartDataGenerator';
 
 const TIME_RANGES = [
-  { label: '1D', value: '1D' },
+
   { label: '1W', value: '1W' },
   { label: '1M', value: '1M' },
   { label: '3M', value: '3M' },
@@ -25,7 +25,7 @@ const StockChart = ({
   // Load persisted range from localStorage
   const getPersistedRange = () => {
     const stored = localStorage.getItem(`chart-timerange-${symbol}`);
-    return stored || '1D';
+    return stored || '1W';
   };
 
   const [selectedRange, setSelectedRange] = useState(getPersistedRange);
@@ -112,8 +112,8 @@ const StockChart = ({
                 key={range.value}
                 onClick={() => handleRangeChange(range.value)}
                 className={`relative px-4 py-1.5 text-xs font-bold transition-colors rounded-lg z-10 ${isActive
-                    ? 'text-slate-900 dark:text-white'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                  ? 'text-slate-900 dark:text-white'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                   }`}
               >
                 {isActive && (

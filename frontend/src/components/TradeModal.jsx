@@ -5,6 +5,7 @@ import { X, Check, TrendingUp, TrendingDown, Wallet, ArrowRight, Minus, Plus } f
 const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
     const [quantity, setQuantity] = useState(1);
     const [success, setSuccess] = useState(false);
+    const [failed, setFailed] = useState(false);
 
     // Handle both direct stock objects and trade request objects
     const stockSymbol = stock?.symbol || stock?.ticker || '';
@@ -19,6 +20,7 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
         if (isOpen) {
             setQuantity(stock?.quantity || 1);
             setSuccess(false);
+            setFailed(false);
         }
     }, [isOpen, stock]);
 
@@ -39,6 +41,11 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
         : buyingPower + totalNum;
 
     const handleConfirm = () => {
+        if (type === 'Sell' && quantity > stockShares) {
+            setFailed(true);
+            return;
+        }
+
         setSuccess(true);
         if (onConfirm) {
             onConfirm({
@@ -63,9 +70,9 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
                     <div className="p-6 border-b border-slate-100 dark:border-slate-800/50 flex items-center justify-between bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl">
                         <div>
                             <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                {success ? 'Order Executed' : `Confirm ${type}`}
+                                {success ? 'Order Executed' : failed ? 'Order Failed' : `Confirm ${type}`}
                             </h2>
-                            {!success && (
+                            {!success && !failed && (
                                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                                     {type === 'Buy' ? 'Purchase' : 'Sell'} {stockSymbol} stock
                                 </p>
@@ -80,7 +87,24 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
                     </div>
 
                     <div className="p-6 bg-white dark:bg-slate-900">
-                        {success ? (
+                        {failed ? (
+                            <div className="text-center py-4 animate-in fade-in zoom-in duration-300">
+                                <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-red-400/20 to-orange-400/20 flex items-center justify-center relative">
+                                    <div className="absolute inset-0 rounded-full bg-red-400/10 animate-ping" />
+                                    <X size={48} className="text-red-600 dark:text-red-400 relative z-10" />
+                                </div>
+                                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Trade Failed</h3>
+                                <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-[80%] mx-auto leading-relaxed">
+                                    You cannot sell <span className="font-bold text-slate-900 dark:text-white">{quantity}</span> shares because you only own <span className="font-bold text-slate-900 dark:text-white">{stockShares}</span> shares of <span className="font-bold text-slate-900 dark:text-white">{stockSymbol}</span>.
+                                </p>
+                                <button
+                                    onClick={() => setFailed(false)}
+                                    className="w-full py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-bold text-lg transition-all"
+                                >
+                                    Try Again
+                                </button>
+                            </div>
+                        ) : success ? (
                             <div className="text-center py-4 animate-in fade-in zoom-in duration-300">
                                 <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-emerald-400/20 to-teal-400/20 flex items-center justify-center relative">
                                     <div className="absolute inset-0 rounded-full bg-emerald-400/10 animate-ping" />

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, TrendingUp, TrendingDown, DollarSign, PieChart, ArrowUpRight, ArrowDownRight, MoreVertical, Wallet, Activity, Eye, Star, X } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import DashboardLayout from '../layouts/DashboardLayout';
-import { SkeletonPortfolioTable, SkeletonMiniSummary } from '../components/Skeleton';
+import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from '../components/Skeleton';
 import StatsCard from '../components/ui/StatsCard';
 import TradeModal from '../components/TradeModal';
 
@@ -14,6 +15,22 @@ const portfolioStocks = [
   { symbol: 'NVDA', name: 'NVIDIA Corp.', price: '485.20', change: '+10.50', changePercent: '+2.21%', positive: true, shares: 10, value: 4852.00 },
   { symbol: 'META', name: 'Meta Platforms Inc.', price: '312.45', change: '-2.10', changePercent: '-0.67%', positive: false, shares: 20, value: 6249.00 },
 ];
+
+// Helper function to generate mock price chart data
+const generateChartData = (basePrice, isPositive) => {
+  const data = [];
+  const days = 30;
+  let price = parseFloat(basePrice) - (Math.random() * 10 + 5);
+  for (let i = 0; i < days; i++) {
+    const change = (Math.random() - 0.45) * 3;
+    price += change;
+    data.push({
+      date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      price: parseFloat(price.toFixed(2))
+    });
+  }
+  return data;
+};
 
 const PortfolioPage = () => {
   const [loading, setLoading] = useState(true);
@@ -315,9 +332,74 @@ const PortfolioPage = () => {
                 </button>
               </div>
 
-              {/* Price Info */}
-              <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-end justify-between mb-3">
+              {/* Price Chart */}
+              <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">30-Day Price Trend</h3>
+                <ResponsiveContainer width="100%" height={180}>
+                  <AreaChart data={generateChartData(selectedStock.price, selectedStock.positive)}>
+                    <defs>
+                      <linearGradient id={`gradient-${selectedStock.symbol}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={selectedStock.positive ? '#10b981' : '#ef4444'} stopOpacity={0.3} />
+                        <stop offset="100%" stopColor={selectedStock.positive ? '#10b981' : '#ef4444'} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 11, fill: '#94a3b8' }}
+                      tickLine={false}
+                      axisLine={false}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11, fill: '#94a3b8' }}
+                      tickLine={false}
+                      axisLine={false}
+                      domain={['dataMin - 2', 'dataMax + 2']}
+                      tickFormatter={(value) => `$${value.toFixed(0)}`}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                        border: '1px solid rgba(148, 163, 184, 0.2)',
+                        borderRadius: '8px',
+                        fontSize: '12px'
+                      }}
+                      labelStyle={{ color: '#e2e8f0' }}
+                      itemStyle={{ color: selectedStock.positive ? '#10b981' : '#ef4444' }}
+                      formatter={(value) => [`$${value.toFixed(2)}`, 'Price']}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="price"
+                      stroke={selectedStock.positive ? '#10b981' : '#ef4444'}
+                      strokeWidth={2}
+                      fill={`url(#gradient-${selectedStock.symbol})`}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Holdings + Price */}
+              <div className="grid gap-4 lg:grid-cols-2 mb-5">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.shares}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">${(selectedStock.value / selectedStock.shares).toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
                     <p className="text-3xl font-bold text-slate-900 dark:text-white">${selectedStock.price}</p>
@@ -391,8 +473,9 @@ const PortfolioPage = () => {
           onConfirm={(tradeData) => {
             console.log('Trade confirmed:', tradeData);
             // Here you would call your API
-            setShowTradeModal(false);
-            setSelectedStock(null);
+            // Do not close modal here, let TradeModal handle success state
+            // setShowTradeModal(false);
+            // setSelectedStock(null);
           }}
         />
       )}

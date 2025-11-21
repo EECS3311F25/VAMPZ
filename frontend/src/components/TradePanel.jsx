@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check, Star } from 'lucide-react';
-import ConfirmTradeModal from './ConfirmTradeModal';
+import TradeModal from './TradeModal';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -14,8 +14,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [watchlist, setWatchlist] = useState([]);
     const wrapperRef = useRef(null);
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [tradeData, setTradeData] = useState(null);
+    const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
     // Mock current price - in production, this would come from real-time data
     const currentPrice = 150.00;
@@ -102,28 +101,16 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const currentTradeData = {
-            type,
-            symbol: selectedSymbol,
-            quantity: Number(quantity),
-            price: currentPrice.toFixed(2),
-            totalCost: total,
-            portfolioAfter: portfolioAfter.toFixed(2)
-        };
-        setTradeData(currentTradeData);
-        setIsConfirmModalOpen(true);
+        setIsTradeModalOpen(true);
     };
 
-    const handleConfirmTrade = () => {
+    const handleConfirmTrade = (tradeData) => {
         console.log('TradePanel handleConfirmTrade called. onTradeSubmit exists:', !!onTradeSubmit);
         if (onTradeSubmit && tradeData) {
             onTradeSubmit(tradeData);
         }
-    };
-
-    const handleCloseModal = () => {
-        setIsConfirmModalOpen(false);
-        setTradeData(null);
+        // Do not close modal here, let TradeModal handle success state
+        // setIsTradeModalOpen(false);
     };
 
     const toggleWatchlist = () => {
@@ -134,6 +121,13 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
             return [...prev, selectedSymbol];
         });
     };
+
+    const modalStockData = useMemo(() => ({
+        symbol: selectedSymbol,
+        price: currentPrice,
+        quantity: quantity, // Pass initial quantity
+        shares: 0 // Mock shares for now since we don't have portfolio context here easily
+    }), [selectedSymbol, currentPrice, quantity]);
 
     return (
         <div>
@@ -374,11 +368,12 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                 </button>
             </form>
 
-            <ConfirmTradeModal
-                isOpen={isConfirmModalOpen}
-                onClose={handleCloseModal}
+            <TradeModal
+                isOpen={isTradeModalOpen}
+                onClose={() => setIsTradeModalOpen(false)}
                 onConfirm={handleConfirmTrade}
-                tradeData={tradeData}
+                stock={modalStockData}
+                type={type}
             />
         </div>
     );

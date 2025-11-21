@@ -446,8 +446,9 @@ const WatchlistPage = () => {
                     onConfirm={(tradeData) => {
                         console.log('Trade confirmed:', tradeData);
                         // Here you would call your API
-                        setShowTradeModal(false);
-                        setSelectedStock(null);
+                        // Do not close modal here, let TradeModal handle success state
+                        // setShowTradeModal(false);
+                        // setSelectedStock(null);
                     }}
                 />
             )}

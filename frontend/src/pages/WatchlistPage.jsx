@@ -1,39 +1,26 @@
-import { useState, useEffect } from 'react';
-import { Search, Plus, X, TrendingUp, TrendingDown, Star, StarOff, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, X, Check, TrendingUp, TrendingDown, Eye } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skeleton';
-
-const initialWatchlist = [
-    { symbol: 'AAPL', name: 'Apple Inc.', price: 175.43, change: 2.34, changePercent: 1.35, positive: true, marketCap: '2.74T' },
-    { symbol: 'TSLA', name: 'Tesla Inc.', price: 245.67, change: -5.43, changePercent: -2.16, positive: false, marketCap: '778B' },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.85, change: -1.23, changePercent: -0.32, positive: false, marketCap: '2.81T' },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.56, change: 3.21, changePercent: 2.30, positive: true, marketCap: '1.79T' },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 485.20, change: 10.50, changePercent: 2.21, positive: true, marketCap: '1.19T' },
-    { symbol: 'META', name: 'Meta Platforms Inc.', price: 312.45, change: -2.10, changePercent: -0.67, positive: false, marketCap: '795B' },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 148.92, change: 0.87, changePercent: 0.59, positive: true, marketCap: '1.54T' },
-];
-
-const availableStocks = [
-    { symbol: 'AMD', name: 'Advanced Micro Devices', price: 145.23, change: 3.45, changePercent: 2.43, positive: true, marketCap: '234B' },
-    { symbol: 'NFLX', name: 'Netflix Inc.', price: 425.67, change: -8.21, changePercent: -1.89, positive: false, marketCap: '189B' },
-    { symbol: 'DIS', name: 'The Walt Disney Company', price: 92.34, change: 1.23, changePercent: 1.35, positive: true, marketCap: '168B' },
-    { symbol: 'COIN', name: 'Coinbase Global Inc.', price: 156.78, change: 12.45, changePercent: 8.63, positive: true, marketCap: '38B' },
-    { symbol: 'PYPL', name: 'PayPal Holdings Inc.', price: 67.89, change: -0.98, changePercent: -1.42, positive: false, marketCap: '74B' },
-];
+import TradeModal from '../components/TradeModal';
 
 const WatchlistPage = () => {
-    const [watchlist, setWatchlist] = useState(initialWatchlist);
+    const [watchlist, setWatchlist] = useState([
+        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.85, change: -1.23, changePercent: -0.32, positive: false, marketCap: '2.81T' },
+        { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.56, change: 3.21, changePercent: 2.30, positive: true, marketCap: '1.79T' },
+        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 485.20, change: 10.50, changePercent: 2.21, positive: true, marketCap: '1.19T' },
+        { symbol: 'META', name: 'Meta Platforms Inc.', price: 312.45, change: -2.10, changePercent: -0.67, positive: false, marketCap: '795B' },
+        { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 148.92, change: 0.87, changePercent: 0.59, positive: true, marketCap: '1.54T' },
+    ]);
+
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
-    const [selectedStock, setSelectedStock] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedStock, setSelectedStock] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Trade Modal State
     const [showTradeModal, setShowTradeModal] = useState(false);
     const [tradeType, setTradeType] = useState('Buy');
-    const [tradeQuantity, setTradeQuantity] = useState(1);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -42,16 +29,32 @@ const WatchlistPage = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    const removeFromWatchlist = (symbol) => {
-        setWatchlist(watchlist.filter(stock => stock.symbol !== symbol));
-    };
+    const availableStocks = [
+        { symbol: 'AMD', name: 'Advanced Micro Devices', price: 145.23, change: 3.45, changePercent: 2.43, positive: true, marketCap: '234B' },
+        { symbol: 'NFLX', name: 'Netflix Inc.', price: 425.67, change: -8.21, changePercent: -1.89, positive: false, marketCap: '189B' },
+        { symbol: 'DIS', name: 'The Walt Disney Company', price: 92.34, change: 1.23, changePercent: 1.35, positive: true, marketCap: '168B' },
+        { symbol: 'COIN', name: 'Coinbase Global Inc.', price: 156.78, change: 12.45, changePercent: 8.63, positive: true, marketCap: '38B' },
+        { symbol: 'PYPL', name: 'PayPal Holdings Inc.', price: 67.89, change: -0.98, changePercent: -1.42, positive: false, marketCap: '74B' },
+    ];
+
+    const filteredWatchlist = watchlist.filter(stock =>
+        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const filteredAvailableStocks = availableStocks.filter(stock =>
+        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     const addToWatchlist = (stock) => {
-        if (!watchlist.find(s => s.symbol === stock.symbol)) {
+        if (!watchlist.some(s => s.symbol === stock.symbol)) {
             setWatchlist([...watchlist, stock]);
-            setShowAddModal(false);
-            setSearchQuery('');
         }
+    };
+
+    const removeFromWatchlist = (symbol) => {
+        setWatchlist(watchlist.filter(s => s.symbol !== symbol));
     };
 
     const viewStockDetails = (stock) => {
@@ -62,27 +65,9 @@ const WatchlistPage = () => {
     const handleTrade = (stock, type) => {
         setSelectedStock(stock);
         setTradeType(type);
-        setTradeQuantity(1);
         setShowDetailModal(false); // Close detail modal if open
         setShowTradeModal(true);
     };
-
-    const confirmTrade = () => {
-        // In a real app, this would call an API to execute the trade
-        alert(`${tradeType} order placed: ${tradeQuantity} shares of ${selectedStock.symbol}`);
-        setShowTradeModal(false);
-    };
-
-    const filteredWatchlist = watchlist.filter(stock =>
-        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const filteredAvailableStocks = availableStocks.filter(stock =>
-        !watchlist.find(w => w.symbol === stock.symbol) &&
-        (stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            stock.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
 
     return (
         <DashboardLayout activeMenu="watchlist">
@@ -301,26 +286,39 @@ const WatchlistPage = () => {
                                         {searchQuery ? 'No stocks found' : 'All available stocks are already in your watchlist'}
                                     </p>
                                 ) : (
-                                    filteredAvailableStocks.map((stock) => (
-                                        <button
-                                            key={stock.symbol}
-                                            onClick={() => addToWatchlist(stock)}
-                                            className="w-full flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-left"
-                                        >
-                                            <div className="flex-1">
-                                                <p className="font-semibold text-slate-900 dark:text-white">{stock.symbol}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400">{stock.name}</p>
-                                            </div>
-                                            <div className="text-right mr-2">
-                                                <p className="font-semibold text-slate-900 dark:text-white">${stock.price.toFixed(2)}</p>
-                                                <p className={`text-xs font-medium ${stock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
-                                                    }`}>
-                                                    {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                                                </p>
-                                            </div>
-                                            <Plus size={20} className="text-teal-600 dark:text-teal-400" />
-                                        </button>
-                                    ))
+                                    filteredAvailableStocks.map((stock) => {
+                                        const isAdded = watchlist.some(w => w.symbol === stock.symbol);
+                                        return (
+                                            <button
+                                                key={stock.symbol}
+                                                onClick={() => !isAdded && addToWatchlist(stock)}
+                                                disabled={isAdded}
+                                                className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all text-left ${isAdded
+                                                    ? 'border-teal-200 dark:border-teal-900 bg-teal-50 dark:bg-teal-900/20 cursor-default'
+                                                    : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                                    }`}
+                                            >
+                                                <div className="flex-1">
+                                                    <p className="font-semibold text-slate-900 dark:text-white">{stock.symbol}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{stock.name}</p>
+                                                </div>
+                                                <div className="text-right mr-2">
+                                                    <p className="font-semibold text-slate-900 dark:text-white">${stock.price.toFixed(2)}</p>
+                                                    <p className={`text-xs font-medium ${stock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                        {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                                                    </p>
+                                                </div>
+                                                {isAdded ? (
+                                                    <div className="p-1 rounded-full bg-teal-100 dark:bg-teal-900/50">
+                                                        <Check size={18} className="text-teal-600 dark:text-teal-400" />
+                                                    </div>
+                                                ) : (
+                                                    <Plus size={20} className="text-teal-600 dark:text-teal-400" />
+                                                )}
+                                            </button>
+                                        );
+                                    })
                                 )}
                             </div>
                         </div>
@@ -437,104 +435,21 @@ const WatchlistPage = () => {
 
             {/* Trade Modal */}
             {showTradeModal && selectedStock && (
-                <>
-                    <div
-                        className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
-                        onClick={() => setShowTradeModal(false)}
-                    />
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50 p-4">
-                        <div className="glass-card rounded-2xl p-6 shadow-2xl">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                                    {tradeType} {selectedStock.symbol}
-                                </h2>
-                                <button
-                                    onClick={() => setShowTradeModal(false)}
-                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <X size={20} className="text-slate-500" />
-                                </button>
-                            </div>
-
-                            {/* Price */}
-                            <div className="mb-4">
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Current Price</p>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">${selectedStock.price.toFixed(2)}</p>
-                            </div>
-
-                            {/* Quantity Input */}
-                            <div className="mb-6">
-                                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
-                                    Quantity
-                                </label>
-                                <div className="flex items-center gap-2 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50">
-                                    <button
-                                        type="button"
-                                        onClick={() => setTradeQuantity(Math.max(1, tradeQuantity - 1))}
-                                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-bold"
-                                    >
-                                        −
-                                    </button>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={tradeQuantity}
-                                        onChange={(e) => {
-                                            const val = e.target.value;
-                                            if (val === '') {
-                                                setTradeQuantity('');
-                                                return;
-                                            }
-                                            const numVal = parseInt(val);
-                                            if (isNaN(numVal) || numVal < 1) return;
-                                            setTradeQuantity(numVal);
-                                        }}
-                                        onBlur={() => {
-                                            if (tradeQuantity === '' || tradeQuantity < 1) {
-                                                setTradeQuantity(1);
-                                            }
-                                        }}
-                                        className="flex-1 text-center bg-transparent border-none outline-none text-slate-900 dark:text-white font-semibold text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setTradeQuantity(tradeQuantity + 1)}
-                                        className="w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-bold"
-                                    >
-                                        +
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Total */}
-                            <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
-                                <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total {tradeType === 'Buy' ? 'Cost' : 'Value'}</p>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                                    ${(selectedStock.price * tradeQuantity).toFixed(2)}
-                                </p>
-                            </div>
-
-                            {/* Buttons */}
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setShowTradeModal(false)}
-                                    className="flex-1 px-4 py-3 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl transition-all font-semibold"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={confirmTrade}
-                                    className={`flex-1 px-4 py-3 ${tradeType === 'Buy'
-                                        ? 'bg-teal-600 hover:bg-teal-500 shadow-teal-600/30'
-                                        : 'bg-red-600 hover:bg-red-500 shadow-red-600/30'
-                                        } text-white rounded-xl transition-all font-semibold shadow-lg`}
-                                >
-                                    Confirm {tradeType}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </>
+                <TradeModal
+                    isOpen={showTradeModal}
+                    onClose={() => {
+                        setShowTradeModal(false);
+                        setSelectedStock(null);
+                    }}
+                    stock={selectedStock}
+                    type={tradeType}
+                    onConfirm={(tradeData) => {
+                        console.log('Trade confirmed:', tradeData);
+                        // Here you would call your API
+                        setShowTradeModal(false);
+                        setSelectedStock(null);
+                    }}
+                />
             )}
         </DashboardLayout>
     );

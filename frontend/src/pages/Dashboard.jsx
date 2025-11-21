@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, Search, DollarSign, PieChart, BarChart3, Activity, Plus, Wallet, TrendingUpIcon } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { DollarSign, Wallet, TrendingUp, BarChart3 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
+import StatsCard from '../components/ui/StatsCard';
 import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
-import ConfirmTradeModal from '../components/ConfirmTradeModal';
-import StatsCard from '../components/ui/StatsCard';
+import TradeModal from '../components/TradeModal';
 import { SkeletonSummaryCard } from '../components/Skeleton';
 
 const statsCards = [
@@ -83,6 +83,7 @@ const Dashboard = () => {
   }, []);
 
   const handleTradeSubmit = (tradeData) => {
+    console.log('Dashboard handleTradeSubmit called with:', tradeData);
     setPendingTrade(tradeData);
     setShowConfirmModal(true);
   };
@@ -257,11 +258,12 @@ const Dashboard = () => {
       </div>
 
       {/* Confirmation Modal */}
-      <ConfirmTradeModal
+      <TradeModal
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
+        stock={pendingTrade}
+        type={pendingTrade?.type}
         onConfirm={handleConfirmTrade}
-        tradeData={pendingTrade || {}}
       />
     </DashboardLayout>
   );

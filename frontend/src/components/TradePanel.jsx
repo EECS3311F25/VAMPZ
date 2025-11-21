@@ -99,6 +99,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log('TradePanel handleSubmit called. onTradeSubmit exists:', !!onTradeSubmit);
         if (onTradeSubmit) {
             onTradeSubmit({
                 type,
@@ -318,7 +319,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Watchlist CTA */}
                     <button
                         type="button"

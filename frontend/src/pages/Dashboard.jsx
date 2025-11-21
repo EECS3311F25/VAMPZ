@@ -5,7 +5,6 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
-import TradeModal from '../components/TradeModal';
 import { SkeletonSummaryCard } from '../components/Skeleton';
 
 const statsCards = [
@@ -69,8 +68,6 @@ const recentActivity = [
 const Dashboard = () => {
   const { user } = useAuth();
   const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [pendingTrade, setPendingTrade] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hoverPoint, setHoverPoint] = useState(null);
   const [tradeMarkers, setTradeMarkers] = useState([]);
@@ -84,27 +81,18 @@ const Dashboard = () => {
 
   const handleTradeSubmit = (tradeData) => {
     console.log('Dashboard handleTradeSubmit called with:', tradeData);
-    setPendingTrade(tradeData);
-    setShowConfirmModal(true);
-  };
 
-  const handleConfirmTrade = () => {
-    console.log('Trade confirmed:', pendingTrade);
-
-    // Add trade marker to chart
-    if (pendingTrade) {
+    if (tradeData) {
       const newMarker = {
-        symbol: pendingTrade.symbol,
-        type: pendingTrade.type,
-        price: parseFloat(pendingTrade.price),
+        symbol: tradeData.symbol,
+        type: tradeData.type,
+        price: parseFloat(tradeData.price),
         timestamp: Date.now()
       };
       setTradeMarkers(prev => [...prev, newMarker]);
     }
 
-    setShowConfirmModal(false);
-    setPendingTrade(null);
-    // Here you would call your actual trade API
+    // Here you would call your actual trade API or trigger a toast/snackbar
   };
 
   return (
@@ -257,14 +245,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
-      <TradeModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        stock={pendingTrade}
-        type={pendingTrade?.type}
-        onConfirm={handleConfirmTrade}
-      />
     </DashboardLayout>
   );
 };

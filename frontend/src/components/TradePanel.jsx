@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check, Star } from 'lucide-react';
+import ConfirmTradeModal from './ConfirmTradeModal';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -13,6 +14,8 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [watchlist, setWatchlist] = useState([]);
     const wrapperRef = useRef(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [tradeData, setTradeData] = useState(null);
 
     // Mock current price - in production, this would come from real-time data
     const currentPrice = 150.00;
@@ -99,17 +102,28 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('TradePanel handleSubmit called. onTradeSubmit exists:', !!onTradeSubmit);
-        if (onTradeSubmit) {
-            onTradeSubmit({
-                type,
-                symbol: selectedSymbol,
-                quantity: Number(quantity),
-                price: currentPrice.toFixed(2),
-                totalCost: total,
-                portfolioAfter: portfolioAfter.toFixed(2)
-            });
+        const currentTradeData = {
+            type,
+            symbol: selectedSymbol,
+            quantity: Number(quantity),
+            price: currentPrice.toFixed(2),
+            totalCost: total,
+            portfolioAfter: portfolioAfter.toFixed(2)
+        };
+        setTradeData(currentTradeData);
+        setIsConfirmModalOpen(true);
+    };
+
+    const handleConfirmTrade = () => {
+        console.log('TradePanel handleConfirmTrade called. onTradeSubmit exists:', !!onTradeSubmit);
+        if (onTradeSubmit && tradeData) {
+            onTradeSubmit(tradeData);
         }
+    };
+
+    const handleCloseModal = () => {
+        setIsConfirmModalOpen(false);
+        setTradeData(null);
     };
 
     const toggleWatchlist = () => {
@@ -359,6 +373,13 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                     {type === 'Buy' ? 'Buy' : 'Sell'} {selectedSymbol}
                 </button>
             </form>
+
+            <ConfirmTradeModal
+                isOpen={isConfirmModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmTrade}
+                tradeData={tradeData}
+            />
         </div>
     );
 };

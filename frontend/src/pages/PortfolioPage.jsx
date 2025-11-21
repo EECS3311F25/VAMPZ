@@ -152,7 +152,7 @@ const PortfolioPage = () => {
             <SkeletonMiniSummary />
           ) : (
             <div className="glass-panel rounded-2xl p-4 mb-8 shadow-sm">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-4 gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-teal-500/10 flex items-center justify-center">
                     <PieChart className="w-5 h-5 text-teal-600 dark:text-teal-400" />

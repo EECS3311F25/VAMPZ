@@ -3,6 +3,7 @@ import { Menu, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
 import { useState } from 'react';
+import { Logo } from './Logo';
 
 const TopBar = ({ onToggleSidebar }) => {
     const { user, logout } = useAuth();
@@ -19,14 +20,7 @@ const TopBar = ({ onToggleSidebar }) => {
                     <Menu size={24} />
                 </button>
                 <Link to="/dashboard" className="flex items-center gap-1.5 hover:opacity-80 transition-opacity">
-                    <img
-                        src="/images/logo-icon.png"
-                        alt="StockSprout Logo"
-                        className="h-11 w-auto md:h-12 flex-shrink-0"
-                    />
-                    <span className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-['Outfit'] leading-none hidden sm:block">
-                        Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
-                    </span>
+                    <Logo textSize="text-xl md:text-2xl" iconSize={32} />
                 </Link>
             </div>
 

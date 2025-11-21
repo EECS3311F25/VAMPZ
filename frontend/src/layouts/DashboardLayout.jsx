@@ -111,8 +111,10 @@ const DashboardLayout = ({ children, activeMenu }) => {
             <div className="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-white/50 dark:from-slate-900/50 to-transparent" />
           </div>
 
-          <div className="flex-1 overflow-y-auto relative z-10 p-4 sm:p-6 lg:p-8">
-            {children}
+          <div className="flex-1 overflow-y-auto relative z-10">
+            <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+              {children}
+            </div>
           </div>
         </div>
       </div>

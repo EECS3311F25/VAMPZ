@@ -72,6 +72,8 @@ const Dashboard = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [pendingTrade, setPendingTrade] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hoverPoint, setHoverPoint] = useState(null);
+  const [tradeMarkers, setTradeMarkers] = useState([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -87,6 +89,18 @@ const Dashboard = () => {
 
   const handleConfirmTrade = () => {
     console.log('Trade confirmed:', pendingTrade);
+
+    // Add trade marker to chart
+    if (pendingTrade) {
+      const newMarker = {
+        symbol: pendingTrade.symbol,
+        type: pendingTrade.type,
+        price: parseFloat(pendingTrade.price),
+        timestamp: Date.now()
+      };
+      setTradeMarkers(prev => [...prev, newMarker]);
+    }
+
     setShowConfirmModal(false);
     setPendingTrade(null);
     // Here you would call your actual trade API
@@ -110,7 +124,7 @@ const Dashboard = () => {
           {/* Stats Cards Grid with improved styling */}
           <div className="mb-10">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
               {loading ? (
                 <>
                   <SkeletonSummaryCard />
@@ -138,14 +152,18 @@ const Dashboard = () => {
           </div>
 
           {/* Market Overview Section with Trade Box */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
             {/* Stock Chart */}
             <div className="lg:col-span-2 glass-panel rounded-2xl p-6 shadow-sm">
               <div className="mb-4">
                 <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Performance</h2>
                 <p className="text-sm text-slate-600 dark:text-slate-400">Track price movements for {selectedSymbol}</p>
               </div>
-              <StockChart symbol={selectedSymbol} />
+              <StockChart
+                symbol={selectedSymbol}
+                onHoverPoint={setHoverPoint}
+                tradeMarkers={tradeMarkers.filter(m => m.symbol === selectedSymbol)}
+              />
             </div>
 
             {/* Trade Panel */}
@@ -158,6 +176,7 @@ const Dashboard = () => {
                 selectedSymbol={selectedSymbol}
                 onSymbolChange={setSelectedSymbol}
                 onTradeSubmit={handleTradeSubmit}
+                hoverPoint={hoverPoint}
               />
             </div>
           </div>

@@ -15,7 +15,7 @@ export default function DataWidget({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-xl shadow-lg p-6 border border-slate-100 w-full max-w-sm"
+      className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 p-6 border border-white/20 dark:border-slate-700/50 w-full max-w-sm"
     >
       <div className="flex justify-between items-start mb-4">
         <div>

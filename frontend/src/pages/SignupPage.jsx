@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
 import TermsModal from '../components/TermsModal';
@@ -63,7 +64,13 @@ const SignupPage = () => {
         title="Create your account"
         subtitle="And start your trading journey!"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.form
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          onSubmit={handleSubmit}
+          className="space-y-6"
+        >
           <div className="space-y-2">
             <label
               htmlFor="fullName"
@@ -72,7 +79,7 @@ const SignupPage = () => {
               Full name
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                 <User className="h-5 w-5 text-slate-400 dark:text-slate-500" />
               </div>
               <input
@@ -83,7 +90,7 @@ const SignupPage = () => {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white"
                 placeholder="John Doe"
               />
             </div>
@@ -97,7 +104,7 @@ const SignupPage = () => {
               Email address
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                 <Mail className="h-5 w-5 text-slate-400 dark:text-slate-500" />
               </div>
               <input
@@ -108,7 +115,7 @@ const SignupPage = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white"
                 placeholder="name@example.com"
               />
             </div>
@@ -123,7 +130,7 @@ const SignupPage = () => {
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                   <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                 </div>
                 <input
@@ -134,7 +141,7 @@ const SignupPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${error && error.toLowerCase().includes('password') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+                  className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white ${error && error.toLowerCase().includes('password') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
                   placeholder="••••••••"
                 />
                 <button
@@ -155,7 +162,7 @@ const SignupPage = () => {
                 Confirm Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                   <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                 </div>
                 <input
@@ -166,7 +173,7 @@ const SignupPage = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${error && error.toLowerCase().includes('match') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white ${error && error.toLowerCase().includes('match') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
                   placeholder="••••••••"
                 />
               </div>
@@ -179,7 +186,9 @@ const SignupPage = () => {
             </p>
           )}
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={loading}
             className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-teal-600/20 text-sm font-medium text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -195,8 +204,8 @@ const SignupPage = () => {
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -5,7 +5,7 @@ const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
 ];
 
-const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) => {
+const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, hoverPoint = null }) => {
     const [type, setType] = useState('Buy');
     const [quantity, setQuantity] = useState(1);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -196,6 +196,27 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit }) 
                         </div>
                     )}
                 </div>
+
+                {/* Chart Hover Point Display */}
+                {hoverPoint && (
+                    <div className="mb-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="flex items-center justify-between">
+                            <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide">Chart Point</span>
+                            <span className="text-xs text-blue-500 dark:text-blue-400">Hover</span>
+                        </div>
+                        <div className="mt-1.5 flex items-baseline gap-3">
+                            <div>
+                                <span className="text-xs text-blue-600 dark:text-blue-400">Time:</span>
+                                <span className="ml-1 text-sm font-bold text-blue-700 dark:text-blue-300">{hoverPoint.time}</span>
+                            </div>
+                            <div className="h-4 w-px bg-blue-300 dark:bg-blue-700"></div>
+                            <div>
+                                <span className="text-xs text-blue-600 dark:text-blue-400">Price:</span>
+                                <span className="ml-1 text-sm font-bold text-blue-700 dark:text-blue-300">${hoverPoint.price.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Current Price Display */}
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">

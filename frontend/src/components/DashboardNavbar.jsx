@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, TrendingUp, User, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
+import { Logo } from './Logo';
 // merge ?
 const DashboardNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,13 +31,8 @@ const DashboardNavbar = () => {
       }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-500 to-blue-600 flex items-center justify-center text-white">
-              <TrendingUp size={20} />
-            </div>
-            <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
-            </span>
+          <Link to="/dashboard">
+            <Logo textSize="text-xl" />
           </Link>
 
           <div className="hidden md:block">

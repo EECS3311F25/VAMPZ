@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
 import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
@@ -32,7 +33,13 @@ const LoginPage = () => {
       title="Welcome back"
       subtitle="Enter your credentials to access your account"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <motion.form
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        onSubmit={handleSubmit}
+        className="space-y-6"
+      >
         <div className="space-y-2">
           <label
             htmlFor="email"
@@ -41,7 +48,7 @@ const LoginPage = () => {
             Email address
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
               <Mail className="h-5 w-5 text-slate-400 dark:text-slate-500" />
             </div>
             <input
@@ -52,7 +59,7 @@ const LoginPage = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${error ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+              className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white ${error ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
               placeholder="name@example.com"
             />
           </div>
@@ -66,12 +73,9 @@ const LoginPage = () => {
             >
               Password
             </label>
-            <Link to="/forgot-password" className="text-sm font-medium text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 transition-colors">
-              Forgot password?
-            </Link>
           </div>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
               <Lock className="h-5 w-5 text-slate-400 dark:text-slate-500" />
             </div>
             <input
@@ -82,7 +86,7 @@ const LoginPage = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${error ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+              className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:-webkit-text-fill-color-slate-900 dark:[&:-webkit-autofill]:-webkit-text-fill-color-white ${error ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
               placeholder="••••••••"
             />
             <button
@@ -100,7 +104,9 @@ const LoginPage = () => {
           )}
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={loading}
           className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-xl shadow-lg shadow-teal-600/20 text-sm font-medium text-white bg-teal-600 hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -116,8 +122,8 @@ const LoginPage = () => {
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
 
       <div className="mt-8 text-center">
         <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { useState, useEffect } from 'react';
+import { Logo } from './Logo';
 
 const HomeNavbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -121,15 +122,8 @@ const HomeNavbar = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-1.5 group">
-                        <img
-                            src="/images/logo-icon.png"
-                            alt="StockSprout Logo"
-                            className="h-11 w-auto md:h-12 flex-shrink-0 group-hover:scale-110 transition-transform duration-200"
-                        />
-                        <span className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white font-['Outfit'] leading-none">
-                            Stock<span className="text-teal-600 dark:text-teal-400">Sprout</span>
-                        </span>
+                    <Link to="/" className="flex items-center gap-1.5 group" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                        <Logo />
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -154,9 +148,9 @@ const HomeNavbar = () => {
                     {/* Right Side - Consistent position: Search | Theme | Auth */}
                     <div className="flex items-center gap-3">
                         {/* Search - optional, hidden on small screens */}
-                        <button className="hidden sm:flex p-2 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                        {/* <button className="hidden sm:flex p-2 text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                             <Search size={20} />
-                        </button>
+                        </button> */}
 
                         {/* Theme Toggle - consistent position across all navbars */}
                         <div className="flex items-center">

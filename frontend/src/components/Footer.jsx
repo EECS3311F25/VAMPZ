@@ -1,4 +1,5 @@
 import { Github, Twitter, Linkedin, ExternalLink } from 'lucide-react';
+import { Logo } from './Logo';
 
 export default function Footer() {
   const footerLinks = {
@@ -54,9 +55,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mb-12">
           <div className="col-span-2 md:col-span-1">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Stock<span className="text-teal-600">Sprout</span>
-              </h3>
+              <Logo textSize="text-xl" iconSize={32} />
             </div>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-xs">
               Practice trading with virtual money. Learn stock market strategies risk-free in a realistic trading environment.

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { X, Check } from 'lucide-react';
+import { X, Check, Loader2 } from 'lucide-react';
 
-const TermsModal = ({ isOpen, onAccept }) => {
+const TermsModal = ({ isOpen, onAccept, loading }) => {
     const [agreed, setAgreed] = useState(false);
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="glass-card rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-300 dark:border-slate-700 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
                 {/* Header */}
                 <div className="p-6 border-b border-slate-200 dark:border-slate-800">
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Terms & Conditions</h2>
@@ -84,7 +84,8 @@ const TermsModal = ({ isOpen, onAccept }) => {
                                 type="checkbox"
                                 checked={agreed}
                                 onChange={(e) => setAgreed(e.target.checked)}
-                                className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 cursor-pointer"
+                                disabled={loading}
+                                className="w-5 h-5 rounded border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             />
                         </div>
                         <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-all duration-200">
@@ -94,13 +95,18 @@ const TermsModal = ({ isOpen, onAccept }) => {
 
                     <button
                         onClick={onAccept}
-                        disabled={!agreed}
-                        className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${agreed
-                            ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
-                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
+                        disabled={!agreed || loading}
+                        className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${agreed && !loading
+                                ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
+                                : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
                             }`}
                     >
-                        {agreed ? (
+                        {loading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                                Creating account...
+                            </span>
+                        ) : agreed ? (
                             <span className="flex items-center justify-center gap-2">
                                 <Check size={20} />
                                 Accept & Continue

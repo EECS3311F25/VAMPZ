@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, TrendingUp, TrendingDown, DollarSign, PieChart, ArrowUpRight, ArrowDownRight, MoreVertical, Wallet, TrendingUpIcon, Activity, Eye, Star, ShoppingCart, DollarSignIcon, X } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import DashboardLayout from '../layouts/DashboardLayout';
 import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from '../components/Skeleton';
 import StatsCard from '../components/ui/StatsCard';
@@ -15,24 +14,6 @@ const portfolioStocks = [
   { symbol: 'META', name: 'Meta Platforms Inc.', price: '312.45', change: '-2.10', changePercent: '-0.67%', positive: false, shares: 20, value: 6249.00 },
 ];
 
-// Helper function to generate mock price chart data
-const generateChartData = (basePrice, isPositive) => {
-  const data = [];
-  const days = 30;
-  let price = parseFloat(basePrice) - (Math.random() * 10 + 5);
-  for (let i = 0; i < days; i++) {
-    const change = (Math.random() - 0.45) * 3;
-    price += change;
-    data.push({
-      date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      price: parseFloat(price.toFixed(2))
-    });
-  }
-  return data;
-};
-
-
-
 const PortfolioPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -42,10 +23,8 @@ const PortfolioPage = () => {
   const [tradeType, setTradeType] = useState('Buy');
   const [tradeQuantity, setTradeQuantity] = useState(1);
   const [watchlist, setWatchlist] = useState([]); // Track watchlist items
-  const [hoveredStock, setHoveredStock] = useState(null); // Track hovered stock for tooltip
   const [loading, setLoading] = useState(true); // Loading state
   const menuRef = useRef(null);
-  const isSelectedInWatchlist = selectedStock ? watchlist.includes(selectedStock.symbol) : false;
 
   // Simulate initial data load
   useEffect(() => {
@@ -263,18 +242,12 @@ const PortfolioPage = () => {
                     {filteredStocks.map((stock) => (
                       <tr key={stock.symbol} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-all group">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div 
-                            className="flex items-center cursor-pointer group/stock"
-                            onClick={() => {
-                              setSelectedStock(stock);
-                              setShowDetailModal(true);
-                            }}
-                          >
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold shadow-sm transition-transform group-hover/stock:scale-110 ${stock.positive ? 'bg-teal-100 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-400' : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'}`}>
+                          <div className="flex items-center">
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold shadow-sm ${stock.positive ? 'bg-teal-100 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-400' : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'}`}>
                               {stock.symbol.charAt(0)}
                             </div>
                             <div className="ml-4">
-                              <div className="font-bold text-slate-900 dark:text-white group-hover/stock:text-teal-600 dark:group-hover/stock:text-teal-400 transition-colors">{stock.symbol}</div>
+                              <div className="font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{stock.symbol}</div>
                               <div className="text-sm text-slate-600 dark:text-slate-500">{stock.name}</div>
                             </div>
                           </div>
@@ -289,34 +262,46 @@ const PortfolioPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold text-right">${stock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div 
-                            className="relative inline-block"
-                            onMouseEnter={() => setHoveredStock(stock.symbol)}
-                            onMouseLeave={() => setHoveredStock(null)}
-                          >
+                          <div className="relative" ref={openMenuId === stock.symbol ? menuRef : null}>
                             <button
-                              onClick={() => handleAddToWatchlist(stock)}
-                              className={`p-2 hover:scale-110 transition-all duration-300 rounded-lg cursor-pointer ${
-                                watchlist.includes(stock.symbol)
-                                  ? 'text-yellow-500 hover:text-yellow-400 dark:text-yellow-400 dark:hover:text-yellow-300'
-                                  : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
-                              }`}
+                              onClick={() => toggleMenu(stock.symbol)}
+                              className="text-slate-600 dark:text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                             >
-                              <Star 
-                                size={20} 
-                                fill={watchlist.includes(stock.symbol) ? 'currentColor' : 'none'}
-                                className="transition-all duration-300"
-                              />
+                              <MoreVertical size={18} />
                             </button>
 
-                            {/* Glassmorphic Tooltip */}
-                            {hoveredStock === stock.symbol && (
-                              <div className="absolute right-0 top-full mt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-200">
-                                <div className="px-3 py-2 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 shadow-lg whitespace-nowrap">
-                                  <p className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                                    {watchlist.includes(stock.symbol) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                                  </p>
-                                </div>
+                            {/* Dropdown Menu */}
+                            {openMenuId === stock.symbol && (
+                              <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                <button
+                                  onClick={() => handleViewDetails(stock)}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left"
+                                >
+                                  <Eye size={16} className="text-slate-500 dark:text-slate-400" />
+                                  View Details
+                                </button>
+                                <button
+                                  onClick={() => handleAddToWatchlist(stock)}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left"
+                                >
+                                  <span className="text-lg">{watchlist.includes(stock.symbol) ? '⭐' : '☆'}</span>
+                                  {watchlist.includes(stock.symbol) ? 'Remove from Watchlist' : 'Add to Watchlist'}
+                                </button>
+                                <div className="h-px bg-slate-200 dark:bg-slate-700"></div>
+                                <button
+                                  onClick={() => handleTrade(stock, 'Buy')}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-teal-600 dark:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors text-left"
+                                >
+                                  <ShoppingCart size={16} />
+                                  Buy More
+                                </button>
+                                <button
+                                  onClick={() => handleTrade(stock, 'Sell')}
+                                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
+                                >
+                                  <DollarSignIcon size={16} />
+                                  Sell Shares
+                                </button>
                               </div>
                             )}
                           </div>
@@ -378,104 +363,59 @@ const PortfolioPage = () => {
               className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
               onClick={() => setShowDetailModal(false)}
             />
-            <div className="fixed inset-0 z-50 overflow-y-auto">
-              <div className="flex min-h-full items-start justify-center px-4 sm:px-6 py-16 sm:py-20">
-                <div className="glass-card relative w-full max-w-4xl rounded-3xl border border-white/20 dark:border-white/5 shadow-2xl p-6 sm:p-8">
-                  <button
-                    onClick={() => setShowDetailModal(false)}
-                    className="absolute top-6 right-6 z-10 p-2 rounded-full bg-white/40 dark:bg-slate-900/40 text-slate-500 hover:text-slate-700 dark:hover:text-white shadow-lg transition-all"
-                  >
-                    <X size={18} />
-                  </button>
-                  <div className="mb-6 pr-10">
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[85vh] overflow-y-auto z-50 p-4">
+              <div className="glass-card rounded-2xl p-6 shadow-2xl">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{selectedStock.symbol}</h2>
                     <p className="text-slate-600 dark:text-slate-400 text-sm mt-0.5">{selectedStock.name}</p>
                   </div>
-
-                {/* Price Chart */}
-                <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                  <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">30-Day Price Trend</h3>
-                  <ResponsiveContainer width="100%" height={180}>
-                    <AreaChart data={generateChartData(selectedStock.price, selectedStock.positive)}>
-                      <defs>
-                        <linearGradient id={`gradient-${selectedStock.symbol}`} x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor={selectedStock.positive ? '#10b981' : '#ef4444'} stopOpacity={0.3} />
-                          <stop offset="100%" stopColor={selectedStock.positive ? '#10b981' : '#ef4444'} stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis 
-                        dataKey="date" 
-                        tick={{ fontSize: 11, fill: '#94a3b8' }}
-                        tickLine={false}
-                        axisLine={false}
-                        interval="preserveStartEnd"
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 11, fill: '#94a3b8' }}
-                        tickLine={false}
-                        axisLine={false}
-                        domain={['dataMin - 2', 'dataMax + 2']}
-                        tickFormatter={(value) => `$${value.toFixed(0)}`}
-                      />
-                      <Tooltip 
-                        contentStyle={{
-                          backgroundColor: 'rgba(30, 41, 59, 0.9)',
-                          border: '1px solid rgba(148, 163, 184, 0.2)',
-                          borderRadius: '8px',
-                          fontSize: '12px'
-                        }}
-                        labelStyle={{ color: '#e2e8f0' }}
-                        itemStyle={{ color: selectedStock.positive ? '#10b981' : '#ef4444' }}
-                        formatter={(value) => [`$${value.toFixed(2)}`, 'Price']}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="price" 
-                        stroke={selectedStock.positive ? '#10b981' : '#ef4444'}
-                        strokeWidth={2}
-                        fill={`url(#gradient-${selectedStock.symbol})`}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <button
+                    onClick={() => setShowDetailModal(false)}
+                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    <X size={20} className="text-slate-500" />
+                  </button>
                 </div>
 
-                {/* Holdings + Price */}
-                <div className="grid gap-4 lg:grid-cols-2 mb-5">
-                  <div className="p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
-                    <div className="grid grid-cols-3 gap-3">
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.shares}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white">${(selectedStock.value / selectedStock.shares).toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
-                        <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                      </div>
+                {/* Current Holdings Info */}
+                <div className="mb-6 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.shares}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">${(selectedStock.value / selectedStock.shares).toFixed(2)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                   </div>
+                </div>
 
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
+                {/* Current Price */}
+                <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-end justify-between mb-3">
                     <div>
                       <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
                       <p className="text-3xl font-bold text-slate-900 dark:text-white">${selectedStock.price}</p>
                     </div>
                     <div className={`text-right ${selectedStock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                      <div className="flex items-center gap-2 justify-end">
+                      <div className="flex items-center gap-2 justify-end mb-1">
                         {selectedStock.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
                         <span className="text-xl font-bold">{selectedStock.change}</span>
                       </div>
-                      <p className="text-sm font-semibold mt-1">{selectedStock.changePercent}</p>
+                      <p className="text-sm font-semibold">{selectedStock.changePercent}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Additional Stats */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                   <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day High</p>
                     <p className="text-base font-bold text-slate-900 dark:text-white">${(parseFloat(selectedStock.price) + 5).toFixed(2)}</p>
@@ -514,7 +454,6 @@ const PortfolioPage = () => {
                   >
                     Sell Shares
                   </button>
-                </div>
                 </div>
               </div>
             </div>

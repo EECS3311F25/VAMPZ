@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, Info, Search, Check, Star } from 'lucide-react';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -11,6 +11,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [watchlist, setWatchlist] = useState([]);
     const wrapperRef = useRef(null);
 
     // Mock current price - in production, this would come from real-time data
@@ -19,6 +20,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const portfolioValue = 125430.50;
     const portfolioAfter = type === 'Buy' ? portfolioValue - total : portfolioValue + total;
     const portfolioChange = ((total / portfolioValue) * 100).toFixed(2);
+    const isInWatchlist = watchlist.includes(selectedSymbol);
 
     useEffect(() => {
         // Filter suggestions when selectedSymbol changes
@@ -107,6 +109,15 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                 portfolioAfter: portfolioAfter.toFixed(2)
             });
         }
+    };
+
+    const toggleWatchlist = () => {
+        setWatchlist(prev => {
+            if (prev.includes(selectedSymbol)) {
+                return prev.filter(symbol => symbol !== selectedSymbol);
+            }
+            return [...prev, selectedSymbol];
+        });
     };
 
     return (
@@ -280,8 +291,8 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                     </div>
                 </div>
 
-                {/* Total & Impact */}
-                <div className="space-y-3 pt-2">
+                {/* Total, Impact & Watchlist */}
+                <div className="space-y-4 pt-2">
                     <div className="flex justify-between items-center">
                         <span className="text-sm text-slate-600 dark:text-slate-400">Estimated Cost</span>
                         <span className="text-xl font-bold text-slate-900 dark:text-white">${total.toFixed(2)}</span>
@@ -307,6 +318,33 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                             </div>
                         </div>
                     </div>
+                    
+                    {/* Watchlist CTA */}
+                    <button
+                        type="button"
+                        onClick={toggleWatchlist}
+                        className={`w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${isInWatchlist ? 'ring-1 ring-emerald-400/40' : ''}`}
+                    >
+                        <div className="flex items-center justify-between px-4 py-3">
+                            <div className="flex items-center gap-3">
+                                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all ${isInWatchlist ? 'bg-emerald-500/20 text-emerald-500' : 'bg-slate-900/10 dark:bg-white/10 text-slate-500 dark:text-slate-200'}`}>
+                                    <Star
+                                        size={18}
+                                        className={`${isInWatchlist ? 'fill-current drop-shadow' : ''}`}
+                                    />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Watchlist</p>
+                                    <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                                        {isInWatchlist ? `${selectedSymbol} saved for quick access` : 'Add this stock for quick access'}
+                                    </p>
+                                </div>
+                            </div>
+                            <span className={`text-sm font-bold ${isInWatchlist ? 'text-emerald-500' : 'text-teal-500'}`}>
+                                {isInWatchlist ? 'Added' : 'Add'}
+                            </span>
+                        </div>
+                    </button>
                 </div>
 
                 {/* Submit Button */}

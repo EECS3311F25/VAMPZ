@@ -20,7 +20,7 @@ const StatsCard = ({
 }) => {
     return (
         <div
-            className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br ${gradient} ${className}`}
+            className={`glass-card rounded-2xl p-6 relative overflow-hidden group hover:shadow-lg transition-all duration-300 bg-gradient-to-br dark:bg-gradient-to-br h-full flex flex-col justify-between ${gradient} ${className}`}
         >
             {/* Header with Title and Icon */}
             <div className="flex justify-between items-start mb-3 relative z-10">

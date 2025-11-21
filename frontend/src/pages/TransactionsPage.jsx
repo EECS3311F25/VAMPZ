@@ -187,8 +187,8 @@ const TransactionsPage = () => {
                                 </table>
                             </div>
 
-                            {/* Empty State */}
-                            {filteredTransactions.length === 0 && (
+                            {/* Empty State - when no transactions at all */}
+                            {transactionsData.length === 0 && (
                                 <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="w-32 h-32 mx-auto mb-4 relative">
                                         <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
@@ -198,9 +198,20 @@ const TransactionsPage = () => {
                                             className="w-full h-full object-contain relative z-10 opacity-80"
                                         />
                                     </div>
-                                    <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions found</p>
+                                    <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions yet</p>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm">
-                                        {searchQuery || filterType !== 'All' ? 'Try adjusting your filters' : 'Your trading history will appear here'}
+                                        Your trading history will appear here
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Empty State - when search/filter returns no results */}
+                            {transactionsData.length > 0 && filteredTransactions.length === 0 && (
+                                <div className="text-center py-12 px-6">
+                                    <Search size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
+                                    <p className="text-slate-600 dark:text-slate-400 font-medium">No transactions found</p>
+                                    <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
+                                        Try adjusting your filters
                                     </p>
                                 </div>
                             )}

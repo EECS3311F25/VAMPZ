@@ -227,8 +227,8 @@ const WatchlistPage = () => {
                         </div>
                     )}
 
-                    {/* Empty State */}
-                    {filteredWatchlist.length === 0 && (
+                    {/* Empty State - when watchlist is truly empty */}
+                    {watchlist.length === 0 && (
                         <div className="text-center py-20 glass-card rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <div className="w-40 h-40 mx-auto mb-6 relative">
                                 <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
@@ -240,17 +240,26 @@ const WatchlistPage = () => {
                             </div>
                             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Your Watchlist is Empty</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-sm mx-auto">
-                                {searchQuery ? 'No stocks found matching your search.' : 'Keep track of your favorite stocks by adding them here.'}
+                                Keep track of your favorite stocks by adding them here.
                             </p>
-                            {!searchQuery && (
-                                <button
-                                    onClick={() => setShowAddModal(true)}
-                                    className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30 hover:shadow-teal-600/40 hover:-translate-y-1"
-                                >
-                                    <Plus size={20} />
-                                    Add First Stock
-                                </button>
-                            )}
+                            <button
+                                onClick={() => setShowAddModal(true)}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30 hover:shadow-teal-600/40 hover:-translate-y-1"
+                            >
+                                <Plus size={20} />
+                                Add First Stock
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Empty State - when search returns no results */}
+                    {watchlist.length > 0 && filteredWatchlist.length === 0 && (
+                        <div className="text-center py-12 px-6 glass-card rounded-2xl">
+                            <Search size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
+                            <p className="text-slate-600 dark:text-slate-400 font-medium">No stocks found</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-500 mt-1">
+                                Try adjusting your search query
+                            </p>
                         </div>
                     )}
                 </div>

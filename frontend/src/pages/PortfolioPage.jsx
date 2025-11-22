@@ -365,14 +365,7 @@ const PortfolioPage = () => {
               {holdings.length === 0 && (
                 <div className="text-center py-16 px-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                   <div className="max-w-md mx-auto">
-                    <div className="w-48 h-48 mx-auto mb-6 relative">
-                      <div className="absolute inset-0 bg-teal-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
-                      <img
-                        src="/images/empty-portfolio.png"
-                        alt="Empty Portfolio"
-                        className="w-full h-full object-contain relative z-10 drop-shadow-xl"
-                      />
-                    </div>
+
                     <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">No Holdings Yet</h3>
                     <p className="text-slate-600 dark:text-slate-400 mb-8 max-w-xs mx-auto">
                       Your portfolio is looking a bit empty. Start building your wealth today!

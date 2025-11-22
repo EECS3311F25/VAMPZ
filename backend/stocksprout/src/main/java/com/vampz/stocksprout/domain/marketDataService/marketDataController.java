@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.domain.marketDataService;
 import com.vampz.stocksprout.domain.marketDataService.StockCurrentDTO;
+import com.vampz.stocksprout.domain.watchMVC.WatchItem;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,14 @@ public class marketDataController {
         System.out.println(response.toString());
         return response;
 
+    }
+
+    @GetMapping
+    @RequestMapping(path = "/stockData")
+    public WatchItem getStockData(@RequestParam String symbol) {
+        WatchItem response = marketDataService.getStockData(symbol);
+        System.out.println(response.toString());
+        return response;
     }
 
 

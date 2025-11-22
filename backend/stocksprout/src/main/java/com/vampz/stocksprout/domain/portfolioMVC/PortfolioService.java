@@ -3,6 +3,8 @@ package com.vampz.stocksprout.domain.portfolioMVC;
 import com.vampz.stocksprout.appuser.AppUser;
 import com.vampz.stocksprout.domain.holdingMVC.Holding;
 import com.vampz.stocksprout.domain.holdingMVC.HoldingService;
+import com.vampz.stocksprout.domain.watchMVC.WatchItem;
+import com.vampz.stocksprout.domain.watchMVC.WatchItemService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,11 +14,13 @@ import java.math.RoundingMode;
 public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final HoldingService holdingService;
+    private final WatchItemService watchItemService;
 
 
-    public PortfolioService(PortfolioRepository portfolioRepository, HoldingService holdingService) {
+    public PortfolioService(PortfolioRepository portfolioRepository, HoldingService holdingService, WatchItemService watchItemService) {
         this.portfolioRepository = portfolioRepository;
         this.holdingService = holdingService;
+        this.watchItemService = watchItemService;
     }
 
     public Portfolio getPortfolioById(Long id) {
@@ -35,15 +39,25 @@ public class PortfolioService {
         BigDecimal stockValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         for (Holding holding : portolio.getHoldings()) {
             holdingService.refresh(holding);
-            invested = invested.add(holding.getBuyPrice().setScale(2, RoundingMode.HALF_UP).multiply(
+            invested = invested.add(holding.getAvgBuyPrice().setScale(2, RoundingMode.HALF_UP).multiply(
                     BigDecimal.valueOf(holding.getQuantity()).setScale(2, RoundingMode.HALF_UP)
             )).setScale(2, RoundingMode.HALF_UP);
             stockValue = stockValue.add(holding.getCurrentPrice().setScale(2, RoundingMode.HALF_UP).multiply(
                     BigDecimal.valueOf(holding.getQuantity()).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP));
         }
 
+
+        for(WatchItem watchItem : portolio.getWatchList()){
+            watchItemService.refresh(watchItem);
+        }
+
+
         portolio.setInvested(invested);
         portolio.setStockValue(stockValue);
         portfolioRepository.save(portolio);
+    }
+
+    public void save(Portfolio portfolio) {
+        portfolioRepository.save(portfolio);
     }
 }

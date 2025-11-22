@@ -1,8 +1,10 @@
 package com.vampz.stocksprout.domain.marketDataService;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.vampz.stocksprout.domain.watchMVC.WatchItem;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -80,6 +82,37 @@ public class marketDataService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public WatchItem getStockData(String symbol) {
+        HttpClient client = HttpClient.newHttpClient();
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://financialmodelingprep.com/stable/quote?symbol="
+                        + symbol + "&apikey=" + apiKey))
+                .GET()
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("Status: " + response.statusCode());
+            System.out.println("Response: " + response.body());
+
+            // IMPORTANT: ignore unknown fields
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            List<WatchItem> list = mapper.readValue(
+                    response.body(),
+                    mapper.getTypeFactory().constructCollectionType(List.class, WatchItem.class)
+            );
+
+            return list.isEmpty() ? null : list.get(0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

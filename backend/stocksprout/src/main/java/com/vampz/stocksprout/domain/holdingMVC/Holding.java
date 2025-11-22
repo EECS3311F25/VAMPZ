@@ -35,8 +35,7 @@ public class Holding {
     private int quantity;
 
     @Column(precision = 19, scale = 2)
-    private BigDecimal
-            e;
+    private BigDecimal avgBuyPrice;
 
     @Column(precision = 19, scale = 2)
     private BigDecimal currentPrice;
@@ -44,14 +43,14 @@ public class Holding {
     public Holding() {
     }
 
-    public Holding(Portfolio portfolio, String symbol, int quantity, BigDecimal buyPrice)
+    public Holding(Portfolio portfolio, String symbol, int quantity, BigDecimal avgBuyPrice)
              {
         this.portfolio = portfolio;
         this.symbol = symbol;
         this.name = symbol;
         this.quantity = quantity;
-        this.buyPrice = buyPrice.setScale(2, RoundingMode.HALF_UP);
-        this.currentPrice = buyPrice.setScale(2, RoundingMode.HALF_UP);
+        this.avgBuyPrice = avgBuyPrice.setScale(2, RoundingMode.HALF_UP);
+        this.currentPrice = avgBuyPrice.setScale(2, RoundingMode.HALF_UP);
     }
 
 

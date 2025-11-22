@@ -3,6 +3,8 @@ package com.vampz.stocksprout.domain.portfolioMVC;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vampz.stocksprout.domain.transactionMVC.Transaction;
 import com.vampz.stocksprout.domain.holdingMVC.Holding;
+import com.vampz.stocksprout.domain.watchMVC.WatchItem;
+import com.vampz.stocksprout.domain.watchMVC.WatchItemService;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -48,6 +50,9 @@ public class Portfolio {
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WatchItem> watchList = new ArrayList<>();
+
     public Portfolio() {
     }
 
@@ -64,6 +69,13 @@ public class Portfolio {
         this.stockValue = new BigDecimal("0").setScale(2, RoundingMode.HALF_UP);
         this.holdings = new ArrayList<>();
         this.transactions = new ArrayList<>();
+        this.watchList = new ArrayList<>();
+
+        String[] symbols= {"AAPL", "MSFT", "GOOGL", "NVDA","META", "AMZN", "NFLX", "TSLA"};
+        for(int i = 0; i < symbols.length; i++)
+        {
+            watchList.add(new WatchItem(symbols[i],this));
+        }
     }
 
 

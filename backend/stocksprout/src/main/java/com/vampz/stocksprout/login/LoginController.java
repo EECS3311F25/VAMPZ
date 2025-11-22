@@ -46,6 +46,7 @@ public class LoginController {
                                     "email", user.getEmail()
                             )
                     ));
+
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                         "status", "error",

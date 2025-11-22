@@ -59,3 +59,19 @@ Content-Type: application/json
   "quantity": 10
 }
 
+
+###
+GET http://localhost:8080/api/marketData/stockData?symbol=MSFT
+
+
+###
+GET http://localhost:8080/api/portfolio/watchList
+
+###
+POST http://localhost:8080/api/portfolio/watchlist?
+    symbol=RIOT
+
+###
+DELETE http://localhost:8080/api/portfolio/watchlist?
+    symbol=AAPL
+

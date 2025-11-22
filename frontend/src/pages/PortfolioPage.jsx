@@ -32,6 +32,7 @@ const PortfolioPage = () => {
   const [watchlist, setWatchlist] = useState(['AAPL', 'NVDA', 'TSLA']);
   const [hoveredStock, setHoveredStock] = useState(null);
   const [portfolioData, setPortfolioData] = useState(null);
+  const [stockDetails, setStockDetails] = useState(null);
 
   const fetchPortfolioData = async () => {
     try {
@@ -52,6 +53,21 @@ const PortfolioPage = () => {
       console.error('Error fetching portfolio data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStockDetails = async (symbol) => {
+    setStockDetails(null);
+    try {
+      const response = await fetch(`http://localhost:8080/api/marketData/stockData?symbol=${symbol}`, {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setStockDetails(data);
+      }
+    } catch (error) {
+      console.error('Error fetching stock details:', error);
     }
   };
 
@@ -109,6 +125,49 @@ const PortfolioPage = () => {
   // Mini Summary Stats
   const gainersCount = filteredStocks.filter(s => s.positive).length;
   const losersCount = filteredStocks.filter(s => !s.positive).length;
+
+  const handleTradeSubmit = async (tradeData) => {
+    if (!tradeData) return;
+
+    const endpoint = tradeData.type === 'Buy' ? '/api/portfolio/buy' : '/api/portfolio/sell';
+
+    try {
+      const response = await fetch(`http://localhost:8080${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          symbol: tradeData.symbol,
+          quantity: parseInt(tradeData.quantity)
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Refresh portfolio data to show new holdings/cash
+        fetchPortfolioData();
+        setShowTradeModal(false);
+        setSelectedStock(null);
+      } else {
+        // Handle specific error messages
+        if (result.message === 'Holding not found') {
+          alert('You do not own any shares of this stock.');
+        } else if (result.message === 'Insufficient stock quantity to sell') {
+          alert('You do not have enough shares to sell this quantity.');
+        } else if (result.message === 'Insufficient funds') {
+          alert('Insufficient funds to complete this purchase.');
+        } else {
+          alert(result.message || 'Trade failed');
+        }
+      }
+    } catch (error) {
+      console.error('Trade error:', error);
+      alert('An error occurred while processing your trade');
+    }
+  };
 
   return (
     <DashboardLayout activeMenu="portfolio">
@@ -255,6 +314,7 @@ const PortfolioPage = () => {
                             className="flex items-center cursor-pointer group/stock"
                             onClick={() => {
                               setSelectedStock(stock);
+                              fetchStockDetails(stock.symbol);
                               setShowDetailModal(true);
                             }}
                           >
@@ -435,12 +495,16 @@ const PortfolioPage = () => {
                 <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
-                    <p className="text-3xl font-bold text-slate-900 dark:text-white">${selectedStock.price}</p>
+                    <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                      ${stockDetails?.price ? stockDetails.price.toFixed(2) : selectedStock.price}
+                    </p>
                   </div>
-                  <div className={`text-right ${selectedStock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                  <div className={`text-right ${stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                     <div className="flex items-center gap-2 justify-end">
-                      {selectedStock.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
-                      <span className="text-xl font-bold">{selectedStock.changePercent}</span>
+                      {stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                      <span className="text-xl font-bold">
+                        {stockDetails?.changePercentage ? (stockDetails.changePercentage > 0 ? '+' : '') + stockDetails.changePercentage.toFixed(2) + '%' : selectedStock.changePercent}
+                      </span>
                     </div>
                     <p className="text-sm font-semibold mt-1">Return</p>
                   </div>
@@ -451,19 +515,27 @@ const PortfolioPage = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day High</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">${(parseFloat(selectedStock.price) + 5).toFixed(2)}</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">
+                    ${stockDetails?.dayHigh ? stockDetails.dayHigh.toFixed(2) : (parseFloat(selectedStock.price) + 5).toFixed(2)}
+                  </p>
                 </div>
                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Low</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">${(parseFloat(selectedStock.price) - 5).toFixed(2)}</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">
+                    ${stockDetails?.dayLow ? stockDetails.dayLow.toFixed(2) : (parseFloat(selectedStock.price) - 5).toFixed(2)}
+                  </p>
                 </div>
                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Volume</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">12.5M</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">
+                    {stockDetails?.volume ? (stockDetails.volume / 1000000).toFixed(1) + 'M' : '12.5M'}
+                  </p>
                 </div>
                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Market Cap</p>
-                  <p className="text-base font-bold text-slate-900 dark:text-white">2.8T</p>
+                  <p className="text-base font-bold text-slate-900 dark:text-white">
+                    {stockDetails?.marketCap ? (stockDetails.marketCap / 1000000000000).toFixed(2) + 'T' : '2.8T'}
+                  </p>
                 </div>
               </div>
 
@@ -504,21 +576,12 @@ const PortfolioPage = () => {
           stock={selectedStock}
           type={tradeType}
           cash={cash}
-          onConfirm={(tradeData) => {
-            console.log('Trade confirmed:', tradeData);
-            // In a real app, you'd call the API here or pass a handler
-            // For now, we'll rely on the Dashboard's handler or just close it
-            // Since this page doesn't have the full trade logic like Dashboard yet,
-            // we might want to implement handleTradeSubmit here too if needed.
-            // But for now, we just close it as per current scope.
-            setShowTradeModal(false);
-            setSelectedStock(null);
-            fetchPortfolioData(); // Refresh data
-          }}
+          onConfirm={handleTradeSubmit}
         />
       )}
     </DashboardLayout>
   );
 };
+
 
 export default PortfolioPage;

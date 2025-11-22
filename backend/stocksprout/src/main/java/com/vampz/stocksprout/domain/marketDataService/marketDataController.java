@@ -25,6 +25,15 @@ public class marketDataController {
     }
 
     @GetMapping
+    @RequestMapping(path = "/yesterdayStockPrice")
+    public StockCurrentDTO getYesterdayStockPrice(@RequestParam String symbol) {
+        StockCurrentDTO response = marketDataService.getYesterdayStockPrice(symbol);
+        System.out.println(response.toString());
+        return response;
+
+    }
+
+    @GetMapping
     @RequestMapping(path = "/StockPriceHistory")
     public List<StockHistDTO> getStockPriceHistory(
             @RequestParam String symbol,
@@ -44,6 +53,8 @@ public class marketDataController {
         System.out.println(response.toString());
         return response;
     }
+
+
 
 
 }

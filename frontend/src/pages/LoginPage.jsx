@@ -127,8 +127,6 @@ function LoginPage({ onSwitchToSignup, onSwitchToForgotPassword, onLoginSuccess 
 
           </form>
 
-
-
           <div className="signup-link">
 
             Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); onSwitchToSignup(); }}>Sign up</a>

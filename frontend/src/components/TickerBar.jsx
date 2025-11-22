@@ -52,27 +52,34 @@ export default function TickerBar() {
           const chunk = UNIQUE_SYMBOLS.slice(i, i + chunkSize);
           const chunkPromises = chunk.map(async (symbol) => {
             try {
-              const [currentRes, yesterdayRes] = await Promise.all([
-                fetch(`http://localhost:8080/api/marketData/currentStockPrice?symbol=${symbol}`),
-                fetch(`http://localhost:8080/api/marketData/yesterdayStockPrice?symbol=${symbol}`)
-              ]);
+              const response = await fetch(`http://localhost:8080/api/marketData/stockData?symbol=${symbol}`);
 
-              if (!currentRes.ok || !yesterdayRes.ok) throw new Error('Fetch failed');
+              if (!response.ok) throw new Error('Fetch failed');
 
-              const currentData = await currentRes.json();
-              const yesterdayData = await yesterdayRes.json();
+              const data = await response.json();
 
-              const currentPrice = currentData.price;
-              const yesterdayPrice = yesterdayData.price;
-              const change = currentPrice - yesterdayPrice;
-              const changePercent = (change / yesterdayPrice) * 100;
+              // API returns:
+              // {
+              //   "symbol": "MSFT",
+              //   "price": 472.12,
+              //   "change": -6.31,
+              //   "changePercentage": -1.3189,
+              //   ...
+              // }
+
+              const price = data.price;
+              const change = data.change;
+              const changePercent = data.changePercentage;
+
+              // Determine if positive based on changePercentage (or change)
+              const isPositive = changePercent >= 0;
 
               return {
                 symbol,
-                price: currentPrice.toFixed(2),
+                price: price.toFixed(2),
                 change: (change >= 0 ? '+' : '') + change.toFixed(2),
-                changePercent: (change >= 0 ? '+' : '') + changePercent.toFixed(2) + '%',
-                positive: change >= 0
+                changePercent: (changePercent >= 0 ? '+' : '') + changePercent.toFixed(2) + '%',
+                positive: isPositive
               };
             } catch (error) {
               // If fetch fails, return a new mock value for this symbol

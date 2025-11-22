@@ -42,11 +42,11 @@ public class PortfolioController {
 
     @PostMapping("/buy")
     public ResponseEntity<?> buyStock(
-            @RequestBody HoldingREQ HoldingREQ,
+            @RequestBody HoldingREQ holdingREQ,
             HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
+        if (session == null || holdingREQ.getQuantity() <= 0) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "status", "error",
                     "message", "Not authenticated"));
@@ -61,9 +61,9 @@ public class PortfolioController {
 
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portfolio = user.getPortfolio();
-        double currentStockPrice = marketDataService.getCurrentStockPrice(HoldingREQ.getSymbol()).getPrice();
+        double currentStockPrice = marketDataService.getCurrentStockPrice(holdingREQ.getSymbol()).getPrice();
         BigDecimal stockPrice = new BigDecimal(currentStockPrice).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal stockQuantity = new BigDecimal(HoldingREQ.getQuantity()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal stockQuantity = new BigDecimal(holdingREQ.getQuantity()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalCost = stockPrice.multiply(stockQuantity).setScale(2, RoundingMode.HALF_UP);
         if (portfolio.getCash().compareTo(totalCost) == -1) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
@@ -73,14 +73,14 @@ public class PortfolioController {
             portfolio.setCash(portfolio.getCash().subtract(totalCost));
 
             Optional<Holding> existingHoldingOpt = portfolio.getHoldings().stream()
-                    .filter(h -> h.getSymbol().equalsIgnoreCase(HoldingREQ.getSymbol()))
+                    .filter(h -> h.getSymbol().equalsIgnoreCase(holdingREQ.getSymbol()))
                     .findFirst();
 
             Holding holdingToSave;
             if (existingHoldingOpt.isPresent()) {
                 holdingToSave = existingHoldingOpt.get();
                 int oldQuantity = holdingToSave.getQuantity();
-                int newQuantity = HoldingREQ.getQuantity();
+                int newQuantity = holdingREQ.getQuantity();
                 BigDecimal oldBuyPrice = holdingToSave.getAvgBuyPrice();
 
                 BigDecimal oldTotalValue = oldBuyPrice.multiply(BigDecimal.valueOf(oldQuantity));
@@ -91,9 +91,10 @@ public class PortfolioController {
 
                 holdingToSave.setQuantity(totalQuantity);
                 holdingToSave.setAvgBuyPrice(newAvgPrice);
+
             } else {
                 // If not, create a new holding
-                holdingToSave = new Holding(portfolio, HoldingREQ.getSymbol(), HoldingREQ.getQuantity(), stockPrice);
+                holdingToSave = new Holding(portfolio, holdingREQ.getSymbol(), holdingREQ.getQuantity(), stockPrice);
             }
 
             holdingService.saveHolding(holdingToSave);
@@ -102,12 +103,24 @@ public class PortfolioController {
                     TransactionType.BUY,
                     portfolio,
                     holdingToSave.getSymbol(),
-                    HoldingREQ.getQuantity(),
+                    holdingREQ.getQuantity(),
                     stockPrice,
                     totalCost);
             transactionService.saveTransaction(transaction);
-
-            portfolio.getHoldings().add(holdingToSave);
+            int flag=0;
+            for(int i = 0; i < portfolio.getHoldings().size(); i++){
+                if(portfolio.getHoldings().get(i).getSymbol().equalsIgnoreCase(holdingToSave.getSymbol())){
+                    portfolio.getHoldings().get(i).setAvgBuyPrice(holdingToSave.getAvgBuyPrice());
+                    portfolio.getHoldings().get(i).setQuantity(holdingToSave.getQuantity());
+                    portfolio.getHoldings().get(i).setCurrentPrice(holdingToSave.getCurrentPrice());
+                    portfolio.getHoldings().get(i).setName(holdingToSave.getName());
+                    portfolio.getHoldings().get(i).setSymbol(holdingToSave.getSymbol());
+                    flag=1;
+                }
+            }
+            if(flag==0){
+                portfolio.getHoldings().add(holdingToSave);
+            }
             portfolio.getTransactions().add(transaction);
             portfolioService.refresh(portfolio);
             return ResponseEntity.ok(holdingToSave);

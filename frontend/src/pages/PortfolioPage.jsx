@@ -6,17 +6,7 @@ import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from
 import StatsCard from '../components/ui/StatsCard';
 import TradeModal from '../components/TradeModal';
 
-const portfolioStocks = [
-  { symbol: 'AAPL', name: 'Apple Inc.', price: '175.43', change: '+2.34', changePercent: '+1.35%', positive: true, shares: 50, value: 8771.50 },
-  { symbol: 'MSFT', name: 'Microsoft Corp.', price: '378.85', change: '-1.23', changePercent: '-0.32%', positive: false, shares: 30, value: 11365.50 },
-  { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '142.56', change: '+3.21', changePercent: '+2.30%', positive: true, shares: 25, value: 3564.00 },
-  { symbol: 'AMZN', name: 'Amazon.com Inc.', price: '148.92', change: '+0.87', changePercent: '+0.59%', positive: true, shares: 40, value: 5956.80 },
-  { symbol: 'TSLA', name: 'Tesla Inc.', price: '245.67', change: '-5.43', changePercent: '-2.16%', positive: false, shares: 15, value: 3685.05 },
-  { symbol: 'NVDA', name: 'NVIDIA Corp.', price: '485.20', change: '+10.50', changePercent: '+2.21%', positive: true, shares: 10, value: 4852.00 },
-  { symbol: 'META', name: 'Meta Platforms Inc.', price: '312.45', change: '-2.10', changePercent: '-0.67%', positive: false, shares: 20, value: 6249.00 },
-];
-
-// Helper function to generate mock price chart data
+// Helper function to generate mock price chart data (kept for UI visualization as we don't have historical data API yet)
 const generateChartData = (basePrice, isPositive) => {
   const data = [];
   const days = 30;
@@ -41,18 +31,58 @@ const PortfolioPage = () => {
   const [tradeType, setTradeType] = useState('Buy');
   const [watchlist, setWatchlist] = useState(['AAPL', 'NVDA', 'TSLA']);
   const [hoveredStock, setHoveredStock] = useState(null);
+  const [portfolioData, setPortfolioData] = useState(null);
+
+  const fetchPortfolioData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/portfolio/me', {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch portfolio data');
+      }
+      const text = await response.text();
+      try {
+        const data = JSON.parse(text);
+        setPortfolioData(data);
+      } catch (e) {
+        console.error('JSON Parse Error:', e);
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
+    fetchPortfolioData();
   }, []);
 
-  const filteredStocks = portfolioStocks.filter(stock =>
+  // Process holdings from API data
+  const holdings = portfolioData?.holdings || [];
+
+  // Filter holdings based on search
+  const filteredStocks = holdings.filter(stock =>
     stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
     stock.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).map(stock => {
+    // Calculate derived values for display
+    const value = stock.quantity * stock.currentPrice;
+    const gainLoss = (stock.currentPrice - stock.avgBuyPrice) * stock.quantity;
+    const gainLossPercent = ((stock.currentPrice - stock.avgBuyPrice) / stock.avgBuyPrice) * 100;
+    const isPositive = gainLoss >= 0;
+
+    return {
+      ...stock,
+      value,
+      change: `${isPositive ? '+' : ''}${gainLossPercent.toFixed(2)}%`, // Using % as change for now
+      changePercent: `${isPositive ? '+' : ''}${gainLossPercent.toFixed(2)}%`,
+      positive: isPositive,
+      shares: stock.quantity,
+      price: stock.currentPrice.toFixed(2)
+    };
+  });
 
   const handleAddToWatchlist = (stock) => {
     if (watchlist.includes(stock.symbol)) {
@@ -68,6 +98,18 @@ const PortfolioPage = () => {
     setShowTradeModal(true);
   };
 
+  // Calculate Portfolio Stats
+  const cash = portfolioData?.cash || 0;
+  // Calculate stock value from holdings if not provided or 0
+  const stockValue = portfolioData?.holdings?.reduce((acc, stock) => acc + (stock.quantity * stock.currentPrice), 0) || 0;
+  const invested = portfolioData?.invested || 0;
+  const totalGain = stockValue - invested;
+  const totalGainPercent = invested > 0 ? (totalGain / invested) * 100 : 0;
+
+  // Mini Summary Stats
+  const gainersCount = filteredStocks.filter(s => s.positive).length;
+  const losersCount = filteredStocks.filter(s => !s.positive).length;
+
   return (
     <DashboardLayout activeMenu="portfolio">
       <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
@@ -80,28 +122,28 @@ const PortfolioPage = () => {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <StatsCard
-              title="Total Value"
-              label="Current balance"
-              value="$125,430.50"
-              change="+$2,450.20"
-              changePercent="+2.00%"
-              positive={true}
-              icon={DollarSign}
+              title="Stock Value"
+              label="Current holdings"
+              value={`$${stockValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              change={`${totalGain >= 0 ? '+' : ''}$${Math.abs(totalGain).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              changePercent={`${totalGainPercent >= 0 ? '+' : ''}${totalGainPercent.toFixed(2)}%`}
+              positive={totalGain >= 0}
+              icon={PieChart}
               gradient="from-teal-500/10 to-blue-500/10"
             />
             <StatsCard
               title="Total Gain"
               label="All time"
-              value="+$15,430.50"
-              change="+14.05%"
-              positive={true}
+              value={`${totalGain >= 0 ? '+' : ''}$${Math.abs(totalGain).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+              change={`${totalGainPercent >= 0 ? '+' : ''}${totalGainPercent.toFixed(2)}%`}
+              positive={totalGain >= 0}
               icon={TrendingUp}
               gradient="from-emerald-500/10 to-teal-500/10"
             />
             <StatsCard
               title="Available Cash"
               label="Ready to invest"
-              value="$10,000.00"
+              value={`$${cash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               change="Paper trading balance"
               positive={true}
               icon={Wallet}
@@ -121,7 +163,7 @@ const PortfolioPage = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Holdings</p>
-                    <p className="text-lg font-bold text-slate-900 dark:text-white">7 Assets</p>
+                    <p className="text-lg font-bold text-slate-900 dark:text-white">{holdings.length} Assets</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -130,7 +172,7 @@ const PortfolioPage = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Gainers</p>
-                    <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">5</p>
+                    <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{gainersCount}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -139,7 +181,7 @@ const PortfolioPage = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Losers</p>
-                    <p className="text-lg font-bold text-red-600 dark:text-red-400">2</p>
+                    <p className="text-lg font-bold text-red-600 dark:text-red-400">{losersCount}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -147,8 +189,10 @@ const PortfolioPage = () => {
                     <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Avg Return</p>
-                    <p className="text-lg font-bold text-blue-600 dark:text-blue-400">+8.2%</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 font-medium">Total Return</p>
+                    <p className={`text-lg font-bold ${totalGain >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(2)}%
+                    </p>
                   </div>
                 </div>
               </div>
@@ -190,10 +234,13 @@ const PortfolioPage = () => {
                         Price
                       </th>
                       <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                        Today's Change
+                        Total Return
                       </th>
                       <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                         Value
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-center text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                        Watch
                       </th>
                       <th scope="col" className="relative px-6 py-4">
                         <span className="sr-only">Actions</span>
@@ -225,41 +272,27 @@ const PortfolioPage = () => {
                         <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium text-right ${stock.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                           <div className="flex items-center justify-end">
                             {stock.positive ? <ArrowUpRight size={16} className="mr-1" /> : <ArrowDownRight size={16} className="mr-1" />}
-                            {stock.change} ({stock.changePercent})
+                            {stock.changePercent}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white font-bold text-right">${stock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <div
-                            className="relative inline-block"
-                            onMouseEnter={() => setHoveredStock(stock.symbol)}
-                            onMouseLeave={() => setHoveredStock(null)}
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                          <button
+                            onClick={() => handleAddToWatchlist(stock)}
+                            className={`p-2 hover:scale-110 transition-all duration-300 rounded-lg cursor-pointer ${watchlist.includes(stock.symbol)
+                              ? 'text-yellow-500 hover:text-yellow-400 dark:text-yellow-400 dark:hover:text-yellow-300'
+                              : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
+                              }`}
                           >
-                            <button
-                              onClick={() => handleAddToWatchlist(stock)}
-                              className={`p-2 hover:scale-110 transition-all duration-300 rounded-lg cursor-pointer ${watchlist.includes(stock.symbol)
-                                ? 'text-yellow-500 hover:text-yellow-400 dark:text-yellow-400 dark:hover:text-yellow-300'
-                                : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300'
-                                }`}
-                            >
-                              <Star
-                                size={20}
-                                fill={watchlist.includes(stock.symbol) ? 'currentColor' : 'none'}
-                                className="transition-all duration-300"
-                              />
-                            </button>
-
-                            {/* Glassmorphic Tooltip */}
-                            {hoveredStock === stock.symbol && (
-                              <div className="absolute right-0 top-full mt-2 z-50 animate-in fade-in slide-in-from-top-1 duration-200">
-                                <div className="px-3 py-2 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 shadow-lg whitespace-nowrap">
-                                  <p className="text-xs font-medium text-slate-700 dark:text-slate-200">
-                                    {watchlist.includes(stock.symbol) ? 'Remove from Watchlist' : 'Add to Watchlist'}
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
+                            <Star
+                              size={20}
+                              fill={watchlist.includes(stock.symbol) ? 'currentColor' : 'none'}
+                              className="transition-all duration-300"
+                            />
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          {/* Placeholder for other actions if needed, or can be removed if 'Actions' column is not used for anything else */}
                         </td>
                       </tr>
 
@@ -269,7 +302,7 @@ const PortfolioPage = () => {
               </div>
 
               {/* Empty State - when no stocks at all */}
-              {portfolioStocks.length === 0 && (
+              {holdings.length === 0 && (
                 <div className="text-center py-16 px-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                   <div className="max-w-md mx-auto">
                     <div className="w-48 h-48 mx-auto mb-6 relative">
@@ -296,7 +329,7 @@ const PortfolioPage = () => {
               )}
 
               {/* Empty State - when search returns no results */}
-              {portfolioStocks.length > 0 && filteredStocks.length === 0 && (
+              {holdings.length > 0 && filteredStocks.length === 0 && (
                 <div className="text-center py-12 px-6">
                   <Search size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
                   <p className="text-slate-600 dark:text-slate-400 font-medium">No stocks found</p>
@@ -390,7 +423,7 @@ const PortfolioPage = () => {
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
-                      <p className="text-xl font-bold text-slate-900 dark:text-white">${(selectedStock.value / selectedStock.shares).toFixed(2)}</p>
+                      <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.avgBuyPrice.toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
@@ -407,9 +440,9 @@ const PortfolioPage = () => {
                   <div className={`text-right ${selectedStock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
                     <div className="flex items-center gap-2 justify-end">
                       {selectedStock.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
-                      <span className="text-xl font-bold">{selectedStock.change}</span>
+                      <span className="text-xl font-bold">{selectedStock.changePercent}</span>
                     </div>
-                    <p className="text-sm font-semibold mt-1">{selectedStock.changePercent}</p>
+                    <p className="text-sm font-semibold mt-1">Return</p>
                   </div>
                 </div>
               </div>
@@ -470,12 +503,17 @@ const PortfolioPage = () => {
           }}
           stock={selectedStock}
           type={tradeType}
+          cash={cash}
           onConfirm={(tradeData) => {
             console.log('Trade confirmed:', tradeData);
-            // Here you would call your API
-            // Do not close modal here, let TradeModal handle success state
-            // setShowTradeModal(false);
-            // setSelectedStock(null);
+            // In a real app, you'd call the API here or pass a handler
+            // For now, we'll rely on the Dashboard's handler or just close it
+            // Since this page doesn't have the full trade logic like Dashboard yet,
+            // we might want to implement handleTradeSubmit here too if needed.
+            // But for now, we just close it as per current scope.
+            setShowTradeModal(false);
+            setSelectedStock(null);
+            fetchPortfolioData(); // Refresh data
           }}
         />
       )}

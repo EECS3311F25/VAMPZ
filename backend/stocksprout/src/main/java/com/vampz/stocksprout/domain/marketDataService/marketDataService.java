@@ -21,7 +21,7 @@ public class marketDataService {
 
     private ObjectMapper mapper;
 
-    private final String apiKey = "JJPW6srrcPS4r7B0yXwHRypTJEGrIxkj";
+    private final String apiKey = "em6lyrWLc7XadzrUeAb4QqwkMd1nS7e2";
 
     public marketDataService() {
         this.mapper = new ObjectMapper();

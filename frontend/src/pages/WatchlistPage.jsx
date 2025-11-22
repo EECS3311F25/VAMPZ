@@ -6,16 +6,14 @@ import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skelet
 import TradeModal from '../components/TradeModal';
 import SparklineChart from '../components/SparklineChart';
 
-const WatchlistPage = () => {
-    const [watchlist, setWatchlist] = useState([
-        { symbol: 'MSFT', name: 'Microsoft Corp.', price: 378.85, change: -1.23, changePercent: -0.32, positive: false, marketCap: '2.81T' },
-        { symbol: 'GOOGL', name: 'Alphabet Inc.', price: 142.56, change: 3.21, changePercent: 2.30, positive: true, marketCap: '1.79T' },
-        { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 485.20, change: 10.50, changePercent: 2.21, positive: true, marketCap: '1.19T' },
-        { symbol: 'META', name: 'Meta Platforms Inc.', price: 312.45, change: -2.10, changePercent: -0.67, positive: false, marketCap: '795B' },
-        { symbol: 'AMZN', name: 'Amazon.com Inc.', price: 148.92, change: 0.87, changePercent: 0.59, positive: true, marketCap: '1.54T' },
-    ]);
+const POPULAR_STOCKS = [
+    'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
+];
 
+const WatchlistPage = () => {
+    const [watchlist, setWatchlist] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [addSymbolQuery, setAddSymbolQuery] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedStock, setSelectedStock] = useState(null);
@@ -23,39 +21,125 @@ const WatchlistPage = () => {
     const [showTradeModal, setShowTradeModal] = useState(false);
     const [tradeType, setTradeType] = useState('Buy');
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
+    // Dropdown state
+    const [suggestions, setSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
+    // Error state
+    const [addError, setAddError] = useState('');
+
+    const fetchWatchlist = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/portfolio/watchList', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const formattedData = data.map(stock => ({
+                    ...stock,
+                    marketCap: formatMarketCap(stock.marketCap),
+                    positive: stock.change >= 0
+                }));
+                setWatchlist(formattedData);
+            }
+        } catch (error) {
+            console.error('Error fetching watchlist:', error);
+        } finally {
             setLoading(false);
-        }, 800);
-        return () => clearTimeout(timer);
+        }
+    };
+
+    useEffect(() => {
+        fetchWatchlist();
     }, []);
 
-    const availableStocks = [
-        { symbol: 'AMD', name: 'Advanced Micro Devices', price: 145.23, change: 3.45, changePercent: 2.43, positive: true, marketCap: '234B' },
-        { symbol: 'NFLX', name: 'Netflix Inc.', price: 425.67, change: -8.21, changePercent: -1.89, positive: false, marketCap: '189B' },
-        { symbol: 'DIS', name: 'The Walt Disney Company', price: 92.34, change: 1.23, changePercent: 1.35, positive: true, marketCap: '168B' },
-        { symbol: 'COIN', name: 'Coinbase Global Inc.', price: 156.78, change: 12.45, changePercent: 8.63, positive: true, marketCap: '38B' },
-        { symbol: 'PYPL', name: 'PayPal Holdings Inc.', price: 67.89, change: -0.98, changePercent: -1.42, positive: false, marketCap: '74B' },
-    ];
+    // Filter suggestions when addSymbolQuery changes
+    useEffect(() => {
+        if (addSymbolQuery) {
+            const filtered = POPULAR_STOCKS.filter(stock =>
+                stock.toLowerCase().includes(addSymbolQuery.toLowerCase()) &&
+                stock !== addSymbolQuery.toUpperCase()
+            ).slice(0, 5);
+            setSuggestions(filtered);
+            setSelectedIndex(-1);
+        } else {
+            setSuggestions([]);
+            setSelectedIndex(-1);
+        }
+    }, [addSymbolQuery]);
+
+    const formatMarketCap = (value) => {
+        if (!value) return 'N/A';
+        if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
+        if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
+        if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
+        return value.toString();
+    };
 
     const filteredWatchlist = watchlist.filter(stock =>
         stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
         stock.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const filteredAvailableStocks = availableStocks.filter(stock =>
-        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const addToWatchlist = async (symbol) => {
+        setAddError(''); // Clear previous errors
 
-    const addToWatchlist = (stock) => {
-        if (!watchlist.some(s => s.symbol === stock.symbol)) {
-            setWatchlist([...watchlist, stock]);
+        const upperSymbol = symbol.toUpperCase();
+
+        // Validate against popular stocks list
+        if (!POPULAR_STOCKS.includes(upperSymbol)) {
+            setAddError(`Stock "${upperSymbol}" is not available for trading.`);
+            return;
+        }
+
+        // Check if already in watchlist
+        if (watchlist.some(stock => stock.symbol === upperSymbol)) {
+            setAddError(`${upperSymbol} is already in your watchlist`);
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${upperSymbol}`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                if (result.status === 'error') {
+                    setAddError(result.message);
+                } else {
+                    fetchWatchlist(); // Refresh list
+                    setShowAddModal(false);
+                    setAddSymbolQuery(''); // Clear search in modal
+                    setShowSuggestions(false);
+                }
+            } else {
+                setAddError(result.message || 'Failed to add to watchlist');
+            }
+        } catch (error) {
+            console.error('Error adding to watchlist:', error);
+            setAddError('Network error. Please try again.');
         }
     };
 
-    const removeFromWatchlist = (symbol) => {
-        setWatchlist(watchlist.filter(s => s.symbol !== symbol));
+    const removeFromWatchlist = async (e, symbol) => {
+        if (e) e.stopPropagation();
+        try {
+            const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${symbol}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+                fetchWatchlist(); // Refresh list
+            } else {
+                console.error('Failed to remove from watchlist');
+            }
+        } catch (error) {
+            console.error('Error removing from watchlist:', error);
+        }
     };
 
     const viewStockDetails = (stock) => {
@@ -68,6 +152,91 @@ const WatchlistPage = () => {
         setTradeType(type);
         setShowDetailModal(false); // Close detail modal if open
         setShowTradeModal(true);
+    };
+
+    const handleAddSubmit = (e) => {
+        e.preventDefault();
+        if (addSymbolQuery.trim()) {
+            addToWatchlist(addSymbolQuery.toUpperCase());
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (!showSuggestions || suggestions.length === 0) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                setSelectedIndex(prev =>
+                    prev < suggestions.length - 1 ? prev + 1 : prev
+                );
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                setSelectedIndex(prev => prev > 0 ? prev - 1 : -1);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+                    setAddSymbolQuery(suggestions[selectedIndex]);
+                    addToWatchlist(suggestions[selectedIndex]);
+                    setShowSuggestions(false);
+                }
+                break;
+            case 'Escape':
+                e.preventDefault();
+                setShowSuggestions(false);
+                setSelectedIndex(-1);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleSelectSuggestion = (symbol) => {
+        setAddSymbolQuery(symbol);
+        addToWatchlist(symbol);
+        setShowSuggestions(false);
+    };
+
+    const handleTradeSubmit = async (tradeData) => {
+        if (!tradeData) return;
+
+        const endpoint = tradeData.type === 'Buy' ? '/api/portfolio/buy' : '/api/portfolio/sell';
+
+        try {
+            const response = await fetch(`http://localhost:8080${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    symbol: tradeData.symbol,
+                    quantity: parseInt(tradeData.quantity)
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                setShowTradeModal(false);
+                setSelectedStock(null);
+                console.log(`Successfully ${tradeData.type === 'Buy' ? 'bought' : 'sold'} ${tradeData.quantity} shares of ${tradeData.symbol}`);
+            } else {
+                if (result.message === 'Holding not found') {
+                    console.error('You do not own any shares of this stock.');
+                } else if (result.message === 'Insufficient stock quantity to sell') {
+                    console.error('You do not have enough shares to sell this quantity.');
+                } else if (result.message === 'Insufficient funds') {
+                    console.error('Insufficient funds to complete this purchase.');
+                } else {
+                    console.error(result.message || 'Trade failed');
+                }
+            }
+        } catch (error) {
+            console.error('Trade error:', error);
+        }
     };
 
     return (
@@ -83,7 +252,11 @@ const WatchlistPage = () => {
                             </p>
                         </div>
                         <button
-                            onClick={() => setShowAddModal(true)}
+                            onClick={() => {
+                                setAddSymbolQuery('');
+                                setAddError('');
+                                setShowAddModal(true);
+                            }}
                             className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-semibold transition-all shadow-lg shadow-teal-600/30"
                         >
                             <Plus size={18} />
@@ -162,7 +335,7 @@ const WatchlistPage = () => {
                                     className="glass-card rounded-2xl p-6 hover:shadow-lg transition-all group relative overflow-hidden"
                                 >
                                     <button
-                                        onClick={() => removeFromWatchlist(stock.symbol)}
+                                        onClick={(e) => removeFromWatchlist(e, stock.symbol)}
                                         className="absolute top-4 right-4 p-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all z-10"
                                         title="Remove from watchlist"
                                     >
@@ -198,7 +371,7 @@ const WatchlistPage = () => {
                                             ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
                                             : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                                             }`}>
-                                            {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                                            {stock.positive ? '+' : ''}{stock.changePercentage.toFixed(2)}%
                                         </div>
                                     </div>
 
@@ -214,7 +387,7 @@ const WatchlistPage = () => {
                     )}
 
                     {/* Empty State - when watchlist is truly empty */}
-                    {watchlist.length === 0 && (
+                    {!loading && watchlist.length === 0 && (
                         <div className="text-center py-20 glass-card rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                             <div className="w-40 h-40 mx-auto mb-6 relative">
                                 <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
@@ -239,7 +412,7 @@ const WatchlistPage = () => {
                     )}
 
                     {/* Empty State - when search returns no results */}
-                    {watchlist.length > 0 && filteredWatchlist.length === 0 && (
+                    {!loading && watchlist.length > 0 && filteredWatchlist.length === 0 && (
                         <div className="text-center py-12 px-6 glass-card rounded-2xl">
                             <Search size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
                             <p className="text-slate-600 dark:text-slate-400 font-medium">No stocks found</p>
@@ -270,58 +443,80 @@ const WatchlistPage = () => {
                                 </button>
                             </div>
 
-                            <div className="relative mb-4">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="Search stocks..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
-                                />
-                            </div>
+                            <form onSubmit={handleAddSubmit}>
+                                <div className="relative mb-4">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                    <input
+                                        type="text"
+                                        placeholder="Enter stock symbol (e.g. AAPL)..."
+                                        value={addSymbolQuery}
+                                        onChange={(e) => {
+                                            setAddSymbolQuery(e.target.value);
+                                            setAddError(''); // Clear error on typing
+                                            setShowSuggestions(true);
+                                        }}
+                                        onKeyDown={handleKeyDown}
+                                        onFocus={() => setShowSuggestions(true)}
+                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${addError ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'
+                                            }`}
+                                        autoFocus
+                                    />
 
-                            <div className="max-h-80 overflow-y-auto space-y-2">
-                                {filteredAvailableStocks.length === 0 ? (
-                                    <p className="text-center text-slate-500 dark:text-slate-400 py-8">
-                                        {searchQuery ? 'No stocks found' : 'All available stocks are already in your watchlist'}
-                                    </p>
-                                ) : (
-                                    filteredAvailableStocks.map((stock) => {
-                                        const isAdded = watchlist.some(w => w.symbol === stock.symbol);
-                                        return (
-                                            <button
-                                                key={stock.symbol}
-                                                onClick={() => !isAdded && addToWatchlist(stock)}
-                                                disabled={isAdded}
-                                                className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all text-left ${isAdded
-                                                    ? 'border-teal-200 dark:border-teal-900 bg-teal-50 dark:bg-teal-900/20 cursor-default'
-                                                    : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                                    }`}
-                                            >
-                                                <div className="flex-1">
-                                                    <p className="font-semibold text-slate-900 dark:text-white">{stock.symbol}</p>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{stock.name}</p>
-                                                </div>
-                                                <div className="text-right mr-2">
-                                                    <p className="font-semibold text-slate-900 dark:text-white">${stock.price.toFixed(2)}</p>
-                                                    <p className={`text-xs font-medium ${stock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'
-                                                        }`}>
-                                                        {stock.positive ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                                                    </p>
-                                                </div>
-                                                {isAdded ? (
-                                                    <div className="p-1 rounded-full bg-teal-100 dark:bg-teal-900/50">
-                                                        <Check size={18} className="text-teal-600 dark:text-teal-400" />
-                                                    </div>
-                                                ) : (
-                                                    <Plus size={20} className="text-teal-600 dark:text-teal-400" />
-                                                )}
-                                            </button>
-                                        );
-                                    })
+                                    {/* Autocomplete Dropdown */}
+                                    {showSuggestions && suggestions.length > 0 && (
+                                        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
+                                            {suggestions.map((symbol, index) => {
+                                                const isAdded = watchlist.some(s => s.symbol === symbol);
+                                                return (
+                                                    <button
+                                                        key={symbol}
+                                                        type="button"
+                                                        onClick={() => handleSelectSuggestion(symbol)}
+                                                        onMouseEnter={() => setSelectedIndex(index)}
+                                                        className={`w-full text-left px-4 py-3 transition-all duration-150 flex items-center justify-between group ${index === selectedIndex
+                                                            ? 'bg-teal-50 dark:bg-teal-900/30 border-l-2 border-teal-500'
+                                                            : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                                            }`}
+                                                    >
+                                                        <span className={`font-bold transition-colors ${index === selectedIndex
+                                                            ? 'text-teal-700 dark:text-teal-300'
+                                                            : 'text-slate-900 dark:text-white'
+                                                            }`}>{symbol}</span>
+
+                                                        {isAdded ? (
+                                                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                                                                Added
+                                                            </span>
+                                                        ) : (
+                                                            <Check
+                                                                size={18}
+                                                                className={`transition-all duration-200 ${index === selectedIndex
+                                                                    ? 'text-teal-600 dark:text-teal-400 opacity-100 scale-100'
+                                                                    : 'text-slate-400 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 group-hover:text-teal-600 dark:group-hover:text-teal-400'
+                                                                    }`}
+                                                            />
+                                                        )}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {addError && (
+                                    <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                                        {addError}
+                                    </div>
                                 )}
-                            </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-600/30"
+                                >
+                                    Add Stock
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </>
@@ -361,7 +556,7 @@ const WatchlistPage = () => {
                                             {selectedStock.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
                                             <span className="text-xl font-bold">{selectedStock.positive ? '+' : ''}{selectedStock.change.toFixed(2)}</span>
                                         </div>
-                                        <p className="text-xs font-semibold">{selectedStock.positive ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%</p>
+                                        <p className="text-xs font-semibold">{selectedStock.positive ? '+' : ''}{selectedStock.changePercentage.toFixed(2)}%</p>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700">
@@ -371,7 +566,7 @@ const WatchlistPage = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Range</p>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">${(selectedStock.price - 5).toFixed(2)} - ${(selectedStock.price + 5).toFixed(2)}</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">${selectedStock.dayLow.toFixed(2)} - ${selectedStock.dayHigh.toFixed(2)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -385,19 +580,19 @@ const WatchlistPage = () => {
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Open</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${(selectedStock.price - 1.5).toFixed(2)}</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.open.toFixed(2)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">High</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${(selectedStock.price + 5).toFixed(2)}</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.dayHigh.toFixed(2)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Low</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${(selectedStock.price - 5).toFixed(2)}</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.dayLow.toFixed(2)}</p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Volume</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">42.3M</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">{(selectedStock.volume / 1e6).toFixed(1)}M</p>
                                 </div>
                             </div>
 
@@ -416,8 +611,8 @@ const WatchlistPage = () => {
                                     Sell
                                 </button>
                                 <button
-                                    onClick={() => {
-                                        removeFromWatchlist(selectedStock.symbol);
+                                    onClick={(e) => {
+                                        removeFromWatchlist(e, selectedStock.symbol);
                                         setShowDetailModal(false);
                                     }}
                                     className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-all"
@@ -440,13 +635,7 @@ const WatchlistPage = () => {
                     }}
                     stock={selectedStock}
                     type={tradeType}
-                    onConfirm={(tradeData) => {
-                        console.log('Trade confirmed:', tradeData);
-                        // Here you would call your API
-                        // Do not close modal here, let TradeModal handle success state
-                        // setShowTradeModal(false);
-                        // setSelectedStock(null);
-                    }}
+                    onConfirm={handleTradeSubmit}
                 />
             )}
         </DashboardLayout>

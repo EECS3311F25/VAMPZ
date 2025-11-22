@@ -4,32 +4,69 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonTransactionTable } from '../components/Skeleton';
 
-const transactionsData = [
-    { id: 1, type: 'Buy', symbol: 'AAPL', name: 'Apple Inc.', shares: 50, price: 172.50, total: 8625.00, date: '2025-01-18', time: '10:23 AM', status: 'Completed' },
-    { id: 2, type: 'Sell', symbol: 'TSLA', name: 'Tesla Inc.', shares: 10, price: 248.30, total: 2483.00, date: '2025-01-17', time: '02:45 PM', status: 'Completed' },
-    { id: 3, type: 'Buy', symbol: 'MSFT', name: 'Microsoft Corp.', shares: 30, price: 375.20, total: 11256.00, date: '2025-01-16', time: '11:10 AM', status: 'Completed' },
-    { id: 4, type: 'Buy', symbol: 'NVDA', name: 'NVIDIA Corp.', shares: 10, price: 482.90, total: 4829.00, date: '2025-01-15', time: '09:30 AM', status: 'Completed' },
-    { id: 5, type: 'Sell', symbol: 'META', name: 'Meta Platforms Inc.', shares: 5, price: 315.60, total: 1578.00, date: '2025-01-14', time: '03:20 PM', status: 'Completed' },
-    { id: 6, type: 'Buy', symbol: 'GOOGL', name: 'Alphabet Inc.', shares: 25, price: 140.20, total: 3505.00, date: '2025-01-13', time: '01:15 PM', status: 'Completed' },
-    { id: 7, type: 'Buy', symbol: 'AMZN', name: 'Amazon.com Inc.', shares: 40, price: 146.80, total: 5872.00, date: '2025-01-12', time: '10:55 AM', status: 'Completed' },
-    { id: 8, type: 'Sell', symbol: 'AAPL', name: 'Apple Inc.', shares: 15, price: 168.90, total: 2533.50, date: '2025-01-11', time: '02:30 PM', status: 'Completed' },
-];
-
 const TransactionsPage = () => {
+    const [transactions, setTransactions] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterType, setFilterType] = useState('All');
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({
+        totalTrades: 0,
+        totalVolume: 0,
+        avgTradeSize: 0
+    });
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 800);
-        return () => clearTimeout(timer);
+        const fetchTransactions = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/portfolio/me', {
+                    credentials: 'include',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const fetchedTransactions = data.transactions || [];
+
+                    // Map API data to UI format
+                    const formattedTransactions = fetchedTransactions.map(t => {
+                        const dateObj = new Date(t.timestamp);
+                        return {
+                            id: t.id,
+                            type: t.type === 'BUY' ? 'Buy' : 'Sell',
+                            symbol: t.symbol,
+                            name: t.symbol, // API doesn't provide name in transaction object yet
+                            shares: t.quantity,
+                            price: t.pricePerUnit,
+                            total: t.totalAmount,
+                            date: dateObj.toLocaleDateString(),
+                            time: dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            rawDate: dateObj // For sorting if needed
+                        };
+                    }).sort((a, b) => b.rawDate - a.rawDate); // Sort by newest first
+
+                    setTransactions(formattedTransactions);
+
+                    // Calculate stats
+                    const totalTrades = formattedTransactions.length;
+                    const totalVolume = formattedTransactions.reduce((acc, curr) => acc + curr.total, 0);
+                    const avgTradeSize = totalTrades > 0 ? totalVolume / totalTrades : 0;
+
+                    setStats({
+                        totalTrades,
+                        totalVolume,
+                        avgTradeSize
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTransactions();
     }, []);
 
-    const filteredTransactions = transactionsData.filter(transaction => {
-        const matchesSearch = transaction.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            transaction.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const filteredTransactions = transactions.filter(transaction => {
+        const matchesSearch = transaction.symbol.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesFilter = filterType === 'All' || transaction.type === filterType;
         return matchesSearch && matchesFilter;
     });
@@ -60,7 +97,7 @@ const TransactionsPage = () => {
                                 <StatsCard
                                     title="Total Trades"
                                     label="All time"
-                                    value="8"
+                                    value={stats.totalTrades.toString()}
                                     icon={ArrowUpRight}
                                     gradient="from-teal-500/10 to-blue-500/10"
                                 />
@@ -68,7 +105,7 @@ const TransactionsPage = () => {
                                 <StatsCard
                                     title="Total Volume"
                                     label="Bought + Sold"
-                                    value="$40,681.50"
+                                    value={`$${stats.totalVolume.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                                     icon={TrendingUp}
                                     gradient="from-emerald-500/10 to-teal-500/10"
                                 />
@@ -76,7 +113,7 @@ const TransactionsPage = () => {
                                 <StatsCard
                                     title="Avg. Trade Size"
                                     label="Per transaction"
-                                    value="$5,085.19"
+                                    value={`$${stats.avgTradeSize.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                                     icon={Calendar}
                                     gradient="from-blue-500/10 to-indigo-500/10"
                                 />
@@ -163,7 +200,7 @@ const TransactionsPage = () => {
                                                 <td className="px-6 py-4">
                                                     <div>
                                                         <p className="font-semibold text-slate-900 dark:text-white">{transaction.symbol}</p>
-                                                        <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.name}</p>
+                                                        {/* <p className="text-xs text-slate-500 dark:text-slate-400">{transaction.name}</p> */}
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
@@ -188,7 +225,7 @@ const TransactionsPage = () => {
                             </div>
 
                             {/* Empty State - when no transactions at all */}
-                            {transactionsData.length === 0 && (
+                            {!loading && transactions.length === 0 && (
                                 <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="w-32 h-32 mx-auto mb-4 relative">
                                         <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
@@ -206,7 +243,7 @@ const TransactionsPage = () => {
                             )}
 
                             {/* Empty State - when search/filter returns no results */}
-                            {transactionsData.length > 0 && filteredTransactions.length === 0 && (
+                            {!loading && transactions.length > 0 && filteredTransactions.length === 0 && (
                                 <div className="text-center py-12 px-6">
                                     <Search size={48} className="mx-auto text-slate-300 dark:text-slate-700 mb-4" />
                                     <p className="text-slate-600 dark:text-slate-400 font-medium">No transactions found</p>

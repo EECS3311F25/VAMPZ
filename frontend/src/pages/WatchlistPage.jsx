@@ -12,6 +12,7 @@ const POPULAR_STOCKS = [
 
 const WatchlistPage = () => {
     const [watchlist, setWatchlist] = useState([]);
+    const [portfolioData, setPortfolioData] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [addSymbolQuery, setAddSymbolQuery] = useState('');
     const [showAddModal, setShowAddModal] = useState(false);
@@ -50,8 +51,23 @@ const WatchlistPage = () => {
         }
     };
 
+    const fetchPortfolioData = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/portfolio/me', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setPortfolioData(data);
+            }
+        } catch (error) {
+            console.error('Error fetching portfolio data:', error);
+        }
+    };
+
     useEffect(() => {
         fetchWatchlist();
+        fetchPortfolioData();
     }, []);
 
     // Filter suggestions when addSymbolQuery changes
@@ -148,7 +164,14 @@ const WatchlistPage = () => {
     };
 
     const handleTrade = (stock, type) => {
-        setSelectedStock(stock);
+        // Find current holding for this stock to pass sharesOwned
+        const currentHolding = portfolioData?.holdings?.find(h => h.symbol === stock.symbol);
+        const sharesOwned = currentHolding ? currentHolding.quantity : 0;
+
+        setSelectedStock({
+            ...stock,
+            shares: sharesOwned // Pass shares owned to TradeModal via stock object
+        });
         setTradeType(type);
         setShowDetailModal(false); // Close detail modal if open
         setShowTradeModal(true);
@@ -222,20 +245,25 @@ const WatchlistPage = () => {
             if (response.ok) {
                 setShowTradeModal(false);
                 setSelectedStock(null);
-                console.log(`Successfully ${tradeData.type === 'Buy' ? 'bought' : 'sold'} ${tradeData.quantity} shares of ${tradeData.symbol}`);
+                // Refresh both watchlist (for potential price updates if we were fetching live) 
+                // and portfolio data (for cash/holdings updates)
+                fetchWatchlist();
+                fetchPortfolioData();
             } else {
+                // Handle specific error messages consistent with Dashboard
                 if (result.message === 'Holding not found') {
-                    console.error('You do not own any shares of this stock.');
+                    alert('You do not own any shares of this stock.');
                 } else if (result.message === 'Insufficient stock quantity to sell') {
-                    console.error('You do not have enough shares to sell this quantity.');
+                    alert('You do not have enough shares to sell this quantity.');
                 } else if (result.message === 'Insufficient funds') {
-                    console.error('Insufficient funds to complete this purchase.');
+                    alert('Insufficient funds to complete this purchase.');
                 } else {
-                    console.error(result.message || 'Trade failed');
+                    alert(result.message || 'Trade failed');
                 }
             }
         } catch (error) {
             console.error('Trade error:', error);
+            alert('An error occurred while processing your trade');
         }
     };
 
@@ -348,10 +376,19 @@ const WatchlistPage = () => {
                                                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">{stock.symbol}</h3>
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{stock.name}</p>
                                             </div>
+                                            <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${stock.change >= 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+                                                {stock.change >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+                                                {Math.abs(stock.changePercentage).toFixed(2)}%
+                                            </div>
                                         </div>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
                                             Market Cap: {stock.marketCap}
                                         </p>
+
+                                        {/* Mini Chart */}
+                                        <div className="mb-3 rounded-lg overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
+                                            <SparklineChart symbol={stock.symbol} range="1W" height="h-16" />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
@@ -366,12 +403,6 @@ const WatchlistPage = () => {
                                                 {stock.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
                                                 <span>{stock.positive ? '+' : ''}{stock.change.toFixed(2)}</span>
                                             </div>
-                                        </div>
-                                        <div className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${stock.positive
-                                            ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400'
-                                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                            }`}>
-                                            {stock.positive ? '+' : ''}{stock.changePercentage.toFixed(2)}%
                                         </div>
                                     </div>
 
@@ -636,6 +667,7 @@ const WatchlistPage = () => {
                     stock={selectedStock}
                     type={tradeType}
                     onConfirm={handleTradeSubmit}
+                    cash={portfolioData?.cash || 0}
                 />
             )}
         </DashboardLayout>

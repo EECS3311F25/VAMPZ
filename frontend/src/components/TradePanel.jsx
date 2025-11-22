@@ -26,6 +26,23 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const hasEnoughShares = type === 'Sell' ? quantity <= sharesOwned : true;
 
     useEffect(() => {
+        const fetchWatchlist = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/portfolio/watchList', {
+                    credentials: 'include',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setWatchlist(data.map(item => item.symbol));
+                }
+            } catch (error) {
+                console.error('Error fetching watchlist:', error);
+            }
+        };
+        fetchWatchlist();
+    }, []);
+
+    useEffect(() => {
         // Filter suggestions when selectedSymbol changes
         if (selectedSymbol) {
             const filtered = POPULAR_STOCKS.filter(stock =>
@@ -119,13 +136,29 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
         // setIsTradeModalOpen(false);
     };
 
-    const toggleWatchlist = () => {
-        setWatchlist(prev => {
-            if (prev.includes(selectedSymbol)) {
-                return prev.filter(symbol => symbol !== selectedSymbol);
+    const toggleWatchlist = async () => {
+        const isWatched = watchlist.includes(selectedSymbol);
+        try {
+            if (isWatched) {
+                const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
+                    method: 'DELETE',
+                    credentials: 'include',
+                });
+                if (response.ok) {
+                    setWatchlist(prev => prev.filter(s => s !== selectedSymbol));
+                }
+            } else {
+                const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                });
+                if (response.ok) {
+                    setWatchlist(prev => [...prev, selectedSymbol]);
+                }
             }
-            return [...prev, selectedSymbol];
-        });
+        } catch (error) {
+            console.error('Error updating watchlist:', error);
+        }
     };
 
     const modalStockData = useMemo(() => ({

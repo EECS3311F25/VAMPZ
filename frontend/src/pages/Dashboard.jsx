@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Wallet, TrendingUp, BarChart3 } from 'lucide-react';
+import { DollarSign, Wallet, TrendingUp, BarChart3, Activity, ArrowUp, ArrowDown, PieChart, Percent } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [tradeMarkers, setTradeMarkers] = useState([]);
   const [portfolioData, setPortfolioData] = useState(null);
   const [currentStockPrice, setCurrentStockPrice] = useState(null);
+  const [stockDetails, setStockDetails] = useState(null);
 
   const fetchPortfolioData = async () => {
     try {
@@ -60,7 +61,23 @@ const Dashboard = () => {
       }
     };
 
+    const fetchStockDetails = async () => {
+      if (!selectedSymbol) return;
+      try {
+        const response = await fetch(`http://localhost:8080/api/marketData/stockData?symbol=${selectedSymbol}`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setStockDetails(data);
+        }
+      } catch (error) {
+        console.error('Error fetching stock details:', error);
+      }
+    };
+
     fetchStockPrice();
+    fetchStockDetails();
     // Poll every 10 seconds for price updates
     const interval = setInterval(fetchStockPrice, 10000);
     return () => clearInterval(interval);
@@ -270,6 +287,68 @@ const Dashboard = () => {
                 onHoverPoint={setHoverPoint}
                 tradeMarkers={tradeMarkers.filter(m => m.symbol === selectedSymbol)}
               />
+
+              {/* Stock Details Grid */}
+              <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[
+                    {
+                      label: 'Open',
+                      value: stockDetails?.open ? `$${stockDetails.open.toFixed(2)}` : '---',
+                      icon: Activity,
+                      color: 'text-blue-500',
+                      bg: 'bg-blue-50 dark:bg-blue-900/20'
+                    },
+                    {
+                      label: 'High',
+                      value: stockDetails?.dayHigh ? `$${stockDetails.dayHigh.toFixed(2)}` : '---',
+                      icon: ArrowUp,
+                      color: 'text-emerald-500',
+                      bg: 'bg-emerald-50 dark:bg-emerald-900/20'
+                    },
+                    {
+                      label: 'Low',
+                      value: stockDetails?.dayLow ? `$${stockDetails.dayLow.toFixed(2)}` : '---',
+                      icon: ArrowDown,
+                      color: 'text-red-500',
+                      bg: 'bg-red-50 dark:bg-red-900/20'
+                    },
+                    {
+                      label: 'Market Cap',
+                      value: stockDetails?.marketCap ? `${(stockDetails.marketCap / 1000000000000).toFixed(2)}T` : '---',
+                      icon: PieChart,
+                      color: 'text-purple-500',
+                      bg: 'bg-purple-50 dark:bg-purple-900/20'
+                    },
+                    {
+                      label: 'Volume',
+                      value: stockDetails?.volume ? `${(stockDetails.volume / 1000000).toFixed(1)}M` : '---',
+                      icon: BarChart3,
+                      color: 'text-orange-500',
+                      bg: 'bg-orange-50 dark:bg-orange-900/20'
+                    },
+                    {
+                      label: 'Change %',
+                      value: stockDetails?.changePercentage ? `${stockDetails.changePercentage > 0 ? '+' : ''}${stockDetails.changePercentage.toFixed(2)}%` : '---',
+                      icon: Percent,
+                      color: stockDetails?.changePercentage >= 0 ? 'text-emerald-500' : 'text-red-500',
+                      bg: stockDetails?.changePercentage >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-red-50 dark:bg-red-900/20'
+                    }
+                  ].map((item, index) => (
+                    <div key={index} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 hover:shadow-md transition-all duration-200 group">
+                      <div className="flex items-start justify-between mb-2">
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{item.label}</p>
+                        <div className={`p-1.5 rounded-lg ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
+                          <item.icon size={14} />
+                        </div>
+                      </div>
+                      <p className={`text-lg font-bold text-slate-900 dark:text-white ${item.label === 'Change %' ? item.color : ''}`}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Trade Panel */}

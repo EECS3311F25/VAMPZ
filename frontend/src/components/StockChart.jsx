@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { motion } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import { getChartData, getSymbolBasePrice } from '../utils/chartDataGenerator';
 
 const TIME_RANGES = [
 
@@ -34,16 +33,75 @@ const StockChart = ({
 
   // Update chart data when symbol or range changes
   useEffect(() => {
-    const basePrice = getSymbolBasePrice(symbol);
-    const newData = getChartData(selectedRange, basePrice);
+    const fetchChartData = async () => {
+      setIsAnimating(true);
 
-    // Trigger animation
-    setIsAnimating(true);
-    setChartData(newData);
+      // Calculate date range
+      const endDate = new Date();
+      const startDate = new Date();
 
-    // Reset animation flag
-    const timer = setTimeout(() => setIsAnimating(false), 800);
-    return () => clearTimeout(timer);
+      switch (selectedRange) {
+        case '1W':
+          startDate.setDate(endDate.getDate() - 7);
+          break;
+        case '1M':
+          startDate.setMonth(endDate.getMonth() - 1);
+          break;
+        case '3M':
+          startDate.setMonth(endDate.getMonth() - 3);
+          break;
+        case '1Y':
+          startDate.setFullYear(endDate.getFullYear() - 1);
+          break;
+        case 'ALL':
+          startDate.setFullYear(endDate.getFullYear() - 5);
+          break;
+        default:
+          startDate.setDate(endDate.getDate() - 7);
+      }
+
+      const formatDate = (date) => date.toISOString().split('T')[0];
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
+          { credentials: 'include' }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Format data for Recharts
+          // API returns: { symbol: "NVDA", price: 186.6, date: "2025-11-17" }
+          // We need: { time: string, price: number, timestamp: number }
+          const formattedData = data.map(item => {
+            const dateObj = new Date(item.date);
+            // Adjust time format based on range
+            let timeLabel;
+            if (selectedRange === '1W' || selectedRange === '1M') {
+              timeLabel = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            } else {
+              timeLabel = dateObj.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+            }
+
+            return {
+              time: timeLabel,
+              price: item.price,
+              timestamp: dateObj.getTime()
+            };
+          }).reverse(); // API returns newest first, chart needs oldest first
+
+          setChartData(formattedData);
+        }
+      } catch (error) {
+        console.error('Error fetching chart data:', error);
+        setChartData([]);
+      } finally {
+        setTimeout(() => setIsAnimating(false), 800);
+      }
+    };
+
+    fetchChartData();
   }, [symbol, selectedRange]);
 
   // Persist range selection

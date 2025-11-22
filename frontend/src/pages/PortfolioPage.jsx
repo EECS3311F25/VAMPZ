@@ -6,21 +6,7 @@ import { SkeletonPortfolioTable, SkeletonSummaryCard, SkeletonMiniSummary } from
 import StatsCard from '../components/ui/StatsCard';
 import TradeModal from '../components/TradeModal';
 
-// Helper function to generate mock price chart data (kept for UI visualization as we don't have historical data API yet)
-const generateChartData = (basePrice, isPositive) => {
-  const data = [];
-  const days = 30;
-  let price = parseFloat(basePrice) - (Math.random() * 10 + 5);
-  for (let i = 0; i < days; i++) {
-    const change = (Math.random() - 0.45) * 3;
-    price += change;
-    data.push({
-      date: new Date(Date.now() - (days - i) * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      price: parseFloat(price.toFixed(2))
-    });
-  }
-  return data;
-};
+
 
 const PortfolioPage = () => {
   const [loading, setLoading] = useState(true);
@@ -29,10 +15,11 @@ const PortfolioPage = () => {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [tradeType, setTradeType] = useState('Buy');
-  const [watchlist, setWatchlist] = useState(['AAPL', 'NVDA', 'TSLA']);
+  const [watchlist, setWatchlist] = useState([]);
   const [hoveredStock, setHoveredStock] = useState(null);
   const [portfolioData, setPortfolioData] = useState(null);
   const [stockDetails, setStockDetails] = useState(null);
+  const [chartData, setChartData] = useState([]);
 
   const fetchPortfolioData = async () => {
     try {
@@ -71,8 +58,52 @@ const PortfolioPage = () => {
     }
   };
 
+  const fetchChartData = async (symbol) => {
+    setChartData([]);
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - 30); // 30 days ago
+
+    const formatDate = (date) => date.toISOString().split('T')[0];
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/marketData/StockPriceHistory?symbol=${symbol}&startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`,
+        { credentials: 'include' }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        // Format data for Recharts
+        const formattedData = data.map(item => ({
+          date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          price: item.price
+        })).reverse();
+        setChartData(formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+    }
+  };
+
+  const fetchWatchlist = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/portfolio/watchList', {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Extract just the symbols for easier checking
+        setWatchlist(data.map(item => item.symbol));
+      }
+    } catch (error) {
+      console.error('Error fetching watchlist:', error);
+    }
+  };
+
   useEffect(() => {
     fetchPortfolioData();
+    fetchWatchlist();
   }, []);
 
   // Process holdings from API data
@@ -100,11 +131,32 @@ const PortfolioPage = () => {
     };
   });
 
-  const handleAddToWatchlist = (stock) => {
-    if (watchlist.includes(stock.symbol)) {
-      setWatchlist(watchlist.filter(s => s !== stock.symbol));
-    } else {
-      setWatchlist([...watchlist, stock.symbol]);
+  const handleAddToWatchlist = async (stock) => {
+    const symbol = stock.symbol;
+    const isWatched = watchlist.includes(symbol);
+
+    try {
+      if (isWatched) {
+        // Remove from watchlist
+        const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${symbol}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        if (response.ok) {
+          setWatchlist(watchlist.filter(s => s !== symbol));
+        }
+      } else {
+        // Add to watchlist
+        const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${symbol}`, {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (response.ok) {
+          setWatchlist([...watchlist, symbol]);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating watchlist:', error);
     }
   };
 
@@ -315,6 +367,7 @@ const PortfolioPage = () => {
                             onClick={() => {
                               setSelectedStock(stock);
                               fetchStockDetails(stock.symbol);
+                              fetchChartData(stock.symbol);
                               setShowDetailModal(true);
                             }}
                           >
@@ -422,7 +475,7 @@ const PortfolioPage = () => {
               <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                 <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">30-Day Price Trend</h3>
                 <ResponsiveContainer width="100%" height={180}>
-                  <AreaChart data={generateChartData(selectedStock.price, selectedStock.positive)}>
+                  <AreaChart data={chartData}>
                     <defs>
                       <linearGradient id={`gradient-${selectedStock.symbol}`} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="0%" stopColor={selectedStock.positive ? '#10b981' : '#ef4444'} stopOpacity={0.3} />
@@ -440,7 +493,7 @@ const PortfolioPage = () => {
                       tick={{ fontSize: 11, fill: '#94a3b8' }}
                       tickLine={false}
                       axisLine={false}
-                      domain={['dataMin - 2', 'dataMax + 2']}
+                      domain={['auto', 'auto']}
                       tickFormatter={(value) => `$${value.toFixed(0)}`}
                     />
                     <Tooltip

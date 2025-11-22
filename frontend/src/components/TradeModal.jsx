@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Check, TrendingUp, TrendingDown, Wallet, ArrowRight, Minus, Plus } from 'lucide-react';
 
-const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
+const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm, cash = 0 }) => {
     const [quantity, setQuantity] = useState(1);
     const [success, setSuccess] = useState(false);
     const [failed, setFailed] = useState(false);
@@ -12,9 +12,11 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
     const stockPrice = parseFloat(stock?.price || 0);
     const stockShares = stock?.shares || 0;
 
-    // Mock portfolio data - in a real app this would come from context/props
-    const currentPortfolioValue = 125430.50;
-    const buyingPower = 10000.00;
+    // Use passed cash for buying power
+    const buyingPower = cash;
+    // We don't have the full portfolio value here easily, so we'll just use cash + current trade value as a proxy or just ignore portfolio value updates for now in the modal display if it's too complex.
+    // But let's try to keep it consistent.
+    const currentPortfolioValue = buyingPower; // Simplified for now as we only passed cash
 
     useEffect(() => {
         if (isOpen) {
@@ -32,10 +34,6 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm }) => {
     const totalNum = parseFloat(total);
 
     // Calculate portfolio effects
-    const newPortfolioValue = type === 'Buy'
-        ? currentPortfolioValue // Buying doesn't change total value immediately (cash -> stock)
-        : currentPortfolioValue; // Selling doesn't change total value immediately (stock -> cash)
-
     const newBuyingPower = type === 'Buy'
         ? buyingPower - totalNum
         : buyingPower + totalNum;

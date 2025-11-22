@@ -6,7 +6,7 @@ const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
 ];
 
-const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, hoverPoint = null }) => {
+const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, hoverPoint = null, cash = 0, currentPrice = 0, sharesOwned = 0 }) => {
     const [type, setType] = useState('Buy');
     const [quantity, setQuantity] = useState(1);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -16,13 +16,14 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
     const wrapperRef = useRef(null);
     const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
 
-    // Mock current price - in production, this would come from real-time data
-    const currentPrice = 150.00;
     const total = (quantity * currentPrice);
-    const portfolioValue = 125430.50;
+    // Use cash from props as portfolioValue for calculation context
+    const portfolioValue = cash;
     const portfolioAfter = type === 'Buy' ? portfolioValue - total : portfolioValue + total;
-    const portfolioChange = ((total / portfolioValue) * 100).toFixed(2);
+
     const isInWatchlist = watchlist.includes(selectedSymbol);
+    const canAfford = type === 'Buy' ? total <= cash : true; // Simple validation
+    const hasEnoughShares = type === 'Sell' ? quantity <= sharesOwned : true;
 
     useEffect(() => {
         // Filter suggestions when selectedSymbol changes
@@ -101,6 +102,11 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (type === 'Buy' && !canAfford) {
+            alert("Insufficient funds");
+            return;
+        }
+
         setIsTradeModalOpen(true);
     };
 
@@ -126,8 +132,8 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
         symbol: selectedSymbol,
         price: currentPrice,
         quantity: quantity, // Pass initial quantity
-        shares: 0 // Mock shares for now since we don't have portfolio context here easily
-    }), [selectedSymbol, currentPrice, quantity]);
+        shares: sharesOwned // Pass real shares owned
+    }), [selectedSymbol, currentPrice, quantity, sharesOwned]);
 
     return (
         <div>
@@ -242,13 +248,10 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Current Price</span>
-                        <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-medium bg-emerald-100 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                            <TrendingUp size={12} />
-                            +2.34%
-                        </span>
+                        {/* Removed static change percentage as we don't have it from simple price API yet */}
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-slate-900 dark:text-white">${currentPrice.toFixed(2)}</span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">${currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                 </div>
 
@@ -304,12 +307,23 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                 <div className="space-y-4 pt-2">
                     <div className="flex justify-between items-center">
                         <span className="text-sm text-slate-600 dark:text-slate-400">Estimated Cost</span>
-                        <span className="text-xl font-bold text-slate-900 dark:text-white">${total.toFixed(2)}</span>
+                        <span className={`text-xl font-bold ${!canAfford ? 'text-red-500' : 'text-slate-900 dark:text-white'}`}>
+                            ${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
                     </div>
 
                     <div className="flex justify-between items-center">
-                        <span className="text-sm text-slate-600 dark:text-slate-400">Fees</span>
-                        <span className="text-sm font-semibold text-teal-600 dark:text-teal-400">Free</span>
+                        <span className="text-sm text-slate-600 dark:text-slate-400">Buying Power</span>
+                        <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                            ${cash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm text-slate-600 dark:text-slate-400">Shares Owned</span>
+                        <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                            {sharesOwned}
+                        </span>
                     </div>
 
                     <div className="h-px bg-slate-200 dark:bg-slate-700 my-2"></div>
@@ -322,7 +336,7 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                             <div className="text-xs">
                                 <p className="text-blue-700 dark:text-blue-300 font-semibold mb-1">Portfolio Impact</p>
                                 <p className="text-blue-600 dark:text-blue-400">
-                                    {type === 'Buy' ? '−' : '+'}{portfolioChange}% • New Balance: ${portfolioAfter.toFixed(2)}
+                                    New Cash Balance: ${portfolioAfter.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </p>
                             </div>
                         </div>
@@ -374,8 +388,9 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
                 onConfirm={handleConfirmTrade}
                 stock={modalStockData}
                 type={type}
+                cash={cash}
             />
-        </div>
+        </div >
     );
 };
 

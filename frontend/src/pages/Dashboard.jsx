@@ -29,50 +29,129 @@ const Dashboard = () => {
   const [hoverPoint, setHoverPoint] = useState(null);
   const [tradeMarkers, setTradeMarkers] = useState([]);
   const [portfolioData, setPortfolioData] = useState(null);
+  const [currentStockPrice, setCurrentStockPrice] = useState(null);
+
+  const fetchPortfolioData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/portfolio/me', {
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch portfolio data');
+      }
+      const text = await response.text();
+      try {
+        const data = JSON.parse(text);
+        setPortfolioData(data);
+      } catch (e) {
+        console.error('JSON Parse Error:', e);
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchPortfolioData = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/api/portfolio/me', {
-          credentials: 'include',
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch portfolio data');
-        }
-        const text = await response.text();
-        console.log('Raw portfolio response:', text);
-        try {
-          const data = JSON.parse(text);
-          setPortfolioData(data);
-        } catch (e) {
-          console.error('JSON Parse Error:', e);
-          // Attempt to fix common JSON issues if possible, or just fail gracefully
-          // For now, let's see what the raw text is.
-        }
-      } catch (error) {
-        console.error('Error fetching portfolio data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPortfolioData();
   }, []);
 
-  const handleTradeSubmit = (tradeData) => {
+  useEffect(() => {
+    const fetchStockPrice = async () => {
+      if (!selectedSymbol) return;
+      try {
+        const response = await fetch(`http://localhost:8080/api/marketData/currentStockPrice?symbol=${selectedSymbol}`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setCurrentStockPrice(data.price);
+        }
+      } catch (error) {
+        console.error('Error fetching stock price:', error);
+      }
+    };
+
+    fetchStockPrice();
+    // Poll every 10 seconds for price updates
+    const interval = setInterval(fetchStockPrice, 10000);
+    return () => clearInterval(interval);
+  }, [selectedSymbol]);
+
+  const handleTradeSubmit = async (tradeData) => {
     console.log('Dashboard handleTradeSubmit called with:', tradeData);
 
-    if (tradeData) {
-      const newMarker = {
-        symbol: tradeData.symbol,
-        type: tradeData.type,
-        price: parseFloat(tradeData.price),
-        timestamp: Date.now()
-      };
-      setTradeMarkers(prev => [...prev, newMarker]);
+    if (!tradeData) return;
+
+    if (tradeData.type === 'Buy') {
+      try {
+        const response = await fetch('http://localhost:8080/api/portfolio/buy', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            symbol: tradeData.symbol,
+            quantity: parseInt(tradeData.quantity)
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Refresh portfolio data to show new holdings/cash
+          fetchPortfolioData();
+        } else {
+          alert(result.message || 'Trade failed');
+        }
+      } catch (error) {
+        console.error('Trade error:', error);
+        alert('An error occurred while processing your trade');
+      }
+    } else if (tradeData.type === 'Sell') {
+      try {
+        const response = await fetch('http://localhost:8080/api/portfolio/sell', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            symbol: tradeData.symbol,
+            quantity: parseInt(tradeData.quantity)
+          }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Refresh portfolio data to show new holdings/cash
+          fetchPortfolioData();
+        } else {
+          // Handle specific error messages
+          if (result.message === 'Holding not found') {
+            alert('You do not own any shares of this stock.');
+          } else if (result.message === 'Insufficient stock quantity to sell') {
+            alert('You do not have enough shares to sell this quantity.');
+          } else {
+            alert(result.message || 'Trade failed');
+          }
+        }
+      } catch (error) {
+        console.error('Trade error:', error);
+        alert('An error occurred while processing your trade');
+      }
     }
 
-    // Here you would call your actual trade API or trigger a toast/snackbar
+    const newMarker = {
+      symbol: tradeData.symbol,
+      type: tradeData.type,
+      price: parseFloat(tradeData.price),
+      timestamp: Date.now()
+    };
+    setTradeMarkers(prev => [...prev, newMarker]);
   };
 
   // Calculate stats based on portfolioData
@@ -81,61 +160,69 @@ const Dashboard = () => {
     const data = portfolioData || {
       cash: 0,
       stockValue: 0,
-      invested: 0
+      invested: 0,
+      holdings: []
     };
 
-    const { cash, stockValue, invested } = data;
+    const { cash, stockValue, invested, holdings } = data;
     const portfolioValue = cash + stockValue;
     const unrealizedPL = portfolioValue - 100000;
     const unrealizedPLPercent = (unrealizedPL / 100000) * 100;
 
-    return [
-      {
-        title: 'Cash',
-        value: `$${cash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-        change: '', // No arrow/change for Cash
-        changePercent: 'Available',
-        label: 'Buying power',
-        positive: true, // Always neutral/positive styling
-        icon: Wallet,
-        gradient: 'from-emerald-500/10 to-teal-500/10',
-        hideArrow: true
-      },
-      {
-        title: 'Portfolio Value',
-        value: `$${portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-        change: '', // Calculated elsewhere if needed, or left blank for now as per req
-        changePercent: 'Total balance',
-        label: 'Total balance',
-        positive: portfolioValue > 100000,
-        icon: DollarSign,
-        gradient: 'from-teal-500/10 to-blue-500/10'
-      },
-      {
-        title: 'Unrealized P/L',
-        value: `${unrealizedPL >= 0 ? '+' : ''}$${Math.abs(unrealizedPL).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-        change: `${unrealizedPLPercent >= 0 ? '+' : ''}${unrealizedPLPercent.toFixed(2)}%`,
-        changePercent: 'All time',
-        label: 'Total return',
-        positive: unrealizedPL >= 0,
-        icon: TrendingUp,
-        gradient: 'from-blue-500/10 to-indigo-500/10'
-      },
-      {
-        title: 'Investments',
-        value: `$${stockValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-        change: '', // Remove "24change"
-        changePercent: 'Market value',
-        label: 'Market value',
-        positive: stockValue > invested,
-        icon: BarChart3,
-        gradient: 'from-purple-500/10 to-pink-500/10',
-        hideArrow: true
-      },
-    ];
+    return {
+      stats: [
+        {
+          title: 'Cash',
+          value: `$${cash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          change: '', // No arrow/change for Cash
+          changePercent: 'Available',
+          label: 'Buying power',
+          positive: true, // Always neutral/positive styling
+          icon: Wallet,
+          gradient: 'from-emerald-500/10 to-teal-500/10',
+          hideArrow: true
+        },
+        {
+          title: 'Portfolio Value',
+          value: `$${portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          change: '', // Calculated elsewhere if needed, or left blank for now as per req
+          changePercent: 'Total balance',
+          label: 'Total balance',
+          positive: portfolioValue > 100000,
+          icon: DollarSign,
+          gradient: 'from-teal-500/10 to-blue-500/10'
+        },
+        {
+          title: 'Unrealized P/L',
+          value: `${unrealizedPL >= 0 ? '+' : ''}$${Math.abs(unrealizedPL).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          change: `${unrealizedPLPercent >= 0 ? '+' : ''}${unrealizedPLPercent.toFixed(2)}%`,
+          changePercent: 'All time',
+          label: 'Total return',
+          positive: unrealizedPL >= 0,
+          icon: TrendingUp,
+          gradient: 'from-blue-500/10 to-indigo-500/10'
+        },
+        {
+          title: 'Investments',
+          value: `$${stockValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+          change: '', // Remove "24change"
+          changePercent: 'Market value',
+          label: 'Market value',
+          positive: stockValue > invested,
+          icon: BarChart3,
+          gradient: 'from-purple-500/10 to-pink-500/10',
+          hideArrow: true
+        },
+      ],
+      holdings: holdings || []
+    };
   };
 
-  const statsCards = calculateStats();
+  const { stats: statsCards, holdings } = calculateStats();
+
+  // Find shares owned for selected symbol
+  const currentHolding = holdings.find(h => h.symbol === selectedSymbol);
+  const sharesOwned = currentHolding ? currentHolding.quantity : 0;
 
   return (
     <DashboardLayout activeMenu="dashboard">
@@ -209,6 +296,9 @@ const Dashboard = () => {
                 onSymbolChange={setSelectedSymbol}
                 onTradeSubmit={handleTradeSubmit}
                 hoverPoint={hoverPoint}
+                cash={portfolioData?.cash || 0}
+                currentPrice={currentStockPrice || 0}
+                sharesOwned={sharesOwned}
               />
             </div>
           </div>

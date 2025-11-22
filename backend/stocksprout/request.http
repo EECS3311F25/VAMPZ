@@ -75,3 +75,17 @@ POST http://localhost:8080/api/portfolio/watchlist?
 DELETE http://localhost:8080/api/portfolio/watchlist?
     symbol=AAPL
 
+
+###
+GET http://localhost:8080/api/portfolio/me
+
+
+###
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email": "agrawal.manas31@gmail.com",
+  "password": "manasmanas"
+}
+

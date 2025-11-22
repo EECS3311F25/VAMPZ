@@ -17,6 +17,7 @@ const StatsCard = ({
     icon: Icon,
     gradient = 'from-teal-500/10 to-blue-500/10',
     className = '',
+    hideArrow = false,
 }) => {
     return (
         <div
@@ -48,14 +49,16 @@ const StatsCard = ({
             {change && (
                 <div
                     className={`flex items-center text-xs font-medium relative z-10 ${positive
-                            ? 'text-teal-600 dark:text-emerald-400'
-                            : 'text-red-600 dark:text-red-400'
+                        ? 'text-teal-600 dark:text-emerald-400'
+                        : 'text-red-600 dark:text-red-400'
                         }`}
                 >
-                    {positive ? (
-                        <TrendingUp size={14} className="mr-1" />
-                    ) : (
-                        <TrendingDown size={14} className="mr-1" />
+                    {!hideArrow && (
+                        positive ? (
+                            <TrendingUp size={14} className="mr-1" />
+                        ) : (
+                            <TrendingDown size={14} className="mr-1" />
+                        )
                     )}
                     <span>{change}</span>
                     {changePercent && (
@@ -79,6 +82,7 @@ StatsCard.propTypes = {
     icon: PropTypes.elementType,
     gradient: PropTypes.string,
     className: PropTypes.string,
+    hideArrow: PropTypes.bool,
 };
 
 export default StatsCard;

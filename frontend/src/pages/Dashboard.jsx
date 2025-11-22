@@ -7,49 +7,6 @@ import StockChart from '../components/StockChart';
 import TradePanel from '../components/TradePanel';
 import { SkeletonSummaryCard } from '../components/Skeleton';
 
-const statsCards = [
-  {
-    title: 'Portfolio Value',
-    value: '$125,430.50',
-    change: '+$2,450.20',
-    changePercent: '+2.00%',
-    label: 'Total balance',
-    positive: true,
-    icon: DollarSign,
-    gradient: 'from-teal-500/10 to-blue-500/10'
-  },
-  {
-    title: 'Cash',
-    value: '$10,000.00',
-    change: '+$0.00',
-    changePercent: 'Available',
-    label: 'Buying power',
-    positive: true,
-    icon: Wallet,
-    gradient: 'from-emerald-500/10 to-teal-500/10'
-  },
-  {
-    title: 'Unrealized P/L',
-    value: '+$15,430.00',
-    change: '+12.5%',
-    changePercent: 'All time',
-    label: 'Total return',
-    positive: true,
-    icon: TrendingUp,
-    gradient: 'from-blue-500/10 to-indigo-500/10'
-  },
-  {
-    title: 'Investments',
-    value: '$115,430.50',
-    change: '+2.00%',
-    changePercent: '24h change',
-    label: 'Market value',
-    positive: true,
-    icon: BarChart3,
-    gradient: 'from-purple-500/10 to-pink-500/10'
-  },
-];
-
 const portfolioStocks = [
   { symbol: 'AAPL', name: 'Apple Inc.', price: '175.43', change: '+2.34', changePercent: '+1.35%', positive: true, shares: 50 },
   { symbol: 'MSFT', name: 'Microsoft Corp.', price: '378.85', change: '-1.23', changePercent: '-0.32%', positive: false, shares: 30 },
@@ -71,12 +28,35 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [hoverPoint, setHoverPoint] = useState(null);
   const [tradeMarkers, setTradeMarkers] = useState([]);
+  const [portfolioData, setPortfolioData] = useState(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
+    const fetchPortfolioData = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/portfolio/me', {
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch portfolio data');
+        }
+        const text = await response.text();
+        console.log('Raw portfolio response:', text);
+        try {
+          const data = JSON.parse(text);
+          setPortfolioData(data);
+        } catch (e) {
+          console.error('JSON Parse Error:', e);
+          // Attempt to fix common JSON issues if possible, or just fail gracefully
+          // For now, let's see what the raw text is.
+        }
+      } catch (error) {
+        console.error('Error fetching portfolio data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolioData();
   }, []);
 
   const handleTradeSubmit = (tradeData) => {
@@ -94,6 +74,68 @@ const Dashboard = () => {
 
     // Here you would call your actual trade API or trigger a toast/snackbar
   };
+
+  // Calculate stats based on portfolioData
+  const calculateStats = () => {
+    // Default values if data is missing or loading failed
+    const data = portfolioData || {
+      cash: 0,
+      stockValue: 0,
+      invested: 0
+    };
+
+    const { cash, stockValue, invested } = data;
+    const portfolioValue = cash + stockValue;
+    const unrealizedPL = portfolioValue - 100000;
+    const unrealizedPLPercent = (unrealizedPL / 100000) * 100;
+
+    return [
+      {
+        title: 'Cash',
+        value: `$${cash.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        change: '', // No arrow/change for Cash
+        changePercent: 'Available',
+        label: 'Buying power',
+        positive: true, // Always neutral/positive styling
+        icon: Wallet,
+        gradient: 'from-emerald-500/10 to-teal-500/10',
+        hideArrow: true
+      },
+      {
+        title: 'Portfolio Value',
+        value: `$${portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        change: '', // Calculated elsewhere if needed, or left blank for now as per req
+        changePercent: 'Total balance',
+        label: 'Total balance',
+        positive: portfolioValue > 100000,
+        icon: DollarSign,
+        gradient: 'from-teal-500/10 to-blue-500/10'
+      },
+      {
+        title: 'Unrealized P/L',
+        value: `${unrealizedPL >= 0 ? '+' : ''}$${Math.abs(unrealizedPL).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        change: `${unrealizedPLPercent >= 0 ? '+' : ''}${unrealizedPLPercent.toFixed(2)}%`,
+        changePercent: 'All time',
+        label: 'Total return',
+        positive: unrealizedPL >= 0,
+        icon: TrendingUp,
+        gradient: 'from-blue-500/10 to-indigo-500/10'
+      },
+      {
+        title: 'Investments',
+        value: `$${stockValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+        change: '', // Remove "24change"
+        changePercent: 'Market value',
+        label: 'Market value',
+        positive: stockValue > invested,
+        icon: BarChart3,
+        gradient: 'from-purple-500/10 to-pink-500/10',
+        hideArrow: true
+      },
+    ];
+  };
+
+  const statsCards = calculateStats();
 
   return (
     <DashboardLayout activeMenu="dashboard">
@@ -134,6 +176,7 @@ const Dashboard = () => {
                     icon={stat.icon}
                     gradient={stat.gradient}
                     className="hover:shadow-xl"
+                    hideArrow={stat.hideArrow}
                   />
                 ))
               )}

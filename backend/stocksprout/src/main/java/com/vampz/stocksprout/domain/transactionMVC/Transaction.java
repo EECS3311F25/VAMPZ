@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.domain.transactionMVC;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vampz.stocksprout.domain.TransactionType;
 import com.vampz.stocksprout.domain.portfolioMVC.Portfolio;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
+    @JsonIgnore
     private Portfolio portfolio;
 
     // stock identifier at the time of trade

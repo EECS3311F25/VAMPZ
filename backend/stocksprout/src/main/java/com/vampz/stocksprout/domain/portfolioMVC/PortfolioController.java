@@ -269,4 +269,25 @@ public class PortfolioController {
     }
 
 
+    @GetMapping("/me")
+    public ResponseEntity<?> me(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        Object userId = session.getAttribute("USER_ID");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Portfolio portfolio = user.getPortfolio();
+        return ResponseEntity.ok(portfolio);
+    }
+
 }

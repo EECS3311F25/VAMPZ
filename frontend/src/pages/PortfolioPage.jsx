@@ -525,15 +525,15 @@ const PortfolioPage = () => {
                   <div className="grid grid-cols-3 gap-3">
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
-                      <p className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.shares}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{selectedStock.shares}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
-                      <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.avgBuyPrice.toFixed(2)}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">${selectedStock.avgBuyPrice.toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
-                      <p className="text-xl font-bold text-slate-900 dark:text-white">${selectedStock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">${selectedStock.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                     </div>
                   </div>
                 </div>

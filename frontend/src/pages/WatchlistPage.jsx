@@ -5,6 +5,7 @@ import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skeleton';
 import TradeModal from '../components/TradeModal';
 import SparklineChart from '../components/SparklineChart';
+import StockChart from '../components/StockChart';
 
 const POPULAR_STOCKS = [
     'AAPL', 'TSLA', 'AMZN', 'MSFT', 'NVDA', 'GOOGL', 'META', 'NFLX', 'JPM', 'V', 'BAC', 'AMD', 'PYPL', 'DIS', 'T', 'PFE', 'COST', 'INTC', 'KO', 'TGT', 'NKE', 'SPY', 'BA', 'BABA', 'XOM', 'WMT', 'GE', 'CSCO', 'VZ', 'JNJ', 'CVX', 'PLTR', 'SQ', 'SHOP', 'SBUX', 'SOFI', 'HOOD', 'RBLX', 'SNAP', 'UBER', 'FDX', 'ABBV', 'ETSY', 'MRNA', 'LMT', 'GM', 'F', 'RIVN', 'LCID', 'CCL', 'DAL', 'UAL', 'AAL', 'TSM', 'SONY', 'ET', 'NOK', 'MRO', 'COIN', 'SIRI', 'RIOT', 'CPRX', 'VWO', 'SPYG', 'ROKU', 'VIAC', 'ATVI', 'BIDU', 'DOCU', 'ZM', 'PINS', 'TLRY', 'WBA', 'MGM', 'NIO', 'C', 'GS', 'WFC', 'ADBE', 'PEP', 'UNH', 'CARR', 'FUBO', 'HCA', 'TWTR', 'BILI', 'RKT'
@@ -21,6 +22,7 @@ const WatchlistPage = () => {
     const [loading, setLoading] = useState(true);
     const [showTradeModal, setShowTradeModal] = useState(false);
     const [tradeType, setTradeType] = useState('Buy');
+    const [stockDetails, setStockDetails] = useState(null);
 
     // Dropdown state
     const [suggestions, setSuggestions] = useState([]);
@@ -158,8 +160,24 @@ const WatchlistPage = () => {
         }
     };
 
+    const fetchStockDetails = async (symbol) => {
+        setStockDetails(null);
+        try {
+            const response = await fetch(`http://localhost:8080/api/marketData/stockData?symbol=${symbol}`, {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setStockDetails(data);
+            }
+        } catch (error) {
+            console.error('Error fetching stock details:', error);
+        }
+    };
+
     const viewStockDetails = (stock) => {
         setSelectedStock(stock);
+        fetchStockDetails(stock.symbol);
         setShowDetailModal(true);
     };
 
@@ -387,7 +405,7 @@ const WatchlistPage = () => {
 
                                         {/* Mini Chart */}
                                         <div className="mb-3 rounded-lg overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
-                                            <SparklineChart symbol={stock.symbol} range="1W" height="h-16" />
+                                            <SparklineChart symbol={stock.symbol} range="1M" height="h-16" />
                                         </div>
                                     </div>
 
@@ -575,55 +593,84 @@ const WatchlistPage = () => {
                                 </button>
                             </div>
 
-                            {/* Price Info */}
-                            <div className="mb-4 p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
-                                <div className="flex items-end justify-between mb-3">
-                                    <div>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
-                                        <p className="text-3xl font-bold text-slate-900 dark:text-white">${selectedStock.price.toFixed(2)}</p>
-                                    </div>
-                                    <div className={`text-right ${selectedStock.positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                                        <div className="flex items-center gap-2 justify-end mb-1">
-                                            {selectedStock.positive ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
-                                            <span className="text-xl font-bold">{selectedStock.positive ? '+' : ''}{selectedStock.change.toFixed(2)}</span>
-                                        </div>
-                                        <p className="text-xs font-semibold">{selectedStock.positive ? '+' : ''}{selectedStock.changePercentage.toFixed(2)}%</p>
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-                                    <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Market Cap</p>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{selectedStock.marketCap}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Range</p>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">${selectedStock.dayLow.toFixed(2)} - ${selectedStock.dayHigh.toFixed(2)}</p>
-                                    </div>
-                                </div>
+                            {/* Price Chart */}
+                            <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                <StockChart symbol={selectedStock.symbol} height="h-[250px]" />
                             </div>
 
-                            {/* Chart */}
-                            <div className="mb-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                <SparklineChart symbol={selectedStock.symbol} range="3M" />
+                            {/* Holdings + Price */}
+                            <div className="grid gap-4 lg:grid-cols-2 mb-5">
+                                <div className="p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
+                                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
+                                    {(() => {
+                                        const holding = portfolioData?.holdings?.find(h => h.symbol === selectedStock.symbol);
+                                        const shares = holding ? holding.quantity : 0;
+                                        const avgCost = holding ? holding.avgBuyPrice : 0;
+                                        const value = holding ? (holding.quantity * holding.currentPrice) : 0;
+
+                                        return (
+                                            <div className="grid grid-cols-3 gap-3">
+                                                <div>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">{shares}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">${avgCost.toFixed(2)}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
+                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
+
+                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
+                                    <div>
+                                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
+                                        <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                                            ${stockDetails?.price ? stockDetails.price.toFixed(2) : selectedStock.price.toFixed(2)}
+                                        </p>
+                                    </div>
+                                    <div className={`text-right ${stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                                        <div className="flex items-center gap-2 justify-end">
+                                            {stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                                            <span className="text-xl font-bold">
+                                                {stockDetails?.changePercentage ? (stockDetails.changePercentage > 0 ? '+' : '') + stockDetails.changePercentage.toFixed(2) + '%' : (selectedStock.changePercentage ? selectedStock.changePercentage.toFixed(2) + '%' : '0.00%')}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm font-semibold mt-1">Return</p>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Additional Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Open</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.open.toFixed(2)}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day High</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">
+                                        ${stockDetails?.dayHigh ? stockDetails.dayHigh.toFixed(2) : (selectedStock.dayHigh ? selectedStock.dayHigh.toFixed(2) : 'N/A')}
+                                    </p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">High</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.dayHigh.toFixed(2)}</p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Low</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">${selectedStock.dayLow.toFixed(2)}</p>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Low</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">
+                                        ${stockDetails?.dayLow ? stockDetails.dayLow.toFixed(2) : (selectedStock.dayLow ? selectedStock.dayLow.toFixed(2) : 'N/A')}
+                                    </p>
                                 </div>
                                 <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
                                     <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Volume</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">{(selectedStock.volume / 1e6).toFixed(1)}M</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">
+                                        {stockDetails?.volume ? (stockDetails.volume / 1000000).toFixed(1) + 'M' : (selectedStock.volume ? (selectedStock.volume / 1e6).toFixed(1) + 'M' : 'N/A')}
+                                    </p>
+                                </div>
+                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Market Cap</p>
+                                    <p className="text-base font-bold text-slate-900 dark:text-white">
+                                        {stockDetails?.marketCap ? (stockDetails.marketCap / 1000000000000).toFixed(2) + 'T' : (selectedStock.marketCap || 'N/A')}
+                                    </p>
                                 </div>
                             </div>
 

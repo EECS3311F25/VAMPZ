@@ -16,7 +16,8 @@ const StockChart = ({
   symbol = 'AAPL',
   onHoverPoint = null,
   tradeMarkers = [],
-  color = "#0d9488"
+  color = "#0d9488",
+  height = "h-[300px] sm:h-[400px]"
 }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -189,7 +190,7 @@ const StockChart = ({
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[300px] sm:h-[400px]">
+      <div className={`w-full ${height}`}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={chartData}

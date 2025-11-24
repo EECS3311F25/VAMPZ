@@ -21,7 +21,7 @@ public class marketDataService {
 
     private ObjectMapper mapper;
 
-    private final String apiKey = "4h61NOWK2m8zO4fx4loXOc9i2dpcB2uX";
+
 
     public marketDataService() {
         this.mapper = new ObjectMapper();
@@ -30,6 +30,7 @@ public class marketDataService {
     }
 
     public StockCurrentDTO getCurrentStockPrice(String symbol) {
+        String apiKey = "4h61NOWK2m8zO4fx4loXOc9i2dpcB2uX";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -59,6 +60,7 @@ public class marketDataService {
     }
 
     public List<StockHistDTO> getStockPriceHistory(String symbol, String startDate, String endDate) {
+        String apiKey = "Pzt62ttNe0pRziddvev8ySklKFfarX7J";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -85,6 +87,7 @@ public class marketDataService {
     }
 
     public WatchItem getStockData(String symbol) {
+        String apiKey = "zmkyyBDHwBHD52ckQ0vyaDTaFrr8T1Wt";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()

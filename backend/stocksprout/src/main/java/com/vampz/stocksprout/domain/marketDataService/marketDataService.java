@@ -21,8 +21,6 @@ public class marketDataService {
 
     private ObjectMapper mapper;
 
-
-
     public marketDataService() {
         this.mapper = new ObjectMapper();
         this.mapper.registerModule(new JavaTimeModule());
@@ -30,7 +28,7 @@ public class marketDataService {
     }
 
     public StockCurrentDTO getCurrentStockPrice(String symbol) {
-        String apiKey = "4h61NOWK2m8zO4fx4loXOc9i2dpcB2uX";
+        String apiKey = "DiFmnrEOGv8K9EPcMoHlxGRicdZoGsgE";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -60,7 +58,7 @@ public class marketDataService {
     }
 
     public List<StockHistDTO> getStockPriceHistory(String symbol, String startDate, String endDate) {
-        String apiKey = "Pzt62ttNe0pRziddvev8ySklKFfarX7J";
+        String apiKey = "TslVsg2AK0fhR9TL1dsLJNTLlltNXwf9";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -87,7 +85,7 @@ public class marketDataService {
     }
 
     public WatchItem getStockData(String symbol) {
-        String apiKey = "zmkyyBDHwBHD52ckQ0vyaDTaFrr8T1Wt";
+        String apiKey = "em6lyrWLc7XadzrUeAb4QqwkMd1nS7e2";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -107,8 +105,7 @@ public class marketDataService {
 
             List<WatchItem> list = mapper.readValue(
                     response.body(),
-                    mapper.getTypeFactory().constructCollectionType(List.class, WatchItem.class)
-            );
+                    mapper.getTypeFactory().constructCollectionType(List.class, WatchItem.class));
 
             return list.isEmpty() ? null : list.get(0);
 
@@ -117,7 +114,5 @@ public class marketDataService {
             return null;
         }
     }
-
-
 
 }

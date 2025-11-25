@@ -135,6 +135,13 @@ const PortfolioPage = () => {
     const symbol = stock.symbol;
     const isWatched = watchlist.includes(symbol);
 
+    // Optimistic update
+    if (isWatched) {
+      setWatchlist(watchlist.filter(s => s !== symbol));
+    } else {
+      setWatchlist([...watchlist, symbol]);
+    }
+
     try {
       if (isWatched) {
         // Remove from watchlist
@@ -142,8 +149,10 @@ const PortfolioPage = () => {
           method: 'DELETE',
           credentials: 'include',
         });
-        if (response.ok) {
-          setWatchlist(watchlist.filter(s => s !== symbol));
+        if (!response.ok) {
+          // Revert if failed
+          setWatchlist([...watchlist, symbol]);
+          console.error('Failed to remove from watchlist');
         }
       } else {
         // Add to watchlist
@@ -151,12 +160,20 @@ const PortfolioPage = () => {
           method: 'POST',
           credentials: 'include',
         });
-        if (response.ok) {
-          setWatchlist([...watchlist, symbol]);
+        if (!response.ok) {
+          // Revert if failed
+          setWatchlist(watchlist.filter(s => s !== symbol));
+          console.error('Failed to add to watchlist');
         }
       }
     } catch (error) {
       console.error('Error updating watchlist:', error);
+      // Revert on error
+      if (isWatched) {
+        setWatchlist([...watchlist, symbol]);
+      } else {
+        setWatchlist(watchlist.filter(s => s !== symbol));
+      }
     }
   };
 

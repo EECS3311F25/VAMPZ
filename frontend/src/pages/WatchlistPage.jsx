@@ -39,7 +39,10 @@ const WatchlistPage = () => {
             });
             if (response.ok) {
                 const data = await response.json();
-                const formattedData = data.map(stock => ({
+                // Deduplicate based on symbol to prevent duplicate cards
+                const uniqueData = Array.from(new Map(data.map(item => [item.symbol, item])).values());
+
+                const formattedData = uniqueData.map(stock => ({
                     ...stock,
                     marketCap: formatMarketCap(stock.marketCap),
                     positive: stock.change >= 0
@@ -95,10 +98,12 @@ const WatchlistPage = () => {
         return value.toString();
     };
 
-    const filteredWatchlist = watchlist.filter(stock =>
-        stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        stock.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredWatchlist = watchlist.filter(stock => {
+        const symbol = stock.symbol || '';
+        const name = stock.name || '';
+        const query = searchQuery.toLowerCase();
+        return symbol.toLowerCase().includes(query) || name.toLowerCase().includes(query);
+    });
 
     const addToWatchlist = async (symbol) => {
         setAddError(''); // Clear previous errors
@@ -144,19 +149,26 @@ const WatchlistPage = () => {
 
     const removeFromWatchlist = async (e, symbol) => {
         if (e) e.stopPropagation();
+
+        // Optimistic update
+        const originalWatchlist = [...watchlist];
+        setWatchlist(prev => prev.filter(s => s.symbol !== symbol));
+
         try {
             const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${symbol}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });
 
-            if (response.ok) {
-                fetchWatchlist(); // Refresh list
-            } else {
+            if (!response.ok) {
+                // Revert if failed
+                setWatchlist(originalWatchlist);
                 console.error('Failed to remove from watchlist');
             }
         } catch (error) {
             console.error('Error removing from watchlist:', error);
+            // Revert on error
+            setWatchlist(originalWatchlist);
         }
     };
 
@@ -396,7 +408,7 @@ const WatchlistPage = () => {
                                             </div>
                                             <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${stock.change >= 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
                                                 {stock.change >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                                {Math.abs(stock.changePercentage).toFixed(2)}%
+                                                {stock.changePercentage ? Math.abs(stock.changePercentage).toFixed(2) : '0.00'}%
                                             </div>
                                         </div>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">
@@ -405,21 +417,21 @@ const WatchlistPage = () => {
 
                                         {/* Mini Chart */}
                                         <div className="mb-3 rounded-lg overflow-hidden opacity-80 hover:opacity-100 transition-opacity">
-                                            <SparklineChart symbol={stock.symbol} range="1M" height="h-16" />
+                                            <SparklineChart symbol={stock.symbol} range="1W" height="h-16" />
                                         </div>
                                     </div>
 
                                     <div className="space-y-2">
                                         <div className="flex items-baseline justify-between">
                                             <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                                                ${stock.price.toFixed(2)}
+                                                ${stock.price ? stock.price.toFixed(2) : '0.00'}
                                             </span>
                                             <div className={`flex items-center gap-1 text-sm font-semibold ${stock.positive
                                                 ? 'text-emerald-600 dark:text-emerald-400'
                                                 : 'text-red-600 dark:text-red-400'
                                                 }`}>
                                                 {stock.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                                <span>{stock.positive ? '+' : ''}{stock.change.toFixed(2)}</span>
+                                                <span>{stock.positive ? '+' : ''}{stock.change ? stock.change.toFixed(2) : '0.00'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -595,7 +607,11 @@ const WatchlistPage = () => {
 
                             {/* Price Chart */}
                             <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                <StockChart symbol={selectedStock.symbol} height="h-[250px]" />
+                                <StockChart
+                                    symbol={selectedStock.symbol}
+                                    height="h-[250px]"
+                                    color={selectedStock.positive ? '#10b981' : '#ef4444'}
+                                />
                             </div>
 
                             {/* Holdings + Price */}

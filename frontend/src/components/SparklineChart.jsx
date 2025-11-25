@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { useTheme } from '../context/ThemeContext';
 
 const SparklineChart = ({ symbol, range = '3M', height = 'h-48' }) => {
@@ -92,8 +92,9 @@ const SparklineChart = ({ symbol, range = '3M', height = 'h-48' }) => {
                             <stop offset="95%" stopColor={color} stopOpacity={0} />
                         </linearGradient>
                     </defs>
+                    <YAxis domain={['auto', 'auto']} hide />
                     <Area
-                        type="monotone"
+                        type="linear"
                         dataKey="price"
                         stroke={color}
                         fill={`url(#colorGradient-${symbol})`}

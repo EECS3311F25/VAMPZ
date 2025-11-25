@@ -138,26 +138,44 @@ const TradePanel = ({ selectedSymbol = "AAPL", onSymbolChange, onTradeSubmit, ho
 
     const toggleWatchlist = async () => {
         const isWatched = watchlist.includes(selectedSymbol);
+
+        // Optimistic update
+        if (isWatched) {
+            setWatchlist(prev => prev.filter(s => s !== selectedSymbol));
+        } else {
+            setWatchlist(prev => [...prev, selectedSymbol]);
+        }
+
         try {
             if (isWatched) {
                 const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
                     method: 'DELETE',
                     credentials: 'include',
                 });
-                if (response.ok) {
-                    setWatchlist(prev => prev.filter(s => s !== selectedSymbol));
+                if (!response.ok) {
+                    // Revert if failed
+                    setWatchlist(prev => [...prev, selectedSymbol]);
+                    console.error('Failed to remove from watchlist');
                 }
             } else {
                 const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${selectedSymbol}`, {
                     method: 'POST',
                     credentials: 'include',
                 });
-                if (response.ok) {
-                    setWatchlist(prev => [...prev, selectedSymbol]);
+                if (!response.ok) {
+                    // Revert if failed
+                    setWatchlist(prev => prev.filter(s => s !== selectedSymbol));
+                    console.error('Failed to add to watchlist');
                 }
             }
         } catch (error) {
             console.error('Error updating watchlist:', error);
+            // Revert on error
+            if (isWatched) {
+                setWatchlist(prev => [...prev, selectedSymbol]);
+            } else {
+                setWatchlist(prev => prev.filter(s => s !== selectedSymbol));
+            }
         }
     };
 

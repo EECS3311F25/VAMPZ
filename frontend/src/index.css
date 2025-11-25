@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
@@ -8,81 +8,53 @@
   :root {
     /* Light Mode (Default) */
     --background: 0 0% 100%;
-    /* White */
     --foreground: 222.2 84% 4.9%;
-    /* Slate-950 */
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
     --primary: 173 80% 40%;
-    /* Teal-600 */
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 173 80% 40%;
-    /* Teal */
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
-    /* Red-500 */
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 173 80% 40%;
-    /* Teal */
-
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Dark Mode */
-    --background: 222.2 84% 4.9%;
-    /* Slate-950 */
+    /* Dark Mode - Void Theme */
+    --background: 220 13% 7%;
     --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
+    --card: 220 13% 10%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
+    --popover: 220 13% 7%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 173 70% 50%;
-    /* Teal-400 */
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 173 70% 50%;
-    /* Teal */
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
-    /* Red-900 */
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 173 70% 50%;
-    /* Teal */
   }
 
   body {
-    @apply bg-[#F4F6FA] dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans antialiased transition-colors duration-300;
-    font-family: 'Inter', sans-serif;
+    @apply bg-[#F4F6FA] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-50 font-sans antialiased transition-colors duration-300;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   html {
@@ -101,21 +73,23 @@
 
 @layer utilities {
   .glass-panel {
-    @apply backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 shadow-xl rounded-2xl;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.4) 100%);
+    @apply backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-2xl rounded-3xl;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 100%);
   }
 
   .dark .glass-panel {
-    background: rgba(15, 23, 42, 0.6);
+    background: linear-gradient(145deg, rgba(17, 25, 40, 0.7) 0%, rgba(17, 25, 40, 0.4) 100%);
+    @apply border-white/5 shadow-none;
   }
 
   .glass-card {
-    @apply backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 hover:border-slate-300/60 dark:hover:border-slate-600/60 transition-all duration-300 shadow-lg hover:shadow-xl rounded-xl;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.3) 100%);
+    @apply backdrop-blur-xl border border-white/20 dark:border-white/5 hover:border-white/30 dark:hover:border-white/10 transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 rounded-2xl;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 100%);
   }
 
   .dark .glass-card {
-    background: rgba(30, 41, 59, 0.4);
+    background: linear-gradient(180deg, rgba(30, 41, 59, 0.2) 0%, rgba(30, 41, 59, 0.1) 100%);
+    @apply shadow-none hover:bg-slate-800/30;
   }
 
   .text-gradient {

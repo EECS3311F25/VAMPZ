@@ -79,7 +79,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
             </p>
           </div>
 
-          <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-2xl border border-white/20 dark:border-slate-700/50 rounded-2xl p-8 shadow-2xl shadow-slate-200/50 dark:shadow-black/50">
+          <div className="bg-white/60 dark:bg-slate-900/50 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-8 shadow-2xl shadow-slate-200/50 dark:shadow-black/50">
             {children}
           </div>
         </div>

@@ -102,7 +102,7 @@ const SignupPage = () => {
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff]"
+                className="block w-full pl-10 pr-3 py-3 border border-slate-200/60 dark:border-slate-700/60 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff]"
                 placeholder="John Doe"
               />
             </div>
@@ -127,7 +127,7 @@ const SignupPage = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff]"
+                className="block w-full pl-10 pr-3 py-3 border border-slate-200/60 dark:border-slate-700/60 rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff]"
                 placeholder="name@example.com"
               />
             </div>
@@ -153,7 +153,7 @@ const SignupPage = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff] ${error && error.toLowerCase().includes('password') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+                  className={`block w-full pl-10 pr-10 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff] ${error && error.toLowerCase().includes('password') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200/60 dark:border-slate-700/60'}`}
                   placeholder="••••••••"
                 />
                 <button
@@ -185,7 +185,7 @@ const SignupPage = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff] ${error && error.toLowerCase().includes('match') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200 dark:border-slate-700'}`}
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all [&:-webkit-autofill]:shadow-[0_0_0_1000px_#f8fafc_inset] dark:[&:-webkit-autofill]:shadow-[0_0_0_1000px_#1e293b_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:#0f172a] dark:[&:-webkit-autofill]:[-webkit-text-fill-color:#fff] ${error && error.toLowerCase().includes('match') ? 'border-red-300 dark:border-red-500/50 focus:ring-red-200 dark:focus:ring-red-900/30' : 'border-slate-200/60 dark:border-slate-700/60'}`}
                   placeholder="••••••••"
                 />
               </div>

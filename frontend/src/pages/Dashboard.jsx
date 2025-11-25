@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { DollarSign, Wallet, TrendingUp, BarChart3, Activity, ArrowUp, ArrowDown, PieChart, Percent } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
@@ -228,23 +229,60 @@ const Dashboard = () => {
   const currentHolding = holdings.find(h => h.symbol === selectedSymbol);
   const sharesOwned = currentHolding ? currentHolding.quantity : 0;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  };
+
+  const subContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
   return (
     <DashboardLayout activeMenu="dashboard">
       {/* Background gradient for depth */}
-      <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="min-h-full"
+      >
         {/* Header with more spacing */}
         <div className="p-6 md:p-8 pt-10 md:pt-12">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {user.firstName}!</h1>
               <p className="text-slate-600 dark:text-slate-400 mt-1">
                 Here's your portfolio overview for today.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Stats Cards Grid with improved styling */}
-          <div className="mb-10">
+          <motion.div variants={itemVariants} className="mb-10">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4 gap-6">
               {loading ? (
@@ -272,10 +310,10 @@ const Dashboard = () => {
                 ))
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Market Overview Section with Trade Box */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
             {/* Stock Chart */}
             <div className="lg:col-span-2 glass-panel rounded-2xl p-6 shadow-sm">
               <div className="mb-4">
@@ -290,7 +328,12 @@ const Dashboard = () => {
 
               {/* Stock Details Grid */}
               <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <motion.div
+                  variants={subContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="grid grid-cols-2 md:grid-cols-3 gap-4"
+                >
                   {[
                     {
                       label: 'Open',
@@ -335,7 +378,11 @@ const Dashboard = () => {
                       bg: stockDetails?.changePercentage >= 0 ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-red-50 dark:bg-red-900/20'
                     }
                   ].map((item, index) => (
-                    <div key={index} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 hover:shadow-md transition-all duration-200 group">
+                    <motion.div
+                      key={index}
+                      variants={itemVariants}
+                      className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 hover:shadow-md transition-all duration-200 group"
+                    >
                       <div className="flex items-start justify-between mb-2">
                         <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{item.label}</p>
                         <div className={`p-1.5 rounded-lg ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
@@ -345,9 +392,9 @@ const Dashboard = () => {
                       <p className={`text-lg font-bold text-slate-900 dark:text-white ${item.label === 'Change %' ? item.color : ''}`}>
                         {item.value}
                       </p>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </div>
 
@@ -367,10 +414,10 @@ const Dashboard = () => {
                 sharesOwned={sharesOwned}
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Portfolio Holdings */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* My Portfolio */}
             <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
               <div className="p-6 border-b border-slate-200 dark:border-slate-800">
@@ -384,15 +431,18 @@ const Dashboard = () => {
                       No holdings yet. Start trading to build your portfolio!
                     </div>
                   ) : (
-                    holdings.map((stock) => {
+                    holdings.map((stock, index) => {
                       // Calculate gain/loss if currentPrice is available, otherwise 0
                       const gainLoss = (stock.currentPrice - stock.avgBuyPrice) * stock.quantity;
                       const gainLossPercent = ((stock.currentPrice - stock.avgBuyPrice) / stock.avgBuyPrice) * 100;
                       const isPositive = gainLoss >= 0;
 
                       return (
-                        <button
+                        <motion.button
                           key={stock.symbol}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
                           onClick={() => setSelectedSymbol(stock.symbol)}
                           className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-2 group ${selectedSymbol === stock.symbol
                             ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-500/50 shadow-md'
@@ -417,7 +467,7 @@ const Dashboard = () => {
                               {isPositive ? '+' : ''}{gainLossPercent.toFixed(2)}%
                             </div>
                           </div>
-                        </button>
+                        </motion.button>
                       );
                     })
                   )}
@@ -435,7 +485,13 @@ const Dashboard = () => {
                 <div className="space-y-3">
                   {portfolioData?.transactions && portfolioData.transactions.length > 0 ? (
                     portfolioData.transactions.slice().reverse().slice(0, 5).map((activity, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                      >
                         <div className="flex items-center gap-3">
                           <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${activity.type === 'BUY'
                             ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
@@ -451,7 +507,7 @@ const Dashboard = () => {
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           {new Date(activity.timestamp).toLocaleDateString()}
                         </div>
-                      </div>
+                      </motion.div>
                     ))
                   ) : (
                     <div className="text-center py-8 text-slate-500 dark:text-slate-400">
@@ -461,11 +517,11 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </div >
+      </motion.div >
 
-    </DashboardLayout>
+    </DashboardLayout >
   );
 };
 

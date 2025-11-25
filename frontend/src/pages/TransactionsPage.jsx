@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Calendar, Filter, Download, TrendingUp, TrendingDown, Search, ArrowUpRight, ArrowDownRight, Receipt } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
@@ -71,20 +72,48 @@ const TransactionsPage = () => {
         return matchesSearch && matchesFilter;
     });
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+            }
+        }
+    };
+
     return (
         <DashboardLayout activeMenu="transactions">
-            <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="min-h-full"
+            >
                 {/* Header */}
                 <div className="p-6 md:p-8 pt-10 md:pt-12">
-                    <div className="mb-6">
+                    <motion.div variants={itemVariants} className="mb-6">
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Transaction History</h1>
                         <p className="text-slate-600 dark:text-slate-400 mt-1">
                             View all your trading activity and transactions.
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* Stats Summary */}
-                    <div className="mb-8">
+                    <motion.div variants={itemVariants} className="mb-8">
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Summary</h2>
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -119,10 +148,10 @@ const TransactionsPage = () => {
                                 />
                             </div>
                         )}
-                    </div>
+                    </motion.div>
 
                     {/* Filters and Search */}
-                    <div className="mb-6">
+                    <motion.div variants={itemVariants} className="mb-6">
                         <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
                             {/* Search */}
                             <div className="relative flex-1 max-w-md">
@@ -157,13 +186,18 @@ const TransactionsPage = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Transactions Table */}
                     {loading ? (
                         <SkeletonTransactionTable />
                     ) : (
-                        <div className="glass-card rounded-2xl overflow-hidden">
+                        <motion.div
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="glass-card rounded-2xl overflow-hidden"
+                        >
                             <div className="overflow-x-auto">
                                 <table className="w-full">
                                     <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
@@ -250,10 +284,10 @@ const TransactionsPage = () => {
                                     </p>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     )}
                 </div>
-            </div>
+            </motion.div>
         </DashboardLayout>
     );
 };

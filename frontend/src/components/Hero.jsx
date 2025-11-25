@@ -7,7 +7,7 @@ export default function Hero() {
   const navigate = useNavigate();
 
   return (
-    <section className="relative overflow-hidden bg-white dark:bg-slate-950 min-h-[80vh] flex items-center pt-16 pb-24 transition-colors duration-300">
+    <section className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 min-h-[80vh] flex items-center pt-16 pb-24 transition-colors duration-300">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] bg-teal-500/5 rounded-full blur-3xl animate-pulse" />

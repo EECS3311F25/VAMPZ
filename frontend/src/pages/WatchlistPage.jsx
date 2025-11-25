@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Search, Plus, X, Check, TrendingUp, TrendingDown, Eye, List } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
@@ -300,12 +301,40 @@ const WatchlistPage = () => {
         }
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 15
+            }
+        }
+    };
+
     return (
         <DashboardLayout activeMenu="watchlist">
-            <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="min-h-full"
+            >
                 {/* Header */}
                 <div className="p-6 md:p-8 pt-10 md:pt-12">
-                    <div className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                    <motion.div variants={itemVariants} className="mb-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div>
                             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Watchlist</h1>
                             <p className="text-slate-600 dark:text-slate-400 mt-1">
@@ -323,10 +352,10 @@ const WatchlistPage = () => {
                             <Plus size={18} />
                             Add Stock
                         </button>
-                    </div>
+                    </motion.div>
 
                     {/* Stats Summary */}
-                    <div className="mb-8">
+                    <motion.div variants={itemVariants} className="mb-8">
                         <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
                         {loading ? (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -361,10 +390,10 @@ const WatchlistPage = () => {
                                 />
                             </div>
                         )}
-                    </div>
+                    </motion.div>
 
                     {/* Search */}
-                    <div className="mb-6">
+                    <motion.div variants={itemVariants} className="mb-6">
                         <div className="relative max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                             <input
@@ -375,7 +404,7 @@ const WatchlistPage = () => {
                                 className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                             />
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Watchlist Grid */}
                     {loading ? (
@@ -388,8 +417,12 @@ const WatchlistPage = () => {
                             <SkeletonWatchlistCard />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-
+                        <motion.div
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                        >
                             {filteredWatchlist.map((stock) => (
                                 <div
                                     key={stock.symbol}
@@ -447,7 +480,7 @@ const WatchlistPage = () => {
                                     </button>
                                 </div>
                             ))}
-                        </div>
+                        </motion.div>
                     )}
 
                     {/* Empty State - when watchlist is truly empty */}
@@ -484,257 +517,263 @@ const WatchlistPage = () => {
                         </div>
                     )}
                 </div>
-            </div>
+            </motion.div >
 
             {/* Add Stock Modal */}
-            {showAddModal && (
-                <>
-                    <div
-                        className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
-                        onClick={() => setShowAddModal(false)}
-                    />
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50 p-4">
-                        <div className="glass-card rounded-2xl p-6 shadow-2xl">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add to Watchlist</h2>
-                                <button
-                                    onClick={() => setShowAddModal(false)}
-                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <X size={20} className="text-slate-500" />
-                                </button>
-                            </div>
+            {
+                showAddModal && (
+                    <>
+                        <div
+                            className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
+                            onClick={() => setShowAddModal(false)}
+                        />
+                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md z-50 p-4">
+                            <div className="glass-card rounded-2xl p-6 shadow-2xl">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Add to Watchlist</h2>
+                                    <button
+                                        onClick={() => setShowAddModal(false)}
+                                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                        <X size={20} className="text-slate-500" />
+                                    </button>
+                                </div>
 
-                            <form onSubmit={handleAddSubmit}>
-                                <div className="relative mb-4">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                    <input
-                                        type="text"
-                                        placeholder="Enter stock symbol (e.g. AAPL)..."
-                                        value={addSymbolQuery}
-                                        onChange={(e) => {
-                                            setAddSymbolQuery(e.target.value);
-                                            setAddError(''); // Clear error on typing
-                                            setShowSuggestions(true);
-                                        }}
-                                        onKeyDown={handleKeyDown}
-                                        onFocus={() => setShowSuggestions(true)}
-                                        className={`w-full pl-10 pr-4 py-2.5 border rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${addError ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'
-                                            }`}
-                                        autoFocus
-                                    />
+                                <form onSubmit={handleAddSubmit}>
+                                    <div className="relative mb-4">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                                        <input
+                                            type="text"
+                                            placeholder="Enter stock symbol (e.g. AAPL)..."
+                                            value={addSymbolQuery}
+                                            onChange={(e) => {
+                                                setAddSymbolQuery(e.target.value);
+                                                setAddError(''); // Clear error on typing
+                                                setShowSuggestions(true);
+                                            }}
+                                            onKeyDown={handleKeyDown}
+                                            onFocus={() => setShowSuggestions(true)}
+                                            className={`w-full pl-10 pr-4 py-2.5 border rounded-xl bg-white dark:bg-slate-900/50 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all ${addError ? 'border-red-500 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700'
+                                                }`}
+                                            autoFocus
+                                        />
 
-                                    {/* Autocomplete Dropdown */}
-                                    {showSuggestions && suggestions.length > 0 && (
-                                        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
-                                            {suggestions.map((symbol, index) => {
-                                                const isAdded = watchlist.some(s => s.symbol === symbol);
-                                                return (
-                                                    <button
-                                                        key={symbol}
-                                                        type="button"
-                                                        onClick={() => handleSelectSuggestion(symbol)}
-                                                        onMouseEnter={() => setSelectedIndex(index)}
-                                                        className={`w-full text-left px-4 py-3 transition-all duration-150 flex items-center justify-between group ${index === selectedIndex
-                                                            ? 'bg-teal-50 dark:bg-teal-900/30 border-l-2 border-teal-500'
-                                                            : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
-                                                            }`}
-                                                    >
-                                                        <span className={`font-bold transition-colors ${index === selectedIndex
-                                                            ? 'text-teal-700 dark:text-teal-300'
-                                                            : 'text-slate-900 dark:text-white'
-                                                            }`}>{symbol}</span>
+                                        {/* Autocomplete Dropdown */}
+                                        {showSuggestions && suggestions.length > 0 && (
+                                            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden max-h-60 overflow-y-auto">
+                                                {suggestions.map((symbol, index) => {
+                                                    const isAdded = watchlist.some(s => s.symbol === symbol);
+                                                    return (
+                                                        <button
+                                                            key={symbol}
+                                                            type="button"
+                                                            onClick={() => handleSelectSuggestion(symbol)}
+                                                            onMouseEnter={() => setSelectedIndex(index)}
+                                                            className={`w-full text-left px-4 py-3 transition-all duration-150 flex items-center justify-between group ${index === selectedIndex
+                                                                ? 'bg-teal-50 dark:bg-teal-900/30 border-l-2 border-teal-500'
+                                                                : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                                                }`}
+                                                        >
+                                                            <span className={`font-bold transition-colors ${index === selectedIndex
+                                                                ? 'text-teal-700 dark:text-teal-300'
+                                                                : 'text-slate-900 dark:text-white'
+                                                                }`}>{symbol}</span>
 
-                                                        {isAdded ? (
-                                                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
-                                                                Added
-                                                            </span>
-                                                        ) : (
-                                                            <Check
-                                                                size={18}
-                                                                className={`transition-all duration-200 ${index === selectedIndex
-                                                                    ? 'text-teal-600 dark:text-teal-400 opacity-100 scale-100'
-                                                                    : 'text-slate-400 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 group-hover:text-teal-600 dark:group-hover:text-teal-400'
-                                                                    }`}
-                                                            />
-                                                        )}
-                                                    </button>
-                                                );
-                                            })}
+                                                            {isAdded ? (
+                                                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/30 px-2 py-0.5 rounded-full">
+                                                                    Added
+                                                                </span>
+                                                            ) : (
+                                                                <Check
+                                                                    size={18}
+                                                                    className={`transition-all duration-200 ${index === selectedIndex
+                                                                        ? 'text-teal-600 dark:text-teal-400 opacity-100 scale-100'
+                                                                        : 'text-slate-400 opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100 group-hover:text-teal-600 dark:group-hover:text-teal-400'
+                                                                        }`}
+                                                                />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {addError && (
+                                        <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                                            {addError}
                                         </div>
                                     )}
-                                </div>
 
-                                {addError && (
-                                    <div className="mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                                        {addError}
-                                    </div>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-600/30"
-                                >
-                                    Add Stock
-                                </button>
-                            </form>
+                                    <button
+                                        type="submit"
+                                        className="w-full py-3 bg-teal-600 hover:bg-teal-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-teal-600/30"
+                                    >
+                                        Add Stock
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )
+            }
 
             {/* Stock Detail Modal */}
-            {showDetailModal && selectedStock && (
-                <>
-                    <div
-                        className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
-                        onClick={() => setShowDetailModal(false)}
-                    />
-                    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[85vh] overflow-y-auto z-50 p-4">
-                        <div className="glass-card rounded-2xl p-5 shadow-2xl">
-                            <div className="flex items-start justify-between mb-4">
-                                <div>
-                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.symbol}</h2>
-                                    <p className="text-slate-600 dark:text-slate-400 text-sm mt-0.5">{selectedStock.name}</p>
-                                </div>
-                                <button
-                                    onClick={() => setShowDetailModal(false)}
-                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                                >
-                                    <X size={20} className="text-slate-500" />
-                                </button>
-                            </div>
-
-                            {/* Price Chart */}
-                            <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                <StockChart
-                                    symbol={selectedStock.symbol}
-                                    height="h-[250px]"
-                                    color={selectedStock.positive ? '#10b981' : '#ef4444'}
-                                />
-                            </div>
-
-                            {/* Holdings + Price */}
-                            <div className="grid gap-4 lg:grid-cols-2 mb-5">
-                                <div className="p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
-                                    {(() => {
-                                        const holding = portfolioData?.holdings?.find(h => h.symbol === selectedStock.symbol);
-                                        const shares = holding ? holding.quantity : 0;
-                                        const avgCost = holding ? holding.avgBuyPrice : 0;
-                                        const value = holding ? (holding.quantity * holding.currentPrice) : 0;
-
-                                        return (
-                                            <div className="grid grid-cols-3 gap-3">
-                                                <div>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
-                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">{shares}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
-                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">${avgCost.toFixed(2)}</p>
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
-                                                    <p className="text-sm font-bold text-slate-900 dark:text-white">${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })()}
-                                </div>
-
-                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
+            {
+                showDetailModal && selectedStock && (
+                    <>
+                        <div
+                            className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-40"
+                            onClick={() => setShowDetailModal(false)}
+                        />
+                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl max-h-[85vh] overflow-y-auto z-50 p-4">
+                            <div className="glass-card rounded-2xl p-5 shadow-2xl">
+                                <div className="flex items-start justify-between mb-4">
                                     <div>
-                                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
-                                        <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                                            ${stockDetails?.price ? stockDetails.price.toFixed(2) : selectedStock.price.toFixed(2)}
+                                        <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedStock.symbol}</h2>
+                                        <p className="text-slate-600 dark:text-slate-400 text-sm mt-0.5">{selectedStock.name}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setShowDetailModal(false)}
+                                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                    >
+                                        <X size={20} className="text-slate-500" />
+                                    </button>
+                                </div>
+
+                                {/* Price Chart */}
+                                <div className="mb-5 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                    <StockChart
+                                        symbol={selectedStock.symbol}
+                                        height="h-[250px]"
+                                        color={selectedStock.positive ? '#10b981' : '#ef4444'}
+                                    />
+                                </div>
+
+                                {/* Holdings + Price */}
+                                <div className="grid gap-4 lg:grid-cols-2 mb-5">
+                                    <div className="p-4 rounded-xl bg-gradient-to-br from-teal-500/10 to-blue-500/10 border border-slate-200 dark:border-slate-700">
+                                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-semibold uppercase tracking-wide">Your Holdings</p>
+                                        {(() => {
+                                            const holding = portfolioData?.holdings?.find(h => h.symbol === selectedStock.symbol);
+                                            const shares = holding ? holding.quantity : 0;
+                                            const avgCost = holding ? holding.avgBuyPrice : 0;
+                                            const value = holding ? (holding.quantity * holding.currentPrice) : 0;
+
+                                            return (
+                                                <div className="grid grid-cols-3 gap-3">
+                                                    <div>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Shares</p>
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">{shares}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Avg Cost</p>
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">${avgCost.toFixed(2)}</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Value</p>
+                                                        <p className="text-sm font-bold text-slate-900 dark:text-white">${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+                                    </div>
+
+                                    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
+                                        <div>
+                                            <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current Price</p>
+                                            <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                                                ${stockDetails?.price ? stockDetails.price.toFixed(2) : selectedStock.price.toFixed(2)}
+                                            </p>
+                                        </div>
+                                        <div className={`text-right ${stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                                            <div className="flex items-center gap-2 justify-end">
+                                                {stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                                                <span className="text-xl font-bold">
+                                                    {stockDetails?.changePercentage ? (stockDetails.changePercentage > 0 ? '+' : '') + stockDetails.changePercentage.toFixed(2) + '%' : (selectedStock.changePercentage ? selectedStock.changePercentage.toFixed(2) + '%' : '0.00%')}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm font-semibold mt-1">Return</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Additional Stats */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                                    <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day High</p>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white">
+                                            ${stockDetails?.dayHigh ? stockDetails.dayHigh.toFixed(2) : (selectedStock.dayHigh ? selectedStock.dayHigh.toFixed(2) : 'N/A')}
                                         </p>
                                     </div>
-                                    <div className={`text-right ${stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                                        <div className="flex items-center gap-2 justify-end">
-                                            {stockDetails?.change >= 0 || (!stockDetails && selectedStock.positive) ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
-                                            <span className="text-xl font-bold">
-                                                {stockDetails?.changePercentage ? (stockDetails.changePercentage > 0 ? '+' : '') + stockDetails.changePercentage.toFixed(2) + '%' : (selectedStock.changePercentage ? selectedStock.changePercentage.toFixed(2) + '%' : '0.00%')}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm font-semibold mt-1">Return</p>
+                                    <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Low</p>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white">
+                                            ${stockDetails?.dayLow ? stockDetails.dayLow.toFixed(2) : (selectedStock.dayLow ? selectedStock.dayLow.toFixed(2) : 'N/A')}
+                                        </p>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Volume</p>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white">
+                                            {stockDetails?.volume ? (stockDetails.volume / 1000000).toFixed(1) + 'M' : (selectedStock.volume ? (selectedStock.volume / 1e6).toFixed(1) + 'M' : 'N/A')}
+                                        </p>
+                                    </div>
+                                    <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Market Cap</p>
+                                        <p className="text-base font-bold text-slate-900 dark:text-white">
+                                            {stockDetails?.marketCap ? (stockDetails.marketCap / 1000000000000).toFixed(2) + 'T' : (selectedStock.marketCap || 'N/A')}
+                                        </p>
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* Additional Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day High</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">
-                                        ${stockDetails?.dayHigh ? stockDetails.dayHigh.toFixed(2) : (selectedStock.dayHigh ? selectedStock.dayHigh.toFixed(2) : 'N/A')}
-                                    </p>
+                                {/* Action Buttons */}
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => handleTrade(selectedStock, 'Buy')}
+                                        className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-lg shadow-emerald-600/30"
+                                    >
+                                        Buy
+                                    </button>
+                                    <button
+                                        onClick={() => handleTrade(selectedStock, 'Sell')}
+                                        className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition-all shadow-lg shadow-red-600/30"
+                                    >
+                                        Sell
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            removeFromWatchlist(e, selectedStock.symbol);
+                                            setShowDetailModal(false);
+                                        }}
+                                        className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-all"
+                                    >
+                                        Remove
+                                    </button>
                                 </div>
-                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Day Low</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">
-                                        ${stockDetails?.dayLow ? stockDetails.dayLow.toFixed(2) : (selectedStock.dayLow ? selectedStock.dayLow.toFixed(2) : 'N/A')}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Volume</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">
-                                        {stockDetails?.volume ? (stockDetails.volume / 1000000).toFixed(1) + 'M' : (selectedStock.volume ? (selectedStock.volume / 1e6).toFixed(1) + 'M' : 'N/A')}
-                                    </p>
-                                </div>
-                                <div className="p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Market Cap</p>
-                                    <p className="text-base font-bold text-slate-900 dark:text-white">
-                                        {stockDetails?.marketCap ? (stockDetails.marketCap / 1000000000000).toFixed(2) + 'T' : (selectedStock.marketCap || 'N/A')}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => handleTrade(selectedStock, 'Buy')}
-                                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all shadow-lg shadow-emerald-600/30"
-                                >
-                                    Buy
-                                </button>
-                                <button
-                                    onClick={() => handleTrade(selectedStock, 'Sell')}
-                                    className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition-all shadow-lg shadow-red-600/30"
-                                >
-                                    Sell
-                                </button>
-                                <button
-                                    onClick={(e) => {
-                                        removeFromWatchlist(e, selectedStock.symbol);
-                                        setShowDetailModal(false);
-                                    }}
-                                    className="px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold transition-all"
-                                >
-                                    Remove
-                                </button>
                             </div>
                         </div>
-                    </div>
-                </>
-            )}
+                    </>
+                )
+            }
 
             {/* Trade Modal */}
-            {showTradeModal && selectedStock && (
-                <TradeModal
-                    isOpen={showTradeModal}
-                    onClose={() => {
-                        setShowTradeModal(false);
-                        setSelectedStock(null);
-                    }}
-                    stock={selectedStock}
-                    type={tradeType}
-                    onConfirm={handleTradeSubmit}
-                    cash={portfolioData?.cash || 0}
-                />
-            )}
-        </DashboardLayout>
+            {
+                showTradeModal && selectedStock && (
+                    <TradeModal
+                        isOpen={showTradeModal}
+                        onClose={() => {
+                            setShowTradeModal(false);
+                            setSelectedStock(null);
+                        }}
+                        stock={selectedStock}
+                        type={tradeType}
+                        onConfirm={handleTradeSubmit}
+                        cash={portfolioData?.cash || 0}
+                    />
+                )
+            }
+        </DashboardLayout >
     );
 };
 

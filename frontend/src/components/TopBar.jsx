@@ -10,7 +10,7 @@ const TopBar = ({ onToggleSidebar }) => {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     return (
-        <div className="h-16 bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md shadow-sm transition-colors duration-300">
+        <div className="h-16 bg-white/70 dark:bg-slate-900/60 border-b border-slate-200/60 dark:border-white/10 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-40 backdrop-blur-xl transition-all duration-300">
             {/* Logo & Hamburger */}
             <div className="flex items-center gap-4">
                 <button

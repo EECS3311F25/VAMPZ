@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Filter, Download, TrendingUp, TrendingDown, Search, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Calendar, Filter, Download, TrendingUp, TrendingDown, Search, ArrowUpRight, ArrowDownRight, Receipt } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonTransactionTable } from '../components/Skeleton';
@@ -227,13 +227,11 @@ const TransactionsPage = () => {
                             {/* Empty State - when no transactions at all */}
                             {!loading && transactions.length === 0 && (
                                 <div className="text-center py-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <div className="w-32 h-32 mx-auto mb-4 relative">
-                                        <div className="absolute inset-0 bg-slate-500/10 blur-2xl rounded-full opacity-50"></div>
-                                        <img
-                                            src="/images/empty-transactions.png"
-                                            alt="No Transactions"
-                                            className="w-full h-full object-contain relative z-10 opacity-80"
-                                        />
+                                    <div className="w-24 h-24 mx-auto mb-6 relative flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-teal-500/10 dark:bg-teal-500/20 blur-2xl rounded-full"></div>
+                                        <div className="relative z-10 bg-white dark:bg-slate-800 p-6 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">
+                                            <Receipt size={48} className="text-teal-500 dark:text-teal-400" />
+                                        </div>
                                     </div>
                                     <p className="text-lg font-semibold text-slate-900 dark:text-white mb-1">No transactions yet</p>
                                     <p className="text-slate-500 dark:text-slate-400 text-sm">

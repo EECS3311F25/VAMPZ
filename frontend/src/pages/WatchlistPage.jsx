@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, X, Check, TrendingUp, TrendingDown, Eye } from 'lucide-react';
+import { Search, Plus, X, Check, TrendingUp, TrendingDown, Eye, List } from 'lucide-react';
 import DashboardLayout from '../layouts/DashboardLayout';
 import StatsCard from '../components/ui/StatsCard';
 import { SkeletonSummaryCard, SkeletonWatchlistCard } from '../components/Skeleton';
@@ -150,8 +150,11 @@ const WatchlistPage = () => {
     const removeFromWatchlist = async (e, symbol) => {
         if (e) e.stopPropagation();
 
+        // Find the item to be removed to save it for potential rollback
+        const itemToRemove = watchlist.find(s => s.symbol === symbol);
+        if (!itemToRemove) return;
+
         // Optimistic update
-        const originalWatchlist = [...watchlist];
         setWatchlist(prev => prev.filter(s => s.symbol !== symbol));
 
         try {
@@ -161,14 +164,14 @@ const WatchlistPage = () => {
             });
 
             if (!response.ok) {
-                // Revert if failed
-                setWatchlist(originalWatchlist);
+                // Revert if failed: Add the item back
+                setWatchlist(prev => [...prev, itemToRemove]);
                 console.error('Failed to remove from watchlist');
             }
         } catch (error) {
             console.error('Error removing from watchlist:', error);
-            // Revert on error
-            setWatchlist(originalWatchlist);
+            // Revert on error: Add the item back
+            setWatchlist(prev => [...prev, itemToRemove]);
         }
     };
 
@@ -450,13 +453,11 @@ const WatchlistPage = () => {
                     {/* Empty State - when watchlist is truly empty */}
                     {!loading && watchlist.length === 0 && (
                         <div className="text-center py-20 glass-card rounded-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <div className="w-40 h-40 mx-auto mb-6 relative">
+                            <div className="w-32 h-32 mx-auto mb-6 relative flex items-center justify-center">
                                 <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full opacity-50 animate-pulse"></div>
-                                <img
-                                    src="/images/empty-watchlist.png"
-                                    alt="Empty Watchlist"
-                                    className="w-full h-full object-contain relative z-10 drop-shadow-xl"
-                                />
+                                <div className="relative z-10 bg-white dark:bg-slate-800 p-8 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">
+                                    <List size={64} className="text-blue-500 dark:text-blue-400" />
+                                </div>
                             </div>
                             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Your Watchlist is Empty</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-sm mx-auto">

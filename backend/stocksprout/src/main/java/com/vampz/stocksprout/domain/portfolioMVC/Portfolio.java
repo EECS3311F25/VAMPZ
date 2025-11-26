@@ -60,4 +60,22 @@ public class Portfolio {
         this.name = name;
         this.owner = owner;
     }
+
+    public Portfolio(AppUser owner){
+        this.name = owner.getFirstName() + " " + owner.getLastName();
+        this.owner = owner;
+        this.cash = new BigDecimal("100000").setScale(2, RoundingMode.HALF_UP);
+        this.invested = new BigDecimal("0").setScale(2, RoundingMode.HALF_UP);
+        this.stockValue = new BigDecimal("0").setScale(2, RoundingMode.HALF_UP);
+        this.holdings = new ArrayList<>();
+        this.transactions = new ArrayList<>();
+        this.watchList = new ArrayList<>();
+
+        String[] symbols= {"AAPL", "MSFT", "GOOGL", "NVDA","META", "AMZN", "NFLX", "TSLA"};
+        for(int i = 0; i < symbols.length; i++)
+        {
+            watchList.add(new WatchItem(symbols[i],this));
+        }
+    }
+
 }

@@ -1,16 +1,28 @@
 package com.vampz.stocksprout.domain.portfolioMVC;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vampz.stocksprout.domain.transactionMVC.Transaction;
 import com.vampz.stocksprout.domain.holdingMVC.Holding;
+import com.vampz.stocksprout.domain.watchMVC.WatchItem;
+import com.vampz.stocksprout.domain.watchMVC.WatchItemService;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.vampz.stocksprout.appuser.AppUser;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@ToString
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +30,17 @@ public class Portfolio {
 
     private String name;
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal cash = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal cash = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal invested = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal invested = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
-    @Column(precision = 19, scale = 4)
-    private BigDecimal stockValue = BigDecimal.ZERO;
+    @Column(precision = 19, scale = 2)
+    private BigDecimal stockValue = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private AppUser owner;
 
@@ -37,6 +50,9 @@ public class Portfolio {
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions = new ArrayList<>();
 
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WatchItem> watchList = new ArrayList<>();
+
     public Portfolio() {
     }
 
@@ -44,74 +60,4 @@ public class Portfolio {
         this.name = name;
         this.owner = owner;
     }
-
-    // convenience: net worth = cash + stockValue
-    public BigDecimal getNetWorth() {
-        return cash.add(stockValue);
-    }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getCash() {
-        return cash;
-    }
-
-    public void setCash(BigDecimal cash) {
-        this.cash = cash;
-    }
-
-    public BigDecimal getInvested() {
-        return invested;
-    }
-
-    public void setInvested(BigDecimal invested) {
-        this.invested = invested;
-    }
-
-    public BigDecimal getStockValue() {
-        return stockValue;
-    }
-
-    public void setStockValue(BigDecimal stockValue) {
-        this.stockValue = stockValue;
-    }
-
-    public AppUser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AppUser owner) {
-        this.owner = owner;
-    }
-
-    public List<Holding> getHoldings() {
-        return holdings;
-    }
-
-    public void setHoldings(List<Holding> holdings) {
-        this.holdings = holdings;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-    
-
 }

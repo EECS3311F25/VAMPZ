@@ -212,4 +212,94 @@ public class PortfolioController {
         return ResponseEntity.ok(portfolio.getWatchList());
     }
 
+    @PostMapping(path = "/watchlist")
+    public ResponseEntity<?> addToWatchList(
+            @RequestParam String symbol,
+            HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        Object userId = session.getAttribute("USER_ID");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Portfolio portfolio = user.getPortfolio();
+        WatchItem newWatchItem = new WatchItem(symbol, portfolio);
+        for (int i = 0; i < portfolio.getWatchList().size(); i++) {
+            if (portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                        "status", "error",
+                        "message", "Symbol already in watchlist"));
+            }
+        }
+
+        portfolio.getWatchList().add(newWatchItem);
+        portfolioService.refresh(portfolio);
+        return ResponseEntity.ok(newWatchItem);
+
+    }
+
+    @DeleteMapping(path = "/watchlist")
+    public ResponseEntity<?> removeFromWatchList(
+            @RequestParam String symbol,
+            HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        Object userId = session.getAttribute("USER_ID");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Portfolio portfolio = user.getPortfolio();
+        for (int i = 0; i < portfolio.getWatchList().size(); i++) {
+            if (portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)) {
+                portfolio.getWatchList().remove(i);
+
+                portfolioService.refresh(portfolio);
+                return ResponseEntity.ok(Map.of("status", "success", "message", "Removed from watchlist"));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("status", "error", "message", "Symbol not found in watchlist"));
+
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> me(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        Object userId = session.getAttribute("USER_ID");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "Not authenticated"));
+        }
+
+        AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Portfolio portfolio = user.getPortfolio();
+        return ResponseEntity.ok(portfolio);
+    }
+
 }

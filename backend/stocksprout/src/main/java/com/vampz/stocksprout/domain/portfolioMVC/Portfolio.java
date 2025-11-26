@@ -71,7 +71,7 @@ public class Portfolio {
         this.transactions = new ArrayList<>();
         this.watchList = new ArrayList<>();
 
-        String[] symbols= {"AAPL", "MSFT", "GOOGL", "NVDA","META", "AMZN", "NFLX", "TSLA"};
+        String[] symbols= {"AAPL", "MSFT"};
         for(int i = 0; i < symbols.length; i++)
         {
             watchList.add(new WatchItem(symbols[i],this));

@@ -28,7 +28,7 @@ public class marketDataService {
     }
 
     public StockCurrentDTO getCurrentStockPrice(String symbol) {
-        String apiKey = "DiFmnrEOGv8K9EPcMoHlxGRicdZoGsgE";
+        String apiKey = "Hrtsyr2PSEGAKoWd0diOQrYMKf9kXGXf";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -58,7 +58,7 @@ public class marketDataService {
     }
 
     public List<StockHistDTO> getStockPriceHistory(String symbol, String startDate, String endDate) {
-        String apiKey = "TslVsg2AK0fhR9TL1dsLJNTLlltNXwf9";
+        String apiKey = "0Cr2Hx25bzdcvjIr76U3OVnlZGVVNpWy";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -85,7 +85,7 @@ public class marketDataService {
     }
 
     public WatchItem getStockData(String symbol) {
-        String apiKey = "em6lyrWLc7XadzrUeAb4QqwkMd1nS7e2";
+        String apiKey = "0Cr2Hx25bzdcvjIr76U3OVnlZGVVNpWy";
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()

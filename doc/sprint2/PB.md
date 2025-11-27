@@ -1,4 +1,7 @@
-
+# Project Name: Paper Trading Platform  
+# Sprint: Sprint 2 (Active)  
+# Backlog Version: 2.0  
+# Date: 2025-11-27
 
 ## 1. Epics
 - **Epic 1**: Live Market Data Integration  
@@ -7,49 +10,55 @@
 - **Epic 4**: Core Trading Experience & Portfolio  
 - **Epic 5**: Security & User Management  
 
-## 2. User Stories
+## 2. User Stories – Sprint 2 Scope
 
-| Story ID | User Story | Acceptance Criteria | Priority (MoSCoW) | Dependencies | Status |
-|----------|------------|----------------------|-------------------|--------------|--------|
-| US1 | As a trader, I want live stock prices instead of only historical data, so my paper trades reflect current market conditions | • Real-time quotes via API (Polygon/Alpha Vantage/etc.)<br>• Graceful fallback to cached/historical data<br>• Rate limiting handled | Must-have | API key, historical data already working | Not Started |
-| US2 | As a trader, I want notifications for executed trades, price alerts (high/low), and account changes, so I don’t have to watch the screen constantly | • In-app + optional email/push notifications<br>• User can enable/disable types<br>• Works with simulated trades | Must-have | Trade execution engine | Not Started |
-| US3 | As a developer / trader, I want complete backend–frontend integration, so the whole platform works end-to-end | • All API endpoints connected<br>• Auth flow working across layers<br>• Trade submission → execution → portfolio update visible | Must-have | Existing partial backend & frontend | In Progress |
-| US4 | As a developer, I want all minor caution/warning errors cleaned up, so the app feels stable and professional | • Remove console warnings<br>• Fix validation bugs<br>• Clean UI glitches | Should-have | Code audit completed | Not Started |
-| US5 | As a trader, I want to see my portfolio with real-time P&L and trade history | • Current positions list<br>• Unrealized & realized profit/loss<br>• Export to CSV | Should-have | US1 (live data) + US3 (integration) | Not Started |
-| US6 | As a new user, I want secure signup/login with email verification | • JWT or session auth<br>• Password reset flow | Must-have | Backend ready | Not Started |
-| US7 | As a trader, I want basic charting and technical indicators | • Candlestick chart + volume<br>• SMA, EMA, RSI toggle | Could-have | US1 (live data) | Not Started |
-| US8 | As a trader, I want custom price alerts (e.g., “notify me when AAPL > $200”) | • Create/delete alerts<br>• Tied to notification system | Should-have | US1 + US2 | Not Started |
+| Story ID | User Story | Acceptance Criteria (summary) | Priority | Dependencies | Status          |
+|----------|------------|-------------------------------|----------|--------------|-----------------|
+| US1      | As a trader, I want live stock prices instead of only historical data | Polygon.io real-time quotes + WebSocket + fallback | Must-have | API key ready | Done            |
+| US2      | As a trader, I want in-app notifications for trade execution & account changes | Toast notifications + sound + notification bell | Must-have | Trade engine | Done            |
+| US3      | Complete backend–frontend integration (auth, trades, portfolio) | Full end-to-end flow works | Must-have | Existing APIs | In Progress     |
+| US4      | Clean up all console warnings, type, and UI warnings | Zero warnings in dev console | Should-have | — | Done            |
+| US5      | As a trader, I want real-time portfolio with P&L | Live positions + unrealized/realized gains | Should-have | US1 + US3 | Done            |
+| US6      | As a new user, I want secure signup/login + email verification | JWT + Resend email verification | Must-have | Backend | Done            |
+| US7      | As a trader, I want candlestick chart on stock page | TradingView Lightweight Charts | Could-have | US1 | Done            |
+| US8      | As a trader, I want to set custom price alerts (e.g. AAPL > $200) | Alert creation + trigger notification | Should-have | US1 + US2 | Not Started → Carryover |
+| US9      | As a trader, I want fully mobile-responsive UI | Works perfectly on phones & tablets | Should-have | — | In Progress     |
+| US10     | As a developer, I want basic activity logging | Log user login & trades | Could-have | — | Not Started     |
 
 ## 3. Carryover from Sprint 1
-| Story ID | Reason Incomplete | Updated Priority | Notes |
-|----------|-------------------|------------------|-------|
-| US3 | Authentication and some API routes not fully connected | Must-have | Major focus this sprint |
+| Story ID | Reason It Carried Over                     | Priority |
+|----------|---------------------------------------------|----------|
+| US3      | Auth token refresh & protected routes not 100% stable | Must-have |
 
-## 4. New Stories Added This Sprint
-| Story ID | New Story | Priority | Notes |
-|----------|-----------|----------|-------|
-| US9 | As an admin, I want basic user activity logging | Could-have | Helps debugging and future analytics |
-| US10 | As a trader, I want the UI to be mobile-responsive | Should-have | Many users trade on phone |
+## 4. New Stories Added During Sprint 2 (will go to Sprint 3)
+| New ID | User Story                                 | Priority   | Reason Added                     |
+|--------|--------------------------------------------|------------|----------------------------------|
+| US11   | As a trader, I want watchlists             | Must-have  | Most requested in user feedback  |
+| US12   | As a trader, I want limit/stop orders      | Must-have  | Only market orders exist now     |
+| US13   | As a trader, I want dark mode              | Should-have| Everyone keeps asking            |
 
 ## 5. Removed / Descoped
-| Story ID | Story | Reason |
-|----------|-------|--------|
-| US11 | Support crypto paper trading | Out of scope for MVP – stocks only for now |
+| Story ID | Story                        | Reason                              |
+|----------|------------------------------|-------------------------------------|
+| US14     | Crypto paper trading support  | Out of MVP scope – stocks only first |
 
-## 6. Backlog Summary
-**Active stories**: 10  
-**Must-have this sprint**: US1, US2, US3, US6  
-**Target completion**: All Must-haves + at least 2 Should-haves  
-**Definition of Done**: Code reviewed + passes automated tests + deployed to staging + demoable
+## 6. Sprint 2 Summary (Current Status)
+**Completed**: US1, US2, US4, US5, US6, US7  
+**In Progress**: US3, US9  
+**Not Started (will carry over)**: US8, US10  
+**Velocity this sprint**: Very strong on data & UI, slower on final integration polish  
+**Biggest win**: Live data + real-time portfolio feels amazing
 
-## 7. Grooming Notes & Decisions
-- Live data provider: Polygon.io selected (good free tier + WebSocket support)  
-- Notifications: Start with in-app only, add email later  
-- Focus this sprint: Get real-time data flowing end-to-end (US1 + US3)  
-- Minor fixes (US4) will be picked up as “filler” tasks when blocked
+## 7. Grooming Notes – Sprint 2
+- Polygon.io is performing perfectly — keeping it  
+- Notifications: in-app done, email/push postponed to Sprint 3  
+- Mobile layout 90 % done — only modal & table overflow issues remain  
+- Focus next days: finish US3 (integration) and US9 (mobile)
 
 ## 8. Change Log
-| Date       | Change |
-|------------|--------|
-| 2025-11-27 | Created Product Backlog 2 – shifted from historical → live data, added notifications epic, removed story points column, added mobile responsiveness |
-|            | (add future changes here) |
+| Date       | Change                                                                 |
+|------------|------------------------------------------------------------------------|
+| 2025-11-20 | Sprint 2 started                                                       |
+| 2025-11-25 | US1, US5, US6, US7 marked Done                                         |
+| 2025-11-27 | Updated real status — US8 & US10 will not finish → carry to Sprint 3   |
+| 2025-11-27 | Added US11–US13 discovered during demo & user testing                   |

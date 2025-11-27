@@ -1,7 +1,4 @@
-# Project Name: Paper Trading Platform  
-# Sprint: Sprint 2 (Active)  
-# Backlog Version: 2.0  
-# Date: 2025-11-27
+
 
 ## 1. Epics
 - **Epic 1**: Live Market Data Integration  

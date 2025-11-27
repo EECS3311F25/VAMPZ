@@ -33,6 +33,120 @@ const WatchlistPage = () => {
     // Error state
     const [addError, setAddError] = useState('');
 
+    const fetchWatchlist = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/portfolio/watchList', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // Deduplicate based on symbol to prevent duplicate cards
+                const uniqueData = Array.from(new Map(data.map(item => [item.symbol, item])).values());
+
+                const formattedData = uniqueData.map(stock => ({
+                    ...stock,
+                    marketCap: formatMarketCap(stock.marketCap),
+                    positive: stock.change >= 0
+                }));
+                setWatchlist(formattedData);
+            }
+        } catch (error) {
+            console.error('Error fetching watchlist:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchPortfolioData = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/portfolio/me', {
+                credentials: 'include',
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setPortfolioData(data);
+            }
+        } catch (error) {
+            console.error('Error fetching portfolio data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchWatchlist();
+        fetchPortfolioData();
+    }, []);
+
+// Filter suggestions when addSymbolQuery changes
+    useEffect(() => {
+        if (addSymbolQuery) {
+            const filtered = POPULAR_STOCKS.filter(stock =>
+                stock.toLowerCase().includes(addSymbolQuery.toLowerCase()) &&
+                stock !== addSymbolQuery.toUpperCase()
+            ).slice(0, 5);
+            setSuggestions(filtered);
+            setSelectedIndex(-1);
+        } else {
+            setSuggestions([]);
+            setSelectedIndex(-1);
+        }
+    }, [addSymbolQuery]);
+
+    const formatMarketCap = (value) => {
+        if (!value) return 'N/A';
+        if (value >= 1e12) return (value / 1e12).toFixed(2) + 'T';
+        if (value >= 1e9) return (value / 1e9).toFixed(2) + 'B';
+        if (value >= 1e6) return (value / 1e6).toFixed(2) + 'M';
+        return value.toString();
+    };
+
+    const filteredWatchlist = watchlist.filter(stock => {
+        const symbol = stock.symbol || '';
+        const name = stock.name || '';
+        const query = searchQuery.toLowerCase();
+        return symbol.toLowerCase().includes(query) || name.toLowerCase().includes(query);
+    });
+
+    const addToWatchlist = async (symbol) => {
+        setAddError(''); // Clear previous errors
+
+        const upperSymbol = symbol.toUpperCase();
+
+        // Validate against popular stocks list
+        if (!POPULAR_STOCKS.includes(upperSymbol)) {
+            setAddError(`Stock "${upperSymbol}" is not available for trading.`);
+            return;
+        }
+
+        // Check if already in watchlist
+        if (watchlist.some(stock => stock.symbol === upperSymbol)) {
+            setAddError(`${upperSymbol} is already in your watchlist`);
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/portfolio/watchlist?symbol=${upperSymbol}`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                if (result.status === 'error') {
+                    setAddError(result.message);
+                } else {
+                    fetchWatchlist(); // Refresh list
+                    setShowAddModal(false);
+                    setAddSymbolQuery(''); // Clear search in modal
+                    setShowSuggestions(false);
+                }
+            } else {
+                setAddError(result.message || 'Failed to add to watchlist');
+            }
+        } catch (error) {
+            console.error('Error adding to watchlist:', error);
+            setAddError('Network error. Please try again.');
+        }
+    };
 
     const removeFromWatchlist = async (e, symbol) => {
         if (e) e.stopPropagation();

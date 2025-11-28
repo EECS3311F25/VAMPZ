@@ -1,7 +1,6 @@
 
 ## 1. Epics
 - **Epic 1**: Live Market Data Integration  
-- **Epic 2**: Notifications & Alerts System  
 - **Epic 3**: Full Backend–Frontend Integration & Stability  
 - **Epic 4**: Core Trading Experience & Portfolio  
 - **Epic 5**: Security & User Management  
@@ -41,14 +40,3 @@
 **Target completion**: All Must-haves + at least 2 Should-haves  
 **Definition of Done**: Code reviewed + passes automated tests + deployed to staging + demoable
 
-## 7. Grooming Notes & Decisions
-- Live data provider: Polygon.io selected (good free tier + WebSocket support)  
-- Notifications: Start with in-app only, add email later  
-- Focus this sprint: Get real-time data flowing end-to-end (US1 + US3)  
-- Minor fixes (US4) will be picked up as “filler” tasks when blocked
-
-## 8. Change Log
-| Date       | Change |
-|------------|--------|
-| 2025-11-27 | Created Product Backlog 2 – shifted from historical → live data, added notifications epic, removed story points column, added mobile responsiveness |
-|            | (add future changes here) |

@@ -1,6 +1,8 @@
 # Sprint 1 Planning Meeting (sprint1.md)
 
 ## Sprint Goal
+The goal of Sprint 3 is to complete all remaining end-to-end functionality of the StockSprout platform by integrating live market data, finalizing the trading workflow, and ensuring the application is stable, responsive, and ready for final demonstration.
+This includes connecting the frontend to all backend endpoints, enabling real-time price updates, implementing trade notifications, polishing the UI, and delivering a fully functional portfolio system showing real-time performance.
 
 ---
 
@@ -41,3 +43,26 @@ The team has a total of *5 members* with the following available capacity for th
 - *[Zyan Mulla]* – Student No. 220221289
 ---
 ## Sprint Review Criteria
+A user story is considered Done when all criteria below are met:
+### 1. Real-Time Market Data Integration
+Live stock prices load consistently across the dashboard, trading page, and portfolio.
+Rate limits and slow-update APIs are handled gracefully with fallback data.
+No crashes or broken UI elements when fetching data.
+
+### 2. Complete Backend–Frontend Integration
+All API endpoints (auth, portfolio, trades, quotes) are connected to frontend components.
+Making a trade updates the backend and instantly reflects in the UI.
+The entire sign-up → login → trade → portfolio flow works as a unified system.
+
+### 3. Notification System
+Users receive in-app notifications for:
+Trade execution
+Price alerts (high/low thresholds)
+Portfolio value changes
+Notification settings can be toggled on/off.
+
+### 4. UI/UX Polish & Error Cleanup
+All console warnings removed.
+Mobile and desktop layouts validated.
+Minor UI issues cleaned (spacing, overflow, alignment).
+Input validation and error messages work consistently.

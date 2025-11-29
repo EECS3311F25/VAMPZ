@@ -9,12 +9,9 @@ This is the frontend for StockSprout, a paper money trading website. It is built
     npm install
     ```
 
-2.  **Create a `.env` file** in the `frontend` directory and add your Twelve Data API key:
-    ```
-    VITE_TWELVEDATA_API_KEY=your_api_key
-    ```
 
-3.  **Start the development server:**
+
+2. **Start the development server:**
     ```bash
     npm run dev
     ```

@@ -73,6 +73,46 @@ export default function MockTradeWidget() {
                 </div>
             </div>
 
+            {/* Quantity */}
+            <div className="mb-6">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase">Quantity</label>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-2">
+                        <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                            <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-8 text-center text-sm font-bold text-slate-900 dark:text-white">1</span>
+                        <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                            <Plus className="w-3 h-3" />
+                        </button>
+                    </div>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">Shares</span>
+                </div>
+            </div>
 
+            {/* Cost & Fees */}
+            <div className="flex justify-between items-center mb-2 text-sm">
+                <span className="text-slate-500 dark:text-slate-400">Estimated Cost</span>
+                <span className="font-bold text-slate-900 dark:text-white">$150.00</span>
+            </div>
+            <div className="flex justify-between items-center mb-4 text-sm">
+                <span className="text-slate-500 dark:text-slate-400">Fees</span>
+                <span className="font-bold text-teal-600 dark:text-teal-400">Free</span>
+            </div>
+
+            {/* Portfolio Impact */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-xl p-3 mb-6 flex gap-3">
+                <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
+                <div>
+                    <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-0.5">Portfolio Impact</p>
+                    <p className="text-[10px] text-blue-600 dark:text-blue-400">-0.12% • New Balance: $125,280.50</p>
+                </div>
+            </div>
+
+            {/* Action Button */}
+            <button className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-teal-600/20 transition-all text-sm">
+                Buy AAPL
+            </button>
+        </motion.div>
     );
 }

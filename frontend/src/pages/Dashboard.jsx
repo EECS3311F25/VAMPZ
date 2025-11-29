@@ -1,399 +1,252 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext.jsx'
-import { TrendingUp, TrendingDown, Search, LogOut, DollarSign, PieChart, BarChart3, Activity, LayoutDashboard, Wallet, Eye, History, Settings, Home } from 'lucide-react'
-import DataWidget from '../components/DataWidget.jsx'
+import React, { useState, useEffect } from 'react';
+import { DollarSign, Wallet, TrendingUp, BarChart3 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import DashboardLayout from '../layouts/DashboardLayout';
+import StatsCard from '../components/ui/StatsCard';
+import StockChart from '../components/StockChart';
+import TradePanel from '../components/TradePanel';
+import { SkeletonSummaryCard } from '../components/Skeleton';
 
-export default function Dashboard() {
-  const { user, loading, checkAuth, logout } = useAuth()
-  const navigate = useNavigate()
-  const [fetching, setFetching] = useState(true)
-  const [activeMenu, setActiveMenu] = useState('dashboard')
+const statsCards = [
+    {
+        title: 'Portfolio Value',
+        value: '$125,430.50',
+        change: '+$2,450.20',
+        changePercent: '+2.00%',
+        label: 'Total balance',
+        positive: true,
+        icon: DollarSign,
+        gradient: 'from-teal-500/10 to-blue-500/10'
+    },
+    {
+        title: 'Cash',
+        value: '$10,000.00',
+        change: '+$0.00',
+        changePercent: 'Available',
+        label: 'Buying power',
+        positive: true,
+        icon: Wallet,
+        gradient: 'from-emerald-500/10 to-teal-500/10'
+    },
+    {
+        title: 'Unrealized P/L',
+        value: '+$15,430.00',
+        change: '+12.5%',
+        changePercent: 'All time',
+        label: 'Total return',
+        positive: true,
+        icon: TrendingUp,
+        gradient: 'from-blue-500/10 to-indigo-500/10'
+    },
+    {
+        title: 'Investments',
+        value: '$115,430.50',
+        change: '+2.00%',
+        changePercent: '24h change',
+        label: 'Market value',
+        positive: true,
+        icon: BarChart3,
+        gradient: 'from-purple-500/10 to-pink-500/10'
+    },
+];
 
-  // Dummy data
-  const statsCards = [
-    { title: 'Portfolio Value', value: '$125,430.50', change: '+$2,450.20', changePercent: '+2.00%', positive: true, icon: DollarSign },
-    { title: 'Total Gain', value: '+$15,430.50', change: '+$1,230.40', changePercent: '+8.67%', positive: true, icon: TrendingUp },
-    { title: 'Active Positions', value: '12', change: '+2', changePercent: 'This month', positive: true, icon: PieChart },
-    { title: 'Win Rate', value: '68%', change: '+5%', changePercent: 'vs last month', positive: true, icon: Activity },
-  ]
-
-  const portfolioStocks = [
+const portfolioStocks = [
     { symbol: 'AAPL', name: 'Apple Inc.', price: '175.43', change: '+2.34', changePercent: '+1.35%', positive: true, shares: 50 },
     { symbol: 'MSFT', name: 'Microsoft Corp.', price: '378.85', change: '-1.23', changePercent: '-0.32%', positive: false, shares: 30 },
     { symbol: 'GOOGL', name: 'Alphabet Inc.', price: '142.56', change: '+3.21', changePercent: '+2.30%', positive: true, shares: 25 },
     { symbol: 'AMZN', name: 'Amazon.com Inc.', price: '148.92', change: '+0.87', changePercent: '+0.59%', positive: true, shares: 40 },
     { symbol: 'TSLA', name: 'Tesla Inc.', price: '245.67', change: '-5.43', changePercent: '-2.16%', positive: false, shares: 15 },
-  ]
+];
 
-  const recentActivity = [
+const recentActivity = [
     { type: 'Buy', symbol: 'NVDA', shares: 10, price: '485.20', date: '2 hours ago', positive: true },
     { type: 'Sell', symbol: 'META', shares: 5, price: '312.45', date: '1 day ago', positive: false },
     { type: 'Buy', symbol: 'NFLX', shares: 8, price: '425.80', date: '2 days ago', positive: true },
     { type: 'Buy', symbol: 'AMD', shares: 20, price: '128.90', date: '3 days ago', positive: true },
-  ]
+];
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'portfolio', label: 'Portfolio', icon: Wallet },
-    { id: 'watchlist', label: 'Watchlist', icon: Eye },
-    { id: 'transactions', label: 'Transactions', icon: History },
-    { id: 'settings', label: 'Settings', icon: Settings },
-  ]
+const Dashboard = () => {
+    const { user } = useAuth();
+    const [selectedSymbol, setSelectedSymbol] = useState('AAPL');
+    const [loading, setLoading] = useState(true);
+    const [hoverPoint, setHoverPoint] = useState(null);
+    const [tradeMarkers, setTradeMarkers] = useState([]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      await checkAuth()
-      setFetching(false)
-    }
-    fetchUser()
-  }, [])
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false);
+        }, 800);
+        return () => clearTimeout(timer);
+    }, []);
 
-  useEffect(() => {
-    if (!loading && !fetching && !user) {
-      navigate('/login')
-    }
-  }, [user, loading, fetching, navigate])
+    const handleTradeSubmit = (tradeData) => {
+        console.log('Dashboard handleTradeSubmit called with:', tradeData);
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
+        if (tradeData) {
+            const newMarker = {
+                symbol: tradeData.symbol,
+                type: tradeData.type,
+                price: parseFloat(tradeData.price),
+                timestamp: Date.now()
+            };
+            setTradeMarkers(prev => [...prev, newMarker]);
+        }
 
-  if (loading || fetching) {
+        // Here you would call your actual trade API or trigger a toast/snackbar
+    };
+
     return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <h1>Loading...</h1>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
-  return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F7F9FC', display: 'flex' }}>
-      {/* Sidebar */}
-      <div style={{
-        width: '260px',
-        backgroundColor: 'white',
-        borderRight: '1px solid #e3e6e0',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'sticky',
-        top: 0,
-        height: '100vh',
-        boxShadow: '1px 0 2px rgba(8, 31, 59, 0.08)'
-      }}>
-        {/* Logo/Brand */}
-        <div style={{ padding: '24px 20px', borderBottom: '1px solid #e3e6e0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Home size={24} color="#081f3b" />
-            <span style={{ fontSize: '20px', fontWeight: '700', color: '#081f3b' }}>
-              Stock<span style={{ fontWeight: '400' }}>Sprout</span>
-            </span>
-          </div>
-        </div>
-
-        {/* Navigation Menu */}
-        <nav style={{ flex: 1, padding: '20px 0', overflowY: 'auto' }}>
-          {menuItems.map((item) => {
-            const Icon = item.icon
-            const isActive = activeMenu === item.id
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveMenu(item.id)}
-                style={{
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '12px 20px',
-                  backgroundColor: isActive ? '#F7F9FC' : 'transparent',
-                  border: 'none',
-                  borderLeft: isActive ? '3px solid #1e5fa8' : '3px solid transparent',
-                  color: isActive ? '#1e5fa8' : '#393f4a',
-                  fontWeight: isActive ? '600' : '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  textAlign: 'left',
-                  fontSize: '14px'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive) {
-                    e.target.style.backgroundColor = '#F7F9FC'
-                    e.target.style.color = '#081f3b'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive) {
-                    e.target.style.backgroundColor = 'transparent'
-                    e.target.style.color = '#393f4a'
-                  }
-                }}
-              >
-                <Icon size={20} />
-                <span>{item.label}</span>
-              </button>
-            )
-          })}
-        </nav>
-
-        {/* User Section */}
-        <div style={{ padding: '20px', borderTop: '1px solid #e3e6e0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              backgroundColor: '#1e5fa8',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: '600',
-              fontSize: '16px'
-            }}>
-              {user.firstName?.[0]?.toUpperCase() || 'U'}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: '14px', fontWeight: '600', color: '#081f3b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user.firstName} {user.lastName}
-              </p>
-              <p style={{ fontSize: '12px', color: '#393f4a', margin: '2px 0 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user.email}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            style={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              backgroundColor: '#081f3b',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '500',
-              fontSize: '14px',
-              transition: 'background 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#0a2a4f'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#081f3b'}
-          >
-            <LogOut size={16} />
-            Logout
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        {/* Header */}
-        <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e3e6e0', boxShadow: '0 1px 2px rgba(8, 31, 59, 0.08)', padding: '20px 32px' }}>
-          <div>
-            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#081f3b', margin: 0 }}>
-              Welcome back, {user.firstName}!
-            </h1>
-            <p style={{ fontSize: '14px', color: '#393f4a', margin: '4px 0 0 0' }}>
-              Here's your portfolio overview
-            </p>
-          </div>
-        </div>
-
-        {/* Scrollable Content */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-          <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            {/* Stats Cards Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '20px',
-              marginBottom: '32px'
-            }}>
-              {statsCards.map((stat, idx) => {
-                const Icon = stat.icon
-                return (
-                  <div
-                    key={idx}
-                    className="data-widget"
-                    style={{ padding: '24px' }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                      <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#393f4a', margin: 0 }}>
-                        {stat.title}
-                      </h3>
-                      <div style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        backgroundColor: '#dbeafe',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#1e5fa8'
-                      }}>
-                        <Icon size={20} />
-                      </div>
-                    </div>
-                    <p style={{ fontSize: '28px', fontWeight: 'bold', color: '#081f3b', margin: '0 0 8px 0' }}>
-                      {stat.value}
-                    </p>
-                    <div className={`widget-change ${stat.positive ? 'widget-change-positive' : 'widget-change-negative'}`}>
-                      {stat.positive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                      <span>{stat.change} ({stat.changePercent})</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Portfolio and Activity Grid */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr',
-              gap: '24px'
-            }}>
-              {/* Portfolio Section */}
-              <div className="portfolio-widget" style={{ marginTop: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <h2 className="portfolio-title" style={{ margin: 0 }}>MY PORTFOLIO</h2>
-                  <button
-                    className="hero-button"
-                    style={{
-                      padding: '8px 16px',
-                      fontSize: '14px',
-                      margin: 0
-                    }}
-                  >
-                    Add Position
-                  </button>
-                </div>
-                <div className="portfolio-search">
-                  <Search className="portfolio-search-icon" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search stocks..."
-                    className="portfolio-search-input"
-                  />
-                </div>
-                <div className="portfolio-list">
-                  {portfolioStocks.map((stock, idx) => (
-                    <div key={idx} className="portfolio-item">
-                      <div className="portfolio-item-left">
-                        <div className={`portfolio-symbol-box ${stock.positive ? 'portfolio-symbol-box-positive' : 'portfolio-symbol-box-negative'}`}>
-                          <span>{stock.symbol}</span>
+        <DashboardLayout activeMenu="dashboard">
+            {/* Background gradient for depth */}
+            <div className="bg-gradient-to-b from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+                {/* Header with more spacing */}
+                <div className="p-6 md:p-8 pt-10 md:pt-12">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Welcome back, {user.firstName}!</h1>
+                            <p className="text-slate-600 dark:text-slate-400 mt-1">
+                                Here's your portfolio overview for today.
+                            </p>
                         </div>
-                        <div className="portfolio-item-info">
-                          <p className="portfolio-item-name">{stock.symbol} {stock.name}</p>
-                          <p style={{ fontSize: '12px', color: '#393f4a', margin: '2px 0 0 0' }}>
-                            {stock.shares} shares
-                          </p>
+                    </div>
+
+                    {/* Stats Cards Grid with improved styling */}
+                    <div className="mb-10">
+                        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Overview</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-4 gap-6">
+                            {loading ? (
+                                <>
+                                    <SkeletonSummaryCard />
+                                    <SkeletonSummaryCard />
+                                    <SkeletonSummaryCard />
+                                    <SkeletonSummaryCard />
+                                </>
+                            ) : (
+                                statsCards.map((stat, idx) => (
+                                    <StatsCard
+                                        key={idx}
+                                        title={stat.title}
+                                        label={stat.label}
+                                        value={stat.value}
+                                        change={stat.change}
+                                        changePercent={stat.changePercent}
+                                        positive={stat.positive}
+                                        icon={stat.icon}
+                                        gradient={stat.gradient}
+                                        className="hover:shadow-xl"
+                                    />
+                                ))
+                            )}
                         </div>
-                      </div>
-                      <div className="portfolio-item-right">
-                        <p className="portfolio-item-price">${stock.price}</p>
-                        <p className={`portfolio-item-change ${stock.positive ? 'portfolio-item-change-positive' : 'portfolio-item-change-negative'}`}>
-                          {stock.positive ? '+' : ''}{stock.change} ({stock.changePercent})
-                        </p>
-                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Recent Activity Section */}
-              <div className="data-widget" style={{ padding: '24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                  <BarChart3 size={20} color="#081f3b" />
-                  <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#081f3b', margin: 0 }}>
-                    Recent Activity
-                  </h2>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {recentActivity.map((activity, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        padding: '12px',
-                        backgroundColor: '#F7F9FC',
-                        borderRadius: '8px',
-                        borderLeft: `3px solid ${activity.positive ? '#059669' : '#dc2626'}`
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                        <span style={{
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: activity.positive ? '#059669' : '#dc2626'
-                        }}>
-                          {activity.type}
-                        </span>
-                        <span style={{ fontSize: '12px', color: '#393f4a' }}>{activity.date}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '14px', fontWeight: '600', color: '#081f3b' }}>
-                          {activity.shares} {activity.symbol}
-                        </span>
-                        <span style={{ fontSize: '14px', color: '#393f4a' }}>${activity.price}</span>
-                      </div>
+                    {/* Market Overview Section with Trade Box */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+                        {/* Stock Chart */}
+                        <div className="lg:col-span-2 glass-panel rounded-2xl p-6 shadow-sm">
+                            <div className="mb-4">
+                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Performance</h2>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Track price movements for {selectedSymbol}</p>
+                            </div>
+                            <StockChart
+                                symbol={selectedSymbol}
+                                onHoverPoint={setHoverPoint}
+                                tradeMarkers={tradeMarkers.filter(m => m.symbol === selectedSymbol)}
+                            />
+                        </div>
+
+                        {/* Trade Panel */}
+                        <div className="glass-panel rounded-2xl p-6 shadow-sm">
+                            <div className="mb-4">
+                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Trade</h2>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Buy or sell assets</p>
+                            </div>
+                            <TradePanel
+                                selectedSymbol={selectedSymbol}
+                                onSymbolChange={setSelectedSymbol}
+                                onTradeSubmit={handleTradeSubmit}
+                                hoverPoint={hoverPoint}
+                            />
+                        </div>
                     </div>
-                  ))}
+
+                    {/* Portfolio Holdings */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* My Portfolio */}
+                        <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
+                            <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">My Portfolio</h2>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Click to view details and trade</p>
+                            </div>
+                            <div className="p-4">
+                                <div className="space-y-2">
+                                    {portfolioStocks.map((stock) => (
+                                        <button
+                                            key={stock.symbol}
+                                            onClick={() => setSelectedSymbol(stock.symbol)}
+                                            className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-2 group ${selectedSymbol === stock.symbol
+                                                ? 'bg-teal-50 dark:bg-teal-900/20 border-teal-500/50 shadow-md'
+                                                : 'bg-white dark:bg-slate-800/50 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700'
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm transition-transform group-hover:scale-105 ${stock.positive
+                                                    ? 'bg-teal-100 dark:bg-emerald-500/20 text-teal-700 dark:text-emerald-400'
+                                                    : 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400'
+                                                }`}>
+                                                    {stock.symbol.charAt(0)}
+                                                </div>
+                                                <div className="text-left">
+                                                    <div className="font-bold text-slate-900 dark:text-white">{stock.symbol}</div>
+                                                    <div className="text-xs text-slate-600 dark:text-slate-400">{stock.shares} shares</div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="font-bold text-slate-900 dark:text-white">${stock.price}</div>
+                                                <div className={`text-xs font-medium ${stock.positive ? 'text-teal-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                                                    {stock.change}
+                                                </div>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recent Activity */}
+                        <div className="glass-panel rounded-2xl overflow-hidden shadow-sm">
+                            <div className="p-6 border-b border-slate-200 dark:border-slate-800">
+                                <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Recent Activity</h2>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">Your latest trades</p>
+                            </div>
+                            <div className="p-4">
+                                <div className="space-y-3">
+                                    {recentActivity.map((activity, idx) => (
+                                        <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`px-3 py-1 rounded-lg text-xs font-semibold ${activity.type === 'Buy'
+                                                    ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
+                                                    : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                                                }`}>
+                                                    {activity.type}
+                                                </div>
+                                                <div>
+                                                    <div className="font-bold text-sm text-slate-900 dark:text-white">{activity.symbol}</div>
+                                                    <div className="text-xs text-slate-600 dark:text-slate-400">{activity.shares} shares @ ${activity.price}</div>
+                                                </div>
+                                            </div>
+                                            <div className="text-xs text-slate-500 dark:text-slate-400">{activity.date}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            {/* Watchlist/Featured Stocks */}
-            <div style={{ marginTop: '32px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#081f3b', marginBottom: '20px' }}>
-                Featured Stocks
-              </h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '20px'
-              }}>
-                <DataWidget
-                  title="Bitcoin - Binance"
-                  symbol="BTC"
-                  price="42,617.94 USD"
-                  change="+1,285.32"
-                  changePercent="+3.11%"
-                  positive={true}
-                />
-                <DataWidget
-                  title="Apple Inc."
-                  symbol="AAPL"
-                  price="175.43 USD"
-                  change="+2.34"
-                  changePercent="+1.35%"
-                  positive={true}
-                  details={[
-                    { label: 'Open', value: '173.20' },
-                    { label: 'Prev Close', value: '173.09' },
-                    { label: 'Volume', value: '45.2M' },
-                  ]}
-                />
-                <DataWidget
-                  title="Microsoft Corp."
-                  symbol="MSFT"
-                  price="378.85 USD"
-                  change="-1.23"
-                  changePercent="-0.32%"
-                  positive={false}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+        </DashboardLayout>
+    );
+};
+
+export default Dashboard;

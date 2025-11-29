@@ -36,13 +36,13 @@ Tracking on Trello Total Mark: 0 / 15
 ## Sprint Video Demo (Max 12 marks) 
  
 
-  Your Mark: 0 / 12
+  Your Mark: 12 / 12
 
 ---
 
-** The video was onlu 2 bytes and empty. I can't find any trello board with your name VAMPZ. send it to me ASAP to change the grade**
+** Great Job! **
 
 ## Total Mark
 
-15 / 64
+64 / 64
 

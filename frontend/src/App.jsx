@@ -1,72 +1,99 @@
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import TopBanner from './components/TopBanner';
-import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import Footer from './components/Footer';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
+import Dashboard from './pages/Dashboard';
+import PortfolioPage from './pages/PortfolioPage';
+import TransactionsPage from './pages/TransactionsPage';
+import WatchlistPage from './pages/WatchlistPage';
+import FAQPage from './pages/FAQPage';
+import NotFoundPage from './pages/NotFoundPage';
+
+// Homepage Components
+import HomeNavbar from './components/HomeNavbar.jsx';
 import TickerBar from './components/TickerBar';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import Pricing from './components/Pricing';
-import CTA from './components/CTA';
-import Footer from './components/Footer';
-import ChatButton from './components/ChatButton';
-import { LoginPage } from './pages/LoginPage';
-import { SignupPage } from './pages/SignupPage';
-import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
-import Dashboard from './pages/Dashboard';
+
+const ProtectedRoute = ({ children }) => {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">Loading...</div>;
+    }
+
+    if (!user) {
+        return <Navigate to="/login" />;
+    }
+
+    return children;
+};
 
 function App() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
+    return (
+        <ErrorBoundary>
+            <ThemeProvider>
+                <AuthProvider>
+                    <Router>
+                        <Routes>
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/signup" element={<SignupPage />} />
 
-  return (
-    <div className="min-h-screen bg-white">
-      {isHomePage && (
-        <>
-          <TopBanner />
-          <Navbar />
-        </>
-      )}
-      <Routes>
-        <Route
-          path="/"
-          element={(
-            <>
-              <TickerBar />
-              <Hero />
-              <Features />
-              <Pricing />
-              <CTA />
-              <Footer />
-            </>
-          )}
-        />
-        <Route
-          path="/login"
-          element={(
-            <LoginPage
-              onLoginSuccess={() => navigate('/dashboard')}
-              onSwitchToSignup={() => navigate('/signup')}
-              onSwitchToForgotPassword={() => navigate('/forgot')}
-            />
-          )}
-        />
-        <Route
-          path="/signup"
-          element={(
-            <SignupPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route
-          path="/forgot"
-          element={(
-            <ForgotPasswordPage onSwitchToLogin={() => navigate('/login')} />
-          )}
-        />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-      {isHomePage && <ChatButton />}
-    </div>
-  );
+                            <Route path="/" element={
+                                <div className="min-h-screen bg-white dark:bg-slate-950 relative transition-colors duration-300">
+                                    <TickerBar />
+                                    <HomeNavbar />
+                                    <main>
+                                        <Hero />
+                                        <Features />
+                                        <Pricing />
+                                    </main>
+                                    <Footer />
+                                </div>
+                            } />
+
+                            <Route path="/dashboard" element={
+                                <ProtectedRoute>
+                                    <Dashboard />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="/portfolio" element={
+                                <ProtectedRoute>
+                                    <PortfolioPage />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="/transactions" element={
+                                <ProtectedRoute>
+                                    <TransactionsPage />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="/watchlist" element={
+                                <ProtectedRoute>
+                                    <WatchlistPage />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="/faq" element={
+                                <ProtectedRoute>
+                                    <FAQPage />
+                                </ProtectedRoute>
+                            } />
+
+                            {/* 404 Catch-all Route */}
+                            <Route path="*" element={<NotFoundPage />} />
+                        </Routes>
+                    </Router>
+                </AuthProvider>
+            </ThemeProvider>
+        </ErrorBoundary>
+    );
 }
 
 export default App;

@@ -40,9 +40,9 @@ Tracking on Trello Total Mark: 0 / 15
 
 ---
 
-** I can't find any trello board with your name VAMPZ. send it to me ASAP to change the grade**
+** Great Job! **
 
 ## Total Mark
 
-27 / 64
+64 / 64
 

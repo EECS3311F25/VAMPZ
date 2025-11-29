@@ -10,3 +10,17 @@
 
 4. Do you have any blockers?  
    No blockers
+
+
+   [11-25-2025] - Sprint 3 Standup 2  
+1. What did you work on since last Standup?  
+   Finished WatchListPage.jsx: searchable ticker input with autocomplete, grid/list view toggle, drag-to-reorder (react-beautiful-dnd), remove action, mock real-time price updates, skeleton loaders, empty state, error handling, and fully responsive layout.
+
+2. What do you commit to next?  
+   I’ll implement TermsModal.jsx – mandatory terms & conditions modal shown on first login, post-signup, and via footer.
+
+3. When do you think you will be done?  
+   I expect to complete the Terms modal with scroll-to-accept and accessibility features by EOD 11-26-2025.
+
+4. Do you have any blockers?  
+   No major blockers

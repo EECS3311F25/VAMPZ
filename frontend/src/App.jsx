@@ -13,7 +13,7 @@ import FAQPage from './pages/FAQPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Homepage Components
-import HomeNavbar from './components/HomeNavbar';
+import HomeNavbar from './components/HomeNavbar.jsx';
 import TickerBar from './components/TickerBar';
 import Hero from './components/Hero';
 import Features from './components/Features';

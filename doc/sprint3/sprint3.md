@@ -19,6 +19,8 @@ The following user stories have been identified for Sprint 3:
 | US3 | As a developer / trader, I want complete backend–frontend integration, so the whole platform works end-to-end | • All API endpoints connected<br>• Auth flow working across layers<br>• Trade submission → execution → portfolio update visible | Must-have | Existing partial backend & frontend | 
 | US4 | As a developer, I want all minor caution/warning errors cleaned up, so the app feels stable and professional | • Remove console warnings<br>• Fix validation bugs<br>• Clean UI glitches | Should-have | Code audit completed | 
 | US5 | As a trader, I want to see my portfolio with real-time P&L and trade history | • Current positions list<br>• Unrealized & realized profit/loss<br>• Export to CSV | Should-have | US1 (live data) + US3 (integration) | 
+| US9 | As an admin, I want basic user activity logging | Could-have | |
+| US10 | As a trader, I want the UI to be mobile-responsive | Should-have | |
 
 ---
 ## Team Capacity

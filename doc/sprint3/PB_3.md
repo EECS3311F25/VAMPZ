@@ -18,7 +18,7 @@
 | US7 | As a trader, I want basic charting and technical indicators | • Candlestick chart + volume<br>• SMA, EMA, RSI toggle | Could-have | US1 (live data) | Not Started |
 | US8 | As a trader, I want custom price alerts (e.g., “notify me when AAPL > $200”) | • Create/delete alerts<br>• Tied to notification system | Should-have | US1 + US2 | Not Started |
 
-## 3. Carryover from Sprint 1
+## 3. Carryover from Sprint 2
 | Story ID | Reason Incomplete | Updated Priority | Notes |
 |----------|-------------------|------------------|-------|
 | US3 | Authentication and some API routes not fully connected | Must-have | Major focus this sprint |

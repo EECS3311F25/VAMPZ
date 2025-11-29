@@ -24,3 +24,16 @@
 
 4. Do you have any blockers?  
    No major blockers
+
+   [11-26-2025] - Sprint 3 Standup 3  
+1. What did you work on since last Standup?  
+   Completed TermsModal.jsx: scroll progress tracking (Accept enabled only after 100%), Reject → logout flow, acceptance saved in localStorage + backend flag, focus trap, ESC support, full ARIA compliance. Integrated triggers from signup completion and global footer.
+
+2. What do you commit to next?  
+   Full responsiveness pass on homepage (Hero, Features, Pricing) + add dark mode support for all components built this sprint.
+
+3. When do you think you will be done?  
+   I expect to wrap up responsiveness and dark mode by 11-28-2025.
+
+4. Do you have any blockers?  
+   No blockers

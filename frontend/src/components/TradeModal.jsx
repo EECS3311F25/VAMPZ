@@ -127,7 +127,7 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm, cash = 0 
                                         <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg shadow-sm ${type === 'Buy'
                                             ? 'bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400'
                                             : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-                                        }`}>
+                                            }`}>
                                             {stockSymbol.charAt(0)}
                                         </div>
                                         <div>
@@ -245,7 +245,7 @@ const TradeModal = ({ isOpen, onClose, stock, type = 'Buy', onConfirm, cash = 0 
                                         className={`flex-[2] px-4 py-3.5 text-white rounded-2xl transition-all font-bold text-sm shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${type === 'Buy'
                                             ? 'bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 shadow-teal-600/20'
                                             : 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 shadow-red-600/20'
-                                        }`}
+                                            }`}
                                     >
                                         {type === 'Buy' && newBuyingPower < 0
                                             ? 'Insufficient Funds'

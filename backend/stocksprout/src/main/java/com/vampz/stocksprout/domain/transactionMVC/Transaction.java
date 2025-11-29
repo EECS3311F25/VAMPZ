@@ -1,5 +1,6 @@
 package com.vampz.stocksprout.domain.transactionMVC;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vampz.stocksprout.domain.TransactionType;
 import com.vampz.stocksprout.domain.portfolioMVC.Portfolio;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 
 @Entity
@@ -26,6 +28,7 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "portfolio_id")
+    @JsonIgnore
     private Portfolio portfolio;
 
     // stock identifier at the time of trade
@@ -34,10 +37,10 @@ public class Transaction {
     @Column
     private int quantity;
 
-    @Column(precision = 19, scale = 4)
+    @Column(precision = 19, scale = 2)
     private BigDecimal pricePerUnit;
 
-    @Column(precision = 19, scale = 4)
+    @Column(precision = 19, scale = 2)
     private BigDecimal totalAmount;
 
     private Instant timestamp;
@@ -50,15 +53,15 @@ public class Transaction {
                        String symbol,
                        int quantity,
                        BigDecimal pricePerUnit,
-                       BigDecimal totalAmount,
-                       Instant timestamp) {
+                       BigDecimal totalAmount
+                         ) {
         this.type = type;
         this.portfolio = portfolio;
         this.symbol = symbol;
         this.quantity = quantity;
-        this.pricePerUnit = pricePerUnit;
-        this.totalAmount = totalAmount;
-        this.timestamp = timestamp;
+        this.pricePerUnit = pricePerUnit.setScale(2, RoundingMode.HALF_UP);
+        this.totalAmount = totalAmount.setScale(2, RoundingMode.HALF_UP);
+        this.timestamp = Instant.now();
     }
 
 

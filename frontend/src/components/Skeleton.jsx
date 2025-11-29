@@ -73,19 +73,19 @@ export const SkeletonPortfolioTable = ({ rows = 5 }) => {
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
                     <thead className="bg-slate-50 dark:bg-slate-900/50">
-                    <tr>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-8" height="h-3" className="ml-auto" /></th>
-                    </tr>
+                        <tr>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-8" height="h-3" className="ml-auto" /></th>
+                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                    {Array.from({ length: rows }).map((_, i) => (
-                        <SkeletonTableRow key={i} />
-                    ))}
+                        {Array.from({ length: rows }).map((_, i) => (
+                            <SkeletonTableRow key={i} />
+                        ))}
                     </tbody>
                 </table>
             </div>
@@ -101,44 +101,44 @@ export const SkeletonTransactionTable = ({ rows = 5 }) => {
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                    <tr>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-20" height="h-3" className="ml-auto" /></th>
-                        <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" /></th>
-                    </tr>
+                        <tr>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-16" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-20" height="h-3" className="ml-auto" /></th>
+                            <th className="px-6 py-4"><Skeleton width="w-24" height="h-3" /></th>
+                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                    {Array.from({ length: rows }).map((_, i) => (
-                        <tr key={i} className="border-b border-slate-200 dark:border-slate-800">
-                            <td className="px-6 py-4">
-                                <Skeleton width="w-16" height="h-6" className="rounded-full" />
-                            </td>
-                            <td className="px-6 py-4">
-                                <div>
-                                    <Skeleton width="w-12" height="h-4" className="mb-1" />
-                                    <Skeleton width="w-24" height="h-3" />
-                                </div>
-                            </td>
-                            <td className="px-6 py-4">
-                                <Skeleton width="w-8" height="h-4" className="ml-auto" />
-                            </td>
-                            <td className="px-6 py-4">
-                                <Skeleton width="w-16" height="h-4" className="ml-auto" />
-                            </td>
-                            <td className="px-6 py-4">
-                                <Skeleton width="w-20" height="h-4" className="ml-auto" />
-                            </td>
-                            <td className="px-6 py-4">
-                                <div>
-                                    <Skeleton width="w-20" height="h-4" className="mb-1" />
-                                    <Skeleton width="w-16" height="h-3" />
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
+                        {Array.from({ length: rows }).map((_, i) => (
+                            <tr key={i} className="border-b border-slate-200 dark:border-slate-800">
+                                <td className="px-6 py-4">
+                                    <Skeleton width="w-16" height="h-6" className="rounded-full" />
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div>
+                                        <Skeleton width="w-12" height="h-4" className="mb-1" />
+                                        <Skeleton width="w-24" height="h-3" />
+                                    </div>
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Skeleton width="w-8" height="h-4" className="ml-auto" />
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Skeleton width="w-16" height="h-4" className="ml-auto" />
+                                </td>
+                                <td className="px-6 py-4">
+                                    <Skeleton width="w-20" height="h-4" className="ml-auto" />
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div>
+                                        <Skeleton width="w-20" height="h-4" className="mb-1" />
+                                        <Skeleton width="w-16" height="h-3" />
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
             </div>

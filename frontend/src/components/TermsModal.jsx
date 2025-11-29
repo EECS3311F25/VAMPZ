@@ -97,9 +97,9 @@ const TermsModal = ({ isOpen, onAccept, loading }) => {
                         onClick={onAccept}
                         disabled={!agreed || loading}
                         className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${agreed && !loading
-                            ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
-                            : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
-                        }`}
+                                ? 'bg-teal-600 hover:bg-teal-500 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40'
+                                : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed'
+                            }`}
                     >
                         {loading ? (
                             <span className="flex items-center justify-center gap-2">

@@ -133,12 +133,12 @@ const FAQPage = () => {
                                                     <ChevronDown
                                                         size={20}
                                                         className={`flex-shrink-0 text-slate-500 dark:text-slate-400 transition-transform duration-300 mt-1 ${isOpen ? 'rotate-180' : ''
-                                                        }`}
+                                                            }`}
                                                     />
                                                 </button>
                                                 <div
                                                     className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                                                    }`}
+                                                        }`}
                                                 >
                                                     <div className="px-6 pb-4 pt-2 text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-200 dark:border-slate-700">
                                                         {item.a}

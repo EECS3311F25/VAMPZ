@@ -1,6 +1,6 @@
 /**
  * Centralized Design Tokens and Theme Configuration
- *
+ * 
  * This file contains all reusable design values to ensure consistency
  * across the application and make theming easier to maintain.
  */

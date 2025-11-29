@@ -125,7 +125,7 @@ const ConfirmTradeModal = ({ isOpen, onClose, onConfirm, tradeData }) => {
                                         className={`flex-1 px-4 py-3 rounded-2xl text-white font-semibold shadow-lg transition-all hover:-translate-y-0.5 ${type === 'Buy'
                                             ? 'bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 shadow-emerald-600/30'
                                             : 'bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-400 hover:to-orange-400 shadow-orange-600/30'
-                                        }`}
+                                            }`}
                                     >
                                         Confirm {type}
                                     </button>

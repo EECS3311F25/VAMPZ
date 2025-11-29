@@ -1,6 +1,12 @@
 import PropTypes from 'prop-types';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
+/**
+ * Reusable Stats Card Component
+ * 
+ * Displays a stat with an icon, title, value, and optional change indicator.
+ * Used across Dashboard, Portfolio, Watchlist, and Transactions pages.
+ */
 const StatsCard = ({
     title,
     label,

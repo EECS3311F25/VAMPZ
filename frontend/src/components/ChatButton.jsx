@@ -9,7 +9,7 @@ export default function ChatButton() {
       transition={{ delay: 1, type: 'spring', stiffness: 200 }}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      className="chat-button"
+      className="fixed bottom-8 right-8 bg-teal-600 hover:bg-teal-700 text-white p-4 rounded-full shadow-lg shadow-teal-600/30 z-50 flex items-center justify-center transition-colors"
       aria-label="Open chat"
     >
       <MessageCircle size={24} />

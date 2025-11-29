@@ -3,7 +3,7 @@ import { AlertTriangle, RefreshCw, XCircle } from 'lucide-react';
 
 /**
  * APIErrorHandler - Reusable component for handling API errors with retry logic
- *
+ * 
  * Usage:
  * <APIErrorHandler
  *   error={error}
@@ -12,12 +12,12 @@ import { AlertTriangle, RefreshCw, XCircle } from 'lucide-react';
  * />
  */
 const APIErrorHandler = ({
-                             error,
-                             onRetry,
-                             message = 'Something went wrong',
-                             showDetails = false,
-                             className = ''
-                         }) => {
+    error,
+    onRetry,
+    message = 'Something went wrong',
+    showDetails = false,
+    className = ''
+}) => {
     const [isRetrying, setIsRetrying] = useState(false);
 
     const handleRetry = async () => {
@@ -86,10 +86,10 @@ const APIErrorHandler = ({
 
 /**
  * useAPIError - Custom hook for managing API errors
- *
+ * 
  * Usage:
  * const { error, setError, handleError, clearError } = useAPIError();
- *
+ * 
  * try {
  *   const data = await fetchData();
  * } catch (err) {

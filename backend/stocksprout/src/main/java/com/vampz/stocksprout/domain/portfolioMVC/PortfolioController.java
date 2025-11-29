@@ -107,18 +107,18 @@ public class PortfolioController {
                     stockPrice,
                     totalCost);
             transactionService.saveTransaction(transaction);
-            int flag = 0;
-            for (int i = 0; i < portfolio.getHoldings().size(); i++) {
-                if (portfolio.getHoldings().get(i).getSymbol().equalsIgnoreCase(holdingToSave.getSymbol())) {
+            int flag=0;
+            for(int i = 0; i < portfolio.getHoldings().size(); i++){
+                if(portfolio.getHoldings().get(i).getSymbol().equalsIgnoreCase(holdingToSave.getSymbol())){
                     portfolio.getHoldings().get(i).setAvgBuyPrice(holdingToSave.getAvgBuyPrice());
                     portfolio.getHoldings().get(i).setQuantity(holdingToSave.getQuantity());
                     portfolio.getHoldings().get(i).setCurrentPrice(holdingToSave.getCurrentPrice());
                     portfolio.getHoldings().get(i).setName(holdingToSave.getName());
                     portfolio.getHoldings().get(i).setSymbol(holdingToSave.getSymbol());
-                    flag = 1;
+                    flag=1;
                 }
             }
-            if (flag == 0) {
+            if(flag==0){
                 portfolio.getHoldings().add(holdingToSave);
             }
             portfolio.getTransactions().add(transaction);
@@ -232,14 +232,15 @@ public class PortfolioController {
 
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portfolio = user.getPortfolio();
-        WatchItem newWatchItem = new WatchItem(symbol, portfolio);
-        for (int i = 0; i < portfolio.getWatchList().size(); i++) {
-            if (portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)) {
+        WatchItem newWatchItem = new WatchItem(symbol,portfolio);
+        for(int i = 0; i < portfolio.getWatchList().size(); i++){
+            if(portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)){
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                         "status", "error",
                         "message", "Symbol already in watchlist"));
             }
         }
+
 
         portfolio.getWatchList().add(newWatchItem);
         portfolioService.refresh(portfolio);
@@ -268,18 +269,18 @@ public class PortfolioController {
 
         AppUser user = userRepository.findById((Long) userId).orElseThrow(() -> new RuntimeException("User not found"));
         Portfolio portfolio = user.getPortfolio();
-        for (int i = 0; i < portfolio.getWatchList().size(); i++) {
-            if (portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)) {
+        for(int i = 0; i < portfolio.getWatchList().size(); i++){
+            if(portfolio.getWatchList().get(i).getSymbol().equalsIgnoreCase(symbol)){
                 portfolio.getWatchList().remove(i);
 
                 portfolioService.refresh(portfolio);
                 return ResponseEntity.ok(Map.of("status", "success", "message", "Removed from watchlist"));
             }
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("status", "error", "message", "Symbol not found in watchlist"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("status", "error", "message", "Symbol not found in watchlist"));
 
     }
+
 
     @GetMapping("/me")
     public ResponseEntity<?> me(HttpServletRequest request) {

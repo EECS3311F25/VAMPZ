@@ -79,7 +79,7 @@ npm run dev
 ```
 
 ## Usage (To be used before deployment)
-1. Open `http://localhost:3000` in your browser.
+1. Open `http://localhost:5173/` in your browser.
 2. Register a new user account or log in.
 3. Start trading stocks, managing your portfolio, and visualizing trends.
 

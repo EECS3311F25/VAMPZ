@@ -71,11 +71,11 @@ mvn spring-boot:run
 ```bash
 cd ../frontend
 
-# Install dependencies
+# Install dependencies ( Install any remaining Dependecies as Well if any error arrises )
 npm install
 
 # Run frontend
-npm start
+npm run dev
 ```
 
 ## Usage (To be used before deployment)

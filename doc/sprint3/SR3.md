@@ -1,5 +1,5 @@
-Sprint 3 Retrospective (SR3.md)
-Participants
+#Sprint 3 Retrospective (SR3.md)
+##Participants
 
 Vansh Madan – Student No. 220150413
 Aniket Saini – Student No. 220751657
@@ -9,8 +9,8 @@ Vansh Madan – Student No. 220150413
 Zyan Mulla – Student No. 220221289
 
 
-What went well / Completed Work
-Backend
+##What went well / Completed Work
+###Backend
 
 -Implemented full Portfolio backend, including default portfolio setup.
 
@@ -18,7 +18,7 @@ Backend
 
 -Integrated portfolio & watchlist backend with frontend successfully.
 
-Frontend
+###Frontend
 
 -Completed marketing homepage: Hero, CTA, Features, and Pricing sections.
 
@@ -32,7 +32,7 @@ Frontend
 
 -Completed FAQ page and multi-watchlist functionality.
 
-Integration
+##Integration
 
 -Fully integrated watchlist + portfolio between backend and frontend.
 
@@ -61,7 +61,7 @@ What could be improved / Unfinished Tasks
 -Ensure all state changes reflect instantly after trades/updates.
 -Acceptance: No refresh needed; consistent real-time UI.
 
-Terms Acceptance Consistency
+##Terms Acceptance Consistency
 
 -Ensure modal triggers and backend flags remain properly synced.
 -Acceptance: No bypassing; consistent login flows.
@@ -70,7 +70,7 @@ Terms Acceptance Consistency
 
 -Improve sorting, filtering, and persistence across lists.
 
-Practices to Continue
+##Practices to Continue
 
 -Modular code structure (frontend + backend).
 
@@ -82,7 +82,7 @@ Practices to Continue
 
 -Using loaders to maintain smooth UX.
 
-New Practices to Start
+##New Practices to Start
 
 -Add end-to-end integration tests.
 
@@ -92,7 +92,7 @@ New Practices to Start
 
 -Improve caching/fallback strategy for market data.
 
-Practices to Stop
+##Practices to Stop
 
 -Avoid heavy reliance on mock data.
 
@@ -100,14 +100,14 @@ Practices to Stop
 
 -Avoid delaying shared component/data model decisions.
 
-Best & Worst Experiences
+##Best & Worst Experiences
 
-Best:
+###Best:
 -Seeing full integration of backend portfolio + watchlist with a polished dashboard and marketing UI.
 
-Worst:
+###Worst:
 -Integration took longer than expected due to dependency chains and data syncing issues.
 
-Summary
+##Summary
 
 -Sprint 3 focused heavily on integration and UI/UX completion, connecting backend data with a fully functional dashboard, watchlist system, and marketing pages. The product now feels cohesive and feature-rich.

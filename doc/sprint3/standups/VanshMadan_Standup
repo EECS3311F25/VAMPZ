@@ -1,0 +1,61 @@
+[11-24-2025] – Sprint 3 Standup 1
+1. What did you work on since last Standup?
+
+Completed the full DashboardLayout structure, including sidebar navigation, responsive layout, and framer-motion animations for the slide-in mobile sidebar.
+Integrated Lucide icons, Tailwind, and Framer Motion into the layout.
+Implemented dynamic menu item highlighting using the activeMenu prop.
+Added authenticated user details (name, email) and the logout workflow using useAuth().
+
+2. What do you commit to next?
+Finish polishing the sidebar and top-bar interactions.
+Start integrating the AuthLayout screens to ensure visual consistency across login/register pages.
+
+3. When do you think you will be done?
+
+This section should be completed by tomorrow (i.e. 11-25-2025).
+
+4. Do you have any blockers?
+
+No major blockers.
+
+[11-25-2025] – Sprint 3 Standup 2
+1. What did you work on since last Standup?
+
+Completed the AuthLayout component, including responsive container structure and reusable form wrapper design.
+Added the TopBar component with user profile dropdown, theme toggle integration, and mobile sidebar trigger.
+Implemented profile menu animations, click-outside close logic, and account actions like FAQ route + logout.a
+Built multiple Skeleton UI components for loading states (cards, tables, watchlist cards, summary cards), improving perceived performance and unifying UI during data fetches.
+
+2. What do you commit to next?
+
+Integrate skeleton components into pages (Portfolio, Watchlist, Transactions).
+Begin wiring the layouts to backend API responses so loading states render dynamically.
+
+3. When do you think you will be done?
+
+Likely by 11-28-2025
+
+4. Do you have any blockers?
+
+No major blockers.
+
+[11-26-2025] – Sprint 3 Standup 3
+1. What did you work on since last Standup?
+
+Integrated skeleton loaders across major dashboard pages (Portfolio, Transactions, Watchlist).
+Completed UI polish for all layout components, including gradients, blur layers, shadows, and dark-mode styling.
+Ensured all components are mobile responsive and tested sidebar interactions on both mobile and desktop breakpoints.
+Cleaned up animation timings for a smoother experience using Framer Motion.
+
+2. What do you commit to next?
+
+Connect front-end components to the backend endpoints to load actual portfolio, watchlist, and transaction data.
+Add any missing loading/error states for improved UX.
+
+3. When do you think you will be done?
+
+Should be finished by 11-30-2025 backend response times.
+
+4. Do you have any blockers?
+
+No major blockers.
